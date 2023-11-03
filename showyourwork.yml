@@ -31,8 +31,8 @@ datasets:
 
 # Custom file dependencies
 dependencies:
-  # src/scripts/my_script.py:
-  #   - src/data/dataset_for_my_script.dat
+   src/scripts/PlotNiTiEOS.py:
+     - src/data/NiTi_EOS.json
   # src/tex/ms.tex:
   #   - src/tex/stylesheet.tex
 
@@ -40,7 +40,7 @@ dependencies:
 ms_name: ms
 
 # Optimize DAG by removing unnecessary jobs upstream of cache hits?
-optimize_caching: false
+optimize_caching: true
 
 # Overleaf sync settings
 overleaf:
@@ -61,7 +61,7 @@ overleaf:
 require_inputs: true
 
 # Allow cacheable rules to run on GitHub Actions?
-run_cache_rules_on_ci: false
+run_cache_rules_on_ci: true
 
 # Mapping of script file extensions to instructions for executing them
 scripts:
@@ -74,7 +74,7 @@ stamp:
   # Stamp angle in degrees
   angle: -20.0
   # Stamp size in inches
-  size: 0.75
+  size: 0.5
   # Horizontal position in inches from right edge of paper
   xpos: 0.50
   # Vertical position in inches from top edge of paper

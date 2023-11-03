@@ -1,0 +1,10 @@
+name: m3gnet
+dependencies:
+  - conda-forge::pip=21.0.1
+  - conda-forge::python=3.9
+  - pip:
+      - spglib==2.1.0
+      - ase==3.22.1
+      - matgl == 0.8.5
+      - seaborn==0.13.0
+      - pandas==2.1.2

@@ -1,0 +1,20 @@
+name: alignn
+channels:
+  - nvidia
+  - pytorch
+  - dglteam/label/cu118
+  - defaults
+  - conda-forge
+dependencies:
+  - conda-forge::python=3.10
+  - pytorch
+  - torchvision
+  - torchaudio
+  - pytorch-cuda=11.8
+  - dgl==1.0.2.cu118 
+  - pip:
+    - spglib
+    - ase
+    - seaborn
+    - pandas
+    - git+https://github.com/usnistgov/alignn

@@ -1,7 +1,4 @@
 <p align="center">
-<a href="https://github.com/showyourwork/showyourwork">
-<img width = "450" src="https://raw.githubusercontent.com/showyourwork/.github/main/images/showyourwork.png" alt="showyourwork"/>
-</a>
 <br>
 <br>
 <a href="https://github.com/stefanbringuier/SMA_Phonons_GNNIP/actions/workflows/build.yml">
@@ -15,4 +12,13 @@
 </a>
 </p>
 
+# Assessing Phonon Properties of Shape Memory Alloys using Graph Neural Network Potentials
+
+**Authors:** Stefan Bringuier
+
+**Affiliation:** Independent Researcher, San Diego, CA
+
+## Abstract
+
+### Acknowledgement
 An open source scientific article created using the [showyourwork](https://github.com/showyourwork/showyourwork) workflow.
