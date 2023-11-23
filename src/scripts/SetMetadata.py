@@ -4,7 +4,7 @@ from ase.db import connect
 def set_db_metadata(dbname):
     db = connect(dbname, append=True)
     db.metadata = {
-        "title": "NiTi Equation of State Calculations",
+        "title": "NiTi Calculations",
         "key_descriptions": {
             "vi": ("Initial Volume", "Initial volume of structure", "Å^3"),
             "v0": ("Equilibrium Volume", "Equilibrium volume from EOS fit", "Å^3"),
@@ -23,6 +23,7 @@ def set_db_metadata(dbname):
             "calculator",
             "formula",
             "potential",
+            "energy",
             "vi",
             "v0",
             "e0",
@@ -40,5 +41,5 @@ def set_db_metadata(dbname):
 
 
 if __name__ == "__main__":
-    db_path_file = paths.data / "NiTi_EOS.json"
+    db_path_file = paths.data / "NiTi_Structures.json"
     set_db_metadata(db_path_file)  

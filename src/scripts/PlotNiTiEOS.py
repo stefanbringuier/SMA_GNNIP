@@ -1,3 +1,9 @@
+import sys
+
+import numpy as np
+import os
+import paths
+
 
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
@@ -5,9 +11,6 @@ from matplotlib.ticker import MultipleLocator, AutoLocator
 from cycler import cycler
 import seaborn as sns  # For color palette
 from ase.db import connect
-import numpy as np
-import os
-import paths
 
 SUBPLOT_ORDER = {'a': 'Mutter',
                  'b': 'Zhong',
@@ -17,7 +20,7 @@ SUBPLOT_ORDER = {'a': 'Mutter',
                  'f': 'ALIGNN',
                  }
 
-def plot_eos(db_path, figsize=(3.4, 5.75), dpi=600, xlim=(0.725, 1.325), ignore_list=['B32', 'R_Phase'], 
+def plot_eos(db_path, figsize=(3.4, 5.75), dpi=600, xlim=(0.75, 1.25), ignore_list=['B32', 'R_Phase'], 
              color_palette="muted", n_colors=10, wspace=0.3, hspace=0.3, linewidth=1, linestyle='-', 
              fontsize=8, tick_fontsize=6, legend_fontsize=8, legend_ncol=3):
    
@@ -83,7 +86,7 @@ def plot_eos(db_path, figsize=(3.4, 5.75), dpi=600, xlim=(0.725, 1.325), ignore_
                     ax.plot(vv_ratio, energy_per_atom, linewidth=linewidth, linestyle=linestyle, label=structure_name)
 
                     # Update the global y-axis limits
-                    ymin =  min(energy_per_atom) - 0.15
+                    ymin =  min(energy_per_atom) - 0.1
                     ymax =  max(energy_per_atom)
                     ax.set_ylim((ymin, ymax))
 
@@ -92,7 +95,7 @@ def plot_eos(db_path, figsize=(3.4, 5.75), dpi=600, xlim=(0.725, 1.325), ignore_
                    fontsize=legend_fontsize, edgecolor='black', 
                    fancybox=True)
 
-        fig.text(0.5, 0.05, 'v/v$_o$', ha='center', fontsize=fontsize)  # Single x-label
+        fig.text(0.5, 0.05, 'V/V$_o$', ha='center', fontsize=fontsize)  # Single x-label
         fig.text(0.01, 0.5, 'Energy per atom (eV)', va='center', rotation='vertical', fontsize=fontsize)  # Single y-label
         plt.subplots_adjust(wspace=wspace, hspace=hspace)  # Adjust spacing as needed
 
@@ -102,5 +105,5 @@ def plot_eos(db_path, figsize=(3.4, 5.75), dpi=600, xlim=(0.725, 1.325), ignore_
         print(f'Saved labels to {os.path.abspath(label_file_path)}')  # Debug statement
 
 if __name__ == "__main__":
-    db_path = paths.data / 'NiTi_EOS.json'  # Specify the path to your ASE database
+    db_path = paths.data / sys.argv[1]  # Specify the path to your ASE database
     plot_eos(db_path)

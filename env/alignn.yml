@@ -6,7 +6,8 @@ channels:
   - defaults
   - conda-forge
 dependencies:
-  - conda-forge::python=3.10
+  - python=3
+  - conda-forge::elastic
   - pytorch
   - torchvision
   - torchaudio

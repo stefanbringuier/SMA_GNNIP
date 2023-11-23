@@ -1,7 +1,16 @@
 % Define document class
-\documentclass[twocolumn]{aastex631}
+\documentclass[preprint]{elsarticle}
 \usepackage{showyourwork}
+
+%% Packages
+\usepackage[utf8]{inputenc}
+\usepackage{fontspec}
+\usepackage{amsmath}
+\usepackage{siunitx}
 \usepackage[version=4]{mhchem}
+\usepackage{pdflscape}
+
+
 
 % Begin!
 \begin{document}
@@ -10,42 +19,159 @@
 \title{Assessing Phonon Properties of Shape Memory Alloys using Graph Neural Network Potentials}
 
 % Author list
-\author{@stefanbringuier}
+\author[1]{Stefan Bringuier\corref{cor1}}
+\ead{stefanbringuier@gmail.com}
+\cortext[cor1]{Corresponding author}
+\affiliation[1]{organization={Indpendent Researcher},
+  city={San Diego, CA},
+  country={United States},
+}
 
 % Abstract with filler text
 \begin{abstract}
-
+Shape Memory Alloys (SMAs) such as NiTi are pivotal in vibrational dampening,robotic arms, prothestic hands, and mechanical vales as a result of their unique displacive phase transformation properties. However, assessing their phonon characteristics, which provide insight into the displacive phase transformation, by using conventional Density Functional Theory (DFT) methods is computationally challenging. In this paper we assess the use of recent Graph Neural Network (GNN) potentials as a viable alternative. These GNN potentials have leveraged large DFT-computed databases for training and provide a good approximation to the potential energy surfaces which enable inference on energies and forces in lattice and atomic dynamic calculations. We compare GNN potentials with the Embedded Atom Method (EAM) in predicting phonon properties of NiTi. We find that in general the EAM potentials are slightly more performant than the GN in that they appear to more accurately describe equation of state, phonon dispersions, and elastic constants. However, the MACE potential shows significant promise as an exploritory potential for designing and characterizing more complex SMAs. Our findings reveal GNN potentials as a promising avenue for advancing SMA research and fine-tuning of pre-trained GNN models with more relevant DFT data (i.e., force-constants) may permit better outcomes.  
 \end{abstract}
 
-% Main body with filler text
+\begin{keyword}
+  shape memory alloys \sep machine learning potentials \sep phonons
+\end{keyword}
+
+
+\maketitle
+
+ % Main body with filler text
 \section{Introduction}
 \label{sec:intro}
+
+\section{Computation Methodology}
+\label{sec:methods}
+
+\begin{itemize}
+\item Discuss EAM potentials Mutter and Zhong.
+\item GNN potentials M3GNet, CHGNet, MACE, ALIGNN
+\item EOS calcs
+\item Phonon calcs with strain.
+  
+  The calculation of the phonon dispersion is based on the dynamical matrix which in term is obtained from the fourier transform of the force-constant matrix. There are different numerical methods to obtain the force-constant matrix. Here we employ the finite-difference small displacement method (cite alfe), whereby atoms in a supercell are displaced by a small amount to ensure they remain within the harmonic (i.e., linear-response) regime. Then the force-constants are calculated. To obtain the dynamical matrix we sample reciprocal space on a given mesh within the irreducible Brillouin zone (BZ). Finally, we diagonalize the dynamical matrix along high-symmetry paths to obtain the phonon bands and eigenfrequencies. \par
+
+  Since the the finite-difference is a numerical approximation technique, one has to check convergence of the calculation for various models. In this work we have found that for most models and the avaible resources a supercell of $8\times8\times8$ is sufficient to converge, we also utlize the acoustic sum rule (add ref). The only stand-out for using that supercell is with use of the ALIGNN model, we found that supercells any larger than $5\times5\times5$ had considerable memory and we the required resources were unavilable. Despite this we find suitable convergence, althoug the ALIGNN model in general was not good at reproducing the NiTi phonon bandstructures. \par
+
+  The displacement was choosen for all calculations to be $0.01\AA$ and the number of points along the BZ path in reciprocal space was 150. These values seemed to give the best trade-off of convergence for all the models. We also calculate the phonon does on a $30\times30\time30$ reciprocal space grid and use lorentz smoothing, the DOS can be found in the supplemental material.\par
+
+  
+\item elastic constants.
+\end{itemize}
+
+
+
 
 
 \section{Results}
 \label{sec:results}
-\subsection{Equation of States}
-\label{subsec:eos}
 
+\subsection{NiTi: Ground State Structures}
+\label{subsec:nitigs}
+
+%\comment{Display results in tables}
+
+\variable{output/Table_NiTi_Equilibrium_Structures.tex}
+
+\subsection{NiTi: Equation of States}
+\label{subsec:nitieos}
+\cite{Luger2021}
 The thermodynamic equation of state (EOS) is a standard assement of the phase stability of materials at a give condition. In the context of atomic calculations the equation of state can be determined at ground-state (i.e., 0K) to asses the phase stability of the different crystals. The equation of state can be represented as a pressure vs. volume or more commonly as the energy per atom  vs the ratio of the isotropically strained volume to that of the equilibrium volume. One criteria for a interatomic potential is that it accurately refelcts the EOS curves for different phases. This entails the construction of a convex hull which represents the minimum energy curve accross the structures for the volume strain conditions. \par
 
-The EOS curves for the \ce{NiTi} structures \textit{B2}, \textit{B19}, \textit{B19'}, \textit{B33}, and \textit{Pbcm}  for the different potentials studied in this work are shown in fig.~\ref{fig:eos}
+The EOS curves for the \ce{NiTi} structures \textit{B2}, \textit{B19}, \textit{B19'}, \textit{B33}, and \textit{Pbcm}  for the different potentials studied in this work are shown in fig.~\ref{fig:eos}. The two EAM potentials, show that at 0 strain ($V/V_o = 1.0$) both the \textit{B19P} and \textit{B33} phases are stable. I believe this is the first reporting of the \textit{B33} phase for these two fittings of the EAM potential for \ce{NiTi}. Its important to note that these potentials have been developed to capture the displacive phase transformation between \textit{B19P} to \textit{B2}. This is shown in fig.~\ref{fig:eos}(a,b) with the stability indicated upon compressive isotropic strain. A mininum appears around $\approx 0.9$. At tensile isotropic strains the \textit{B19P} phase is stable up till around $1.18$ where the \textit{Pbcm} phase shows stability. An interesting note is that these two fittings of the EAM potential show a double well curve for the \textit{B2} phase. \par
+
+In the UIP-GNN potentials M3GNet, CHGNet, and MACE, the equation of states shown in fig.~\ref{fig:eos}(c-e) look fairly different from thos in fig.~\ref{fig:eos}(a,b). For the M3GNet,  at no strain, the \textit{B33} appears to be the predicted stable phase and the \textit{B2} phase becomes stable around $0.9$ (see fig.~\ref{fig:eos}(c). The stability for \textit{B19} and \textit{B19P} exit, in trade-off, between approximately $1.025$ and $1.1$ tensile isotropic strain. Interestingly beyond a strain of $1.1$ the \textit{Pbcm} is dominate. The double-well curve shown for the EAM potentials is not present for the B2-phase. The CHGNet potential results shown in fig.~\ref{fig:eos}(d) are similar to the M3GNet, but the stability window of the \textit{B2} occurs at a lower compressive isotropic strain. \par
+
+The MACE potential shown in fig.~\ref{fig:eos}(e) has a very different set of EOS curves compard to the M3GNet and CHGNet. Here many of the phases exhibit a stablity window, except the \textit{B33} phase, which was stable in M3GNet and CHGNet. Interestingly, the \text{B19} phase, not the \text{B19P} phase is shown to be the stable zero strain phase. One unique perspective of the the UIP-GNN models is that they provide a different displacive phase transformation pathway then that shown by the EAM potentials. However, this does not include the meta-stable R-phase or other potential meta-stable phases which can also offer such transformation mechanisms. \par
+
+
+Finally, the ALIGNN potential EOS was generated, but a few issues arose during the calculations. The most prominant was the difficulty in convergence of the structural optimzation to the specified tolerance (see \ref{sec:methods}. Secondly the calculated cohesive energies differs from the UIP-GNN by a factor $\approx 2$ and by $1$ eV for the EAM potentials. The \textit{B19P} phase is the stable at zero strain and for a considerable portion of the compressive, but all of the tensile. At compressive strain beyond $\approx 0.94$ the \textit{B2} phase is stable. 
+
+It is observed that for all but the ALIGNN potential, that upon high tensile isotropic strain, the \textit{Pbcm} phase is the most stable. \par
+
 \begin{figure}[ht!]
     \script{PlotNiTiEOS.py}
     \begin{centering}
         \includegraphics[width=\linewidth]{figures/NiTi_EOS_Comparison.png}
         \caption{
-            The equation of state curves for different \ce{NiTi} structures for (a) Mutter (EAM) (b) Zhong (EAM) (c) M3GNet (d) CHGNet (e) MACE and (f) ALIGNN. 
+            The equation of state curves for different \ce{NiTi} structures for (a) Mutter (EAM) (b) Zhong (EAM) (c) M3GNet (d) CHGNet (e) MACE and (f) ALIGNN interatomic potentials. The x-axis is the ratio of the isotropic strained unit cell volume, $V$,  with respect to the ground-state unit cell volume, $V_o$.
         }
         \label{fig:eos}
     \end{centering}
 \end{figure}
 
+\subsection{NiTi: Phonon Instability}
+\label{subsec:niphonons}
+
+
+\subsubsection{B2 Phase}
+\label{subsubsec:b2}
+
+\begin{figure}[ht!]
+    \script{PlotNoStrainPhonons.py}
+    \begin{centering}
+        \includegraphics[width=\linewidth]{figures/B2_combined_models_phonon_bandstructures.png}
+        \caption{
+          Ground-state, no isotropic strain, Phonon bandstructure of B2 phase for all models. The Mutter and Zhong EAM potentials differ in that Mutter predicts no dynamic instability of the B2 phase at 0K. 
+        }
+        \label{fig:allmodels_no_strainphonon_b2}
+    \end{centering}
+\end{figure}
+
+
+\begin{figure}[ht!]
+    \script{PlotEAMPhonons.py}
+    \begin{centering}
+        \includegraphics[width=0.5\linewidth]{figures/Mutter_B2_combined_strain_phonon_bandstructures.png}
+        \vspace{1mm}
+        \includegraphics[width=0.5\linewidth]{figures/Zhong_B2_combined_strain_phonon_bandstructures.png}
+        \caption{
+           Phonon dispersion of B2 structure for the Mutter (top) and Zhong (bottom)  EAM potentials at different isotropic strains. The optical branches have been made more transparent to emphasis the behavior in the TA$_1$ and TA$_2$ branches. The color indicates direction from compressive to tensile strain. Note that the strain percent shown is with respect to isotropic changes (i.e. volume). 
+        }
+        \label{fig:mutter_zhong_phonon_b2}
+    \end{centering}
+\end{figure}
+
+
+%ADD Plot of zero strain EAM and first-pricinpals results
+
+\begin{figure}[ht!]
+    \script{PlotGNNPhonons.py}
+    \begin{centering}
+      \includegraphics[width=0.5\linewidth]{figures/M3GNet_B2_combined_strain_phonon_bandstructures.png}
+      \vspace{1mm}
+      \includegraphics[width=0.5\linewidth]{figures/CHGNet_B2_combined_strain_phonon_bandstructures.png}
+      \vspace{1mm}
+      \includegraphics[width=0.5\linewidth]{figures/MACE_B2_combined_strain_phonon_bandstructures.png}
+      \caption{
+        Phonon dispersion of B2 structure for the (a) M3GNet, (b) CHGNet, and (c) MACE potentials for different isotropic strains. Similar transcparency is used as done in \ref{fig:mutter_zhong_phonon_b2}.
+      }
+      \label{fig:gnn_phonon_b2}
+    \end{centering}
+\end{figure}
+
+
+
+\subsection{NiTiCu: Equation of States}
+
+
+\bibliographystyle{naturemag}
+\bibliography{bib}
+
+
+\section*{CR\lowercase{e}d\lowercase{i}T author statement}
+
+S.B: Conceptualization, Formal Analysis, Investigation, Methodology, Software, Visualisation, Writing---original draft.
+
+
+\section*{Reproducibilty and Data Availability}
+This study was carried out using the reproducibility software \href{https://github.com/showyourwork/showyourwork}{\showyourwork} \cite{Luger2021}, which leverages continuous integration to programmatically download the data from \href{https://zenodo.org/}{zenodo.org}, create the figures, and compile the manuscript. Each figure caption contains two links: one to the dataset stored on zenodo used in the corresponding figure, and the other to the script used to make the figure (at the commit corresponding to the current build of the manuscript). The git repository associated to this study is publicly available at \url{https://github.com/stefanbringuier/SMA_Phonons_GNNIP} and allows anyone to re-build the entire manuscript. The datasets generated by this paper are stored at \url{xyz}.
+
+\section*{Acknowledgements}
 
 \appendix
-\section{Reproducibilty}
-This study was carried out using the reproducibility software \href{https://github.com/showyourwork/showyourwork}{\showyourwork} \citep{Luger2021}, which leverages continuous integration to programmatically download the data from \href{https://zenodo.org/}{zenodo.org}, create the figures, and compile the manuscript. Each figure caption contains two links: one to the dataset stored on zenodo used in the corresponding figure, and the other to the script used to make the figure (at the commit corresponding to the current build of the manuscript). The git repository associated to this study is publicly available at \url{https://github.com/stefanbringuier/SMA_Phonons_GNNIP} and allows anyone to re-build the entire manuscript. The datasets generated by this paper are stored at \url{xyz}.
-
-\bibliography{bib}
 
 \end{document}

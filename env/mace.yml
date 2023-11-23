@@ -3,10 +3,9 @@ channels:
   - pytorch
   - nvidia
   - defaults
-  - conda-forge
 dependencies:
-  - conda-forge::python
-  - conda-forge::pip
+  - python
+  - conda-forge::elastic
   - pytorch
   - torchvision
   - torchaudio
