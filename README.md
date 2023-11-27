@@ -40,5 +40,8 @@ Any file in [src/scripts](src/scripts)  with a variation of the word "Plot" gene
 ### Manuscript
 A single `LaTeX` files is used, [ms.tex](src/tex/ms.tex) and is fairly boilerplate other than the written text. The rendered figures are saved in [src/tex/figures](src/tex/figures) and are in `.png` format. Some formatting with regard to placement of subfigures is done in the `ms.tex` document within the `\begin{figure} ... \end{figure}` environment. So the figures in the manuscript pdf may be combinations of figures in [src/tex/figures](src/tex/figures)
 
+### Github Actions
+Because multiple conda environments are used and the packages are considerable in size, the disk space used during the Github actions is very large. Therefore the hack provided by <https://github.com/marketplace/actions/maximize-build-disk-space> needs to be used.
+
 ### Acknowledgement
 An open source scientific article created using the [showyourwork](https://github.com/showyourwork/showyourwork) workflow.
