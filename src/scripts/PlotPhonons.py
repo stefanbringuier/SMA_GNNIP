@@ -5,12 +5,32 @@ from matplotlib.gridspec import GridSpec
 from ase.db import connect
 from scipy.interpolate import interp1d
 
+def format_xticklabels(labels, locs):
+    # Dictionary to keep track of formatted labels with their locations
+    formatted_labels_dict = {}
+    
+    for loc, label in zip(locs, labels):
+        if label == "G":  # Check if label is 'G'
+            label = '$\Gamma$'  # Replace with the Greek letter Gamma
+        
+        # Check if this location already has a label
+        if loc in formatted_labels_dict:
+            # Append the new label to it with a comma
+            formatted_labels_dict[loc] += ', ' + label
+        else:
+            # Otherwise, just add the label
+            formatted_labels_dict[loc] = label
+    
+    # Now, build the list of formatted labels in the order of locations
+    formatted_labels = [formatted_labels_dict[loc] for loc in locs]
+    
+    return formatted_labels
 
 def normalize_q_points(q_points):
     return (q_points - np.min(q_points)) / (np.max(q_points) - np.min(q_points))
 
 
-def get_color(value, cmap_name="viridis", vmin=-0.12, vmax=0.12):
+def get_color(value, cmap_name="viridis", vmin=-1.5, vmax=1.5):
     norm = plt.Normalize(vmin=vmin, vmax=vmax)
     cmap = plt.get_cmap(cmap_name)
     return cmap(norm(value))
@@ -33,7 +53,7 @@ def PlotPhonons(dbname, model_name, structure_name, num_strains=None):
                     ax.plot(q_points, energies, color="k")
 
                 ax.set_xticks(pdata["bandstructure"]["label_locs"])
-                ax.set_xticklabels(pdata["bandstructure"]["labels"])
+                ax.set_xticklabels(format_xticklabels(pdata["bandstructure"]["labels"], pdata["bandstructure"]["label_locs"]))
                 _ = [
                     ax.axvline(x=loc, color="gray", linestyle="-", alpha=0.5)
                     for loc in pdata["bandstructure"]["label_locs"]
@@ -41,7 +61,7 @@ def PlotPhonons(dbname, model_name, structure_name, num_strains=None):
                 stress = (
                     np.mean(pdata["stress"][:3]) * 0.1
                 )  # Confirm units are bar -> MPa
-                ax.set_title(f"Strain: {float(strain)*100:.3f}%, Stress: {stress:.3f} MPa")
+                ax.set_title(f"Strain: {float(strain):.3f}%, Stress: {stress:.3f} MPa")
                 ax.set_xlim((0, pdata["bandstructure"]["label_locs"][-1]))
                 ax.set_ylabel("Frequency [THz]")
                 ax.axhline(y=0.0, color="gray", linestyle="-", alpha=0.5)
@@ -60,6 +80,8 @@ def PlotPhonons(dbname, model_name, structure_name, num_strains=None):
         labels = f_pdata["bandstructure"]["labels"]
         norm_locs = {}
 
+        #NOTE: I create a evenly space sampling of strains from min to max, but
+        # it might also be need to provide ranges based on model
         strains = sorted(first_row.data["strain_phonons"].keys(), key=float)
         if num_strains is not None and num_strains < len(strains):
             strain_indices = np.round(
@@ -77,7 +99,7 @@ def PlotPhonons(dbname, model_name, structure_name, num_strains=None):
 
             for b_idx, energies in pdata["bandstructure"]["band_index"].items():
                 alpha = 1.0 if b_idx in [0, 1, 2] else 0.375
-                label = f"{float(strain)*100:0.2f}%" if b_idx == 0 else ""
+                label = f"{float(strain):0.2f}%" if b_idx == 0 else ""
                 ax.plot(
                     q_norm,
                     energies,
@@ -89,7 +111,8 @@ def PlotPhonons(dbname, model_name, structure_name, num_strains=None):
 
         f_strain_key = selected_strains[0]
         ax.set_xticks(norm_locs[f_strain_key])
-        ax.set_xticklabels(labels[: len(norm_locs[f_strain_key])])
+        ax.set_xticklabels(format_xticklabels(labels[: len(norm_locs[f_strain_key])], norm_locs[f_strain_key]))
+#        ax.set_xticklabels(labels[: len(norm_locs[f_strain_key])])
         ax.set_xlim((0, norm_locs[f_strain_key][-1]))
 
         _ = [
@@ -195,7 +218,7 @@ def PlotPhonons(dbname, model_name, structure_name, num_strains=None):
 
 
 
-def PlotAllModelPhonons(dbname, models, structure_name, strain=0.00, columns=3):
+def PlotAllModelPhonons(dbname, models, structure_name, strain=0.00, columns=3,fade_optical=False):
     """
     This function creates a grid of phonon bandstructure plots for each model.
     """
@@ -211,6 +234,12 @@ def PlotAllModelPhonons(dbname, models, structure_name, strain=0.00, columns=3):
             ax = fig.add_subplot(gs[m // columns, m % columns])
 
             first_row = db.get(structure_name=structure_name, model_name=model_name)
+            #NOTE: we skip B19 and B19P for ALIGNN due to performance issues
+            #if model_name == "ALIGNN":
+            #    if structure_name != "B2":
+            #        UserWarning(f"Skipping: {structure_name} {model_name}")
+            #        continue
+                
             f_pdata = next(iter(first_row.data["strain_phonons"].values()))
             labels = f_pdata["bandstructure"]["labels"]
             strains = sorted(first_row.data["strain_phonons"].keys(), key=float)
@@ -222,7 +251,10 @@ def PlotAllModelPhonons(dbname, models, structure_name, strain=0.00, columns=3):
             norm_locs = normalize_q_points(pdata["bandstructure"]["label_locs"])
 
             for b_idx, energies in pdata["bandstructure"]["band_index"].items():
-                alpha = 1.0 if b_idx in [0, 1, 2] else 0.375
+                if fade_optical:
+                    alpha = 1.0 if b_idx in [0, 1, 2] else 0.375
+                else:
+                    alpha = 1.0
                 ax.plot(
                     q_norm,
                     energies,
@@ -232,7 +264,8 @@ def PlotAllModelPhonons(dbname, models, structure_name, strain=0.00, columns=3):
                 )
 
             ax.set_xticks(norm_locs)
-            ax.set_xticklabels(labels[: len(norm_locs)])
+            ax.set_xticklabels(format_xticklabels(labels[: len(norm_locs)], norm_locs))
+            #ax.set_xticklabels(labels[: len(norm_locs)])
             ax.set_xlim((0, norm_locs[-1]))
             ax.axhline(y=0.0, color="black", linestyle="-", linewidth=0.5, alpha=0.9)
             ax.set_ylabel("Frequency [THz]")

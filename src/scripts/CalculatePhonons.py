@@ -14,10 +14,12 @@ from ase.constraints import StrainFilter, UnitCellFilter
 from ase.spacegroup.symmetrize import FixSymmetry, check_symmetry
 
 
+from ConfigsUtils import *
+
 EV_to_THz = 241.799050402293e0
 
 
-def PlotBandstructure(bs, dos, info, ymaxlim=13.0, of="."):
+def PlotBandstructure(bs, dos, info, ymaxlim=9.0, of="."):
     """
     Plots a single phonon band structure and DOS.
     """
@@ -39,8 +41,8 @@ def PlotBandstructure(bs, dos, info, ymaxlim=13.0, of="."):
         ax.plot(q_points, omega, "k-", lw=2)
 
     ax.set_title(
-        f"Lattice Parameter: {info['a']:.3f}Å\
-        Strain: {info['strain_percent']:.2f}% (a0={info['a0']:.3f}Å)\
+        f"Volume: {info['vol']:.3f}Å^3\
+        Strain: {info['strain']:.2f}% \
         Potential: {info['potname']}",
         fontsize=10,
     )
@@ -66,7 +68,10 @@ def PlotBandstructure(bs, dos, info, ymaxlim=13.0, of="."):
     dosax.set_xticks([])
     dosax.set_xlabel("DOS", fontsize=18)
     fig.savefig(
-        os.path.join(of, f"{info['potname']}_a={info['a']:.3f}_NiTi-B2_Phonons.png")
+        os.path.join(
+            of,
+            f"{info['structure']}_{info['potname']}_{info['strain']:.3f}_Phonons.png",
+        )
     )
     fig.clear()
 
@@ -94,7 +99,7 @@ def WriteModeWisual(
 
     NOT TESTED with showyourwork flow
     """
-    
+
     # Write modes for specific q-vector to trajectory files:
     bandpath = structure.cell.bandpath(npoints=pts)
     p = bandpath.special_points[point]
@@ -128,19 +133,23 @@ def WriteModeWisual(
 def GetPhonons(
     structure,
     potential,
+    bandpath,
     supercell=(8, 8, 8),
-    bspts=150,
+    # bspts=150,
     doskpts=(30, 30, 30),
     dospts=150,
     displacement=0.01,
+    center_refcell=True,
     lorentz_width=4.5e-4,
 ):
     """
     displacement is in Angstrom and is atom movement.
     """
-    bandpath = structure.get_cell().bandpath(npoints=bspts)
+    # NOTE: Because the k-space bandpath will change this now needs to be passed
+    # bandpath = structure.get_cell().bandpath(npoints=bspts,eps=1.0e-6)
     phfolder = (
-        str(paths.data / potential[0].upper() / structure.info["name"]) + "-phonon-calc-files"
+        str(paths.data / potential[0].upper() / structure.info["name"])
+        + "-phonon-calc-files"
     )
     phonons = Phonons(
         structure,
@@ -148,12 +157,13 @@ def GetPhonons(
         calc=potential[1],
         supercell=supercell,
         delta=displacement,
+        center_refcell=center_refcell,
     )
     phonons.clean()
     phonons.run()
     phonons.read(acoustic=True)
     phonons.clean()
-    bs = phonons.get_band_structure(bandpath,verbose=False)
+    bs = phonons.get_band_structure(bandpath, verbose=False)
 
     dos = phonons.get_dos(kpts=doskpts).sample_grid(npts=dospts, width=lorentz_width)
 
@@ -164,7 +174,6 @@ def CalculatePhonons(
     dbname,
     structure_name,
     potential,
-    # strain=np.array([0.995, 0.9975, 1.0, 1.0025, 1.005, 1.01]),
     strain=[
         -0.11000,
         -0.09375,
@@ -181,22 +190,18 @@ def CalculatePhonons(
     potname = potential[0]
     calculator = potential[1]
 
-    #TODO: Need to catch potential dependent settings
-    #NOTES: ALIGNN has huge memory demands on cpu.
-    if potential[0] == "ALIGNN":
-        supercell=(6,6,6)
-    else:
-        supercell = (8,8,8)
-        
+    supercell, displacement, bspts = GetPhononCalcConfig(structure_name, potential[0])
+
     entry = db.get(model_name=potname, structure_name=structure_name)
     spg = entry.spacegroup
     cell_relaxed = entry.cell
 
-    structure = crystal(entry.toatoms(),spacegroup=spg)
+    structure = crystal(entry.toatoms(), spacegroup=spg)
+    bandpath = structure.get_cell().bandpath(npoints=bspts)
     structure.set_calculator(calculator)
     structure.info["name"] = entry.structure_name
+    bandpath = structure.get_cell().bandpath(npoints=bspts, eps=1.0e-6)
 
-    
     # Ideally we want to enfoce these filters.
     # We cannot break symmetry and strain tensor must comply.
     # But this doesn't work.
@@ -209,16 +214,39 @@ def CalculatePhonons(
         isotropic_strain = np.array(
             [[1.0 + e, 0.0, 0.0], [0.0, 1.0 + e, 0.0], [0.0, 0.0, 1.0 + e]]
         )
-        structure.set_cell(cell_relaxed * isotropic_strain, scale_atoms=True)
+        mod_structure = structure.copy()
+        mod_structure.set_calculator(calculator)
+        mod_structure.set_cell(cell_relaxed * isotropic_strain, scale_atoms=True)
 
-        #CHeck symmetry isn't broken
-        new_spg = get_spacegroup(structure)
+        # Check symmetry isn't broken
+        new_spg = get_spacegroup(mod_structure)
         if new_spg.no != spg:
-            ValueError(f"Symmetry was broken! Determined strained crystal spacegroup is {new_spg}.")
-            
-        stress = structure.get_stress()
-        volume = structure.get_cell().volume
-        bandstructure, dos, ph = GetPhonons(structure, potential, supercell=supercell)
+            ValueError(
+                f"Symmetry was broken! Determined strained crystal spacegroup is {new_spg}."
+            )
+
+        stress = mod_structure.get_stress()
+        volume = mod_structure.get_cell().volume
+        bandstructure, dos, ph = GetPhonons(
+            mod_structure,
+            potential,
+            bandpath,
+            supercell=supercell,
+            displacement=displacement,
+        )
+
+        # Plot raw output bandstructure
+        PlotBandstructure(
+            bandstructure,
+            dos,
+            {
+                "vol": volume,
+                "strain": e * 100.0,
+                "structure": structure.info["name"],
+                "potname": potname,
+            },
+            of=str(paths.data / potential[0].upper() ),
+        )
         eigenvalues = bandstructure.energies * EV_to_THz
         ev_list_by_band = [
             eigenvalues[:, :, i].tolist() for i in range(eigenvalues.shape[2])
@@ -240,26 +268,15 @@ def CalculatePhonons(
         }
         dos_data = {"weights": dos_weights_list, "energies": dos_energies_list}
 
-        strain_phonons[e] = {
+        frmt_e = f"{e*100.0:.2f}"
+        strain_phonons[frmt_e] = {
             "bandstructure": bandstructure_data,
             "dos": dos_data,
             "volume": volume,
             "stress": stress,
         }
-        
-    db.update(entry.id, data={"strain_phonons": strain_phonons})
 
-    # plot_single_bs_dos(
-    #        bs,
-    #        dos,
-    #        {
-    #            "a0": a0,
-    #            "a": a,
-    #            "potname": potname,
-    #            "strain_percent": strain_percent,
-    #        },
-    #        of=of,
-    #    )
+    db.update(entry.id, data={"strain_phonons": strain_phonons})
 
     # write_mode_visual(f"{potname}_a={a:.3f}_NiTi-B2", ph, B2,of=of)
     return None

@@ -78,7 +78,10 @@ def plot_eos(db_path, figsize=(3.4, 5.75), dpi=600, xlim=(0.75, 1.25), ignore_li
                 for row in db.select(model_name=calculator_model, structure_name=structure_name):
                     volumes = np.array(row.data['volumes'])
                     energies = np.array(row.data['energies'])
-                    vi = row.vi
+                    #NOTE: We can't use EOS fit volume, as the fits aren't always that good.
+                    #vi = row.v0
+                    min_energy_index = np.argmin(energies)
+                    vi = volumes[min_energy_index]
                     natoms = row.natoms
                     
                     vv_ratio = volumes / vi
@@ -87,7 +90,7 @@ def plot_eos(db_path, figsize=(3.4, 5.75), dpi=600, xlim=(0.75, 1.25), ignore_li
 
                     # Update the global y-axis limits
                     ymin =  min(energy_per_atom) - 0.1
-                    ymax =  max(energy_per_atom)
+                    ymax =  max(energy_per_atom) * 1.05
                     ax.set_ylim((ymin, ymax))
 
         handles, labels = axs[-1].get_legend_handles_labels()

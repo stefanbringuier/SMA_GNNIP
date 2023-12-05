@@ -9,6 +9,8 @@
 \usepackage{siunitx}
 \usepackage[version=4]{mhchem}
 \usepackage{pdflscape}
+%% Handles multipage table. Not sure allowed by pub.
+\usepackage{longtable}
 
 
 
@@ -121,6 +123,39 @@ It is observed that for all but the ALIGNN potential, that upon high tensile iso
     \end{centering}
 \end{figure}
 
+\begin{figure}[ht!]
+    \script{PlotNoStrainPhonons.py}
+    \begin{centering}
+        \includegraphics[width=\linewidth]{figures/B19P_combined_models_phonon_bandstructures.png}
+        \caption{
+          Phonon bandstructure of B19P phase for all models.
+        }
+        \label{fig:allmodels_no_strainphonon_B19P}
+    \end{centering}
+\end{figure}
+
+\begin{figure}[ht!]
+    \script{PlotNoStrainPhonons.py}
+    \begin{centering}
+        \includegraphics[width=\linewidth]{figures/B19_combined_models_phonon_bandstructures.png}
+        \caption{
+          Phonon bandstructure of B19 phase for all models.
+        }
+        \label{fig:allmodels_no_strainphonon_B19P}
+    \end{centering}
+\end{figure}
+
+
+\begin{figure}[ht!]
+    \script{PlotNoStrainPhonons.py}
+    \begin{centering}
+        \includegraphics[width=\linewidth]{figures/B19P_combined_models_phonon_bandstructures.png}
+        \caption{
+          Phonon bandstructure of BCO phase for all models.
+        }
+        \label{fig:allmodels_no_strainphonon_B19P}
+    \end{centering}
+\end{figure}
 
 \begin{figure}[ht!]
     \script{PlotEAMPhonons.py}
@@ -156,6 +191,13 @@ It is observed that for all but the ALIGNN potential, that upon high tensile iso
 
 
 \subsection{NiTiCu: Equation of States}
+
+
+\section{Conclusion}
+\label{sec:conclusion}
+This word aimed to provide an assement of the of GNN univeral interatomic potentials on the ability to capture the stable ground-state phases of binary and ternary SMA. In addition, the dynamic stability of these SMA is crucially evaluated to understand the suitability in observing the onset of displacive phase transformations via the softening of TA branch modes. In the case of NiTi we find that all the GNN potentials predict either the Monoclinic or BCO phases as stable over the B2 structure. However, not all agree with the recent works by (cite) which have indicated that it is the BCO phase which is the ground-state structure.
+
+We observe that the M3GNet and CHGnet capture the M-point instability of the B2 phase, however, no stablizing isotropic strain is observed. With regard to the MACE, very good agrement is found with the phonon bandstructure and that from ab-initio methods. The ALIGNN potential was found not to be suitable of NiTi.
 
 
 \bibliographystyle{naturemag}
