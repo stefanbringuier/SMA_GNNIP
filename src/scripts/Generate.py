@@ -3,13 +3,12 @@ import argparse
 import os
 import paths
 
-from NiTiStructures import *
-from Calculators import *
-
-from CalculateEOS import *
-
-from CalculateElastic import *
-from CalculatePhonons import *
+from ase.db import connect
+from Structures import get_structure
+from Calculators import get_ase_calculator
+from CalculateEOS import get_min_structure_and_calculate_eos
+from CalculateElastic import calculate_elastic_constants
+from CalculatePhonons import calculate_phonons
 
 # Surpress warning from dependencies for which I can do nothing about.
 warnings.filterwarnings("ignore", category=UserWarning, module="ase.spacegroup")
@@ -28,7 +27,7 @@ def main():
     activated for selected model (i.e., ASE Calculator)
     """
     parser = argparse.ArgumentParser(
-        description="""Equation of State Calculations of NiTi.
+        description="""Top-level run script for EOS, Phonons, and Elastic constants.
     Be mindful that the correct python environment is activated for the model (i.e., ASE Calculator) you
     intend to use!!"""
     )
@@ -38,7 +37,16 @@ def main():
     parser.add_argument("--dbfolder", type=str, default=".", help="ASE Database folder")
     parser.add_argument(
         "--model",
-        choices=["Mutter", "Zhong", "M3GNet", "CHGNet", "MACE", "ALIGNN"],
+        choices=[
+            "Mutter",
+            "MutterASE",
+            "Zhong",
+            "ZhongASE",
+            "M3GNet",
+            "CHGNet",
+            "MACE",
+            "ALIGNN",
+        ],
         default="Mutter",
         help="Choose ASECalculator Model",
     )
@@ -80,28 +88,29 @@ def main():
         help="Maximum strain for phonon calcs, fractional",
     )
     parser.add_argument("--eos_fit", type=str, default="sj", help="EOS fit function")
+
     args = parser.parse_args()
 
     outfolder = paths.data / args.model.upper()
     os.makedirs(outfolder, exist_ok=True)
 
-    asecalc = GetCalculator(args)
-    structure = GetStructure(args.structure)
+    structure = get_structure(args.structure)
+    asecalc = get_ase_calculator(args.model)
     structure.calc = asecalc
     structure.info["model_name"] = args.model
 
     db_path_file = paths.data / args.dbname
 
-
     # NOTE: Because this adds a new entry and its hard to get Snakemake to handle
     # checking if the entry exist directly. We check here and then skip if the model
     # and structure have already been optimized
     entry_exist = False
-    from ase.db import connect
     try:
-        entry = connect(db_path_file).get(model_name=args.model, structure_name=args.structure)
+        entry = connect(db_path_file).get(
+            model_name=args.model, structure_name=args.structure
+        )
         if entry != None:
-            entry_exist = True 
+            entry_exist = True
     except:
         print(
             f"""
@@ -110,29 +119,24 @@ def main():
             -----------------------------------------------------
             """
         )
-        CalculateEOS(
+        get_min_structure_and_calculate_eos(
             structure,
             (args.model, asecalc),
-            outfolder,
-            strain=np.linspace(args.min_strain_eos, args.max_strain_eos, args.n),
             dbname=db_path_file,
-            eos_eq=args.eos_fit,
+            strain=np.linspace(args.min_strain_eos, args.max_strain_eos, args.n),
         )
-
-    # NOTE: Due to resource demands only B2 Phonons of ALIGNN
-    # if args.model == "ALIGNN":
-    #    if args.structure != "B2":
-    #        return None
 
     print(
         f"""
-    -----------------------------------------------------
+    ---------------------------------------------------------
     Phonon Calculation of {args.structure} using {args.model}
-    -----------------------------------------------------
+    ---------------------------------------------------------
     """
     )
     strain = np.linspace(args.min_strain_ph, args.max_strain_ph, args.nph)
-    CalculatePhonons(db_path_file, args.structure, (args.model, asecalc), strain=strain)
+    calculate_phonons(
+        db_path_file, args.structure, (args.model, asecalc), strain=strain
+    )
 
     print(
         f"""

@@ -14,8 +14,13 @@ SPACEGROUP_MAP = {"B2" : 221,
                   "BCO" : 63,
                   }
 
-def GetPhononCalcConfig(structure_name, potential):
-    """
+def get_phonon_config(structure_name, potential):
+    """Settings for the phonon calculations
+
+    - supercell
+    - atomic displacement (angstrom)
+    - q-points along band path
+
     Settings have been manually calibrated.
     """
     # Supercell, displacement (ang.), band path points

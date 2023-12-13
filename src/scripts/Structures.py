@@ -203,7 +203,7 @@ def NiTi_R_Phase_Structure(
     return R_Phase
 
 
-def GetStructure(structure_name):
+def get_structure(structure_name):
     structure_functions = {
         "B2": NiTi_B2_Structure,
         "B19": NiTi_B19_Structure,

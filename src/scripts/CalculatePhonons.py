@@ -1,4 +1,4 @@
-import argparse
+
 import os
 import numpy as np
 import matplotlib.pyplot as plt
@@ -10,11 +10,11 @@ from ase.spacegroup import get_spacegroup
 from ase.spacegroup import crystal
 from ase.io.trajectory import Trajectory
 from ase.io import write
-from ase.constraints import StrainFilter, UnitCellFilter
+#from ase.constraints import StrainFilter, UnitCellFilter
 from ase.spacegroup.symmetrize import FixSymmetry, check_symmetry
 
-from NiTiStructures import *
-from ConfigsUtils import *
+from Structures import *
+from Configs import *
 
 EV_to_THz = 241.799050402293e0
 
@@ -131,27 +131,26 @@ def WriteModeWisual(
         os.remove(phonons.name + "." + branch[1])
 
 
-def GetPhonons(
+def get_phonons(
     structure,
     potential,
     bandpath,
     supercell=(8, 8, 8),
-    # bspts=150,
     doskpts=(30, 30, 30),
     dospts=150,
-    displacement=0.01,
+    displacement=0.03,
     center_refcell=True,
     lorentz_width=4.5e-4,
 ):
     """
     displacement is in Angstrom and is atom movement.
     """
-    # NOTE: Because the k-space bandpath will change this now needs to be passed
-    # bandpath = structure.get_cell().bandpath(npoints=bspts,eps=1.0e-6)
+
     phfolder = (
-        str(paths.data / potential[0].upper() / structure.info["name"])
+        str(paths.data / potential[0].upper() / structure.info["structure_name"])
         + "-phonon-calc-files"
     )
+    
     phonons = Phonons(
         structure,
         name=phfolder,
@@ -164,14 +163,14 @@ def GetPhonons(
     phonons.run()
     phonons.read(acoustic=True)
     phonons.clean()
-    bs = phonons.get_band_structure(bandpath, verbose=False)
 
+    bs = phonons.get_band_structure(bandpath, verbose=False)
     dos = phonons.get_dos(kpts=doskpts).sample_grid(npts=dospts, width=lorentz_width)
 
     return bs, dos, phonons
 
 
-def CalculatePhonons(
+def calculate_phonons(
     dbname,
     structure_name,
     potential,
@@ -199,20 +198,17 @@ def CalculatePhonons(
 
     structure = crystal(entry.toatoms(), spacegroup=spg)
     # NOTE: Structure cell must be same as cell_relaxed
-
     structure.set_calculator(calculator)
-    structure.info["name"] = entry.structure_name
-    #bandpath = structure.get_cell().bandpath(npoints=bspts, eps=1.0e-6)
+    structure.info["structure_name"] = entry.structure_name
     bandpath,directions = get_bandpath(structure)
 
-    # Ideally we want to enfoce these filters.
-    # We cannot break symmetry and strain tensor must comply.
-    # But this doesn't work.
+    # Ideally we want to enfoce these filters. We cannot break symmetry
+    # and strain tensor must comply. But this doesn't work.
     # structure.set_constraint(FixSymmetry(structure, symprec=1.0e-4))
     # sf = StrainFilter(structure)
+
     strain_phonons = {}
     for e in strain:
-        
         mod_structure = structure.copy()
         mod_structure.set_calculator(calculator)
         a,b,c,alpha,beta,gamma = cell_relaxed.cellpar()
@@ -220,7 +216,6 @@ def CalculatePhonons(
         a_s,b_s,c_s = [ x*(1.0 + e) for x in (a,b,c) ]
         mod_structure.set_cell([a_s,b_s,c_s,alpha,beta,gamma],scale_atoms=True)
 
-        # Check symmetry isn't broken
         # NOTE: This won't catch all abuse. If structure is monoclinic angle
         # might not be conserved yet still be same spacegroup.
         new_spg = get_spacegroup(mod_structure,symprec=1e-06)
@@ -231,7 +226,7 @@ def CalculatePhonons(
 
         stress = mod_structure.get_stress()
         volume = mod_structure.get_cell().volume
-        bandstructure, dos, ph = GetPhonons(
+        bandstructure, dos, ph = get_phonons(
             mod_structure,
             potential,
             bandpath,
@@ -246,17 +241,17 @@ def CalculatePhonons(
             {
                 "vol": volume,
                 "strain": e * 100.0,
-                "structure": structure.info["name"],
+                "structure": structure.info["structure_name"],
                 "potname": potname,
             },
             of=str(paths.data / potential[0].upper() ),
         )
+        
         eigenvalues = bandstructure.energies * EV_to_THz
         ev_list_by_band = [
             eigenvalues[:, :, i].tolist() for i in range(eigenvalues.shape[2])
         ]
 
-        # Convert other numpy arrays to lists
         dos_weights_list = dos.get_weights().tolist()
         dos_energies = dos.get_energies() * EV_to_THz
         dos_energies_list = dos_energies.tolist()
@@ -271,6 +266,7 @@ def CalculatePhonons(
                 str(i): ev_list_by_band[i][0] for i in range(len(ev_list_by_band))
             },
         }
+
         dos_data = {"weights": dos_weights_list, "energies": dos_energies_list}
 
         frmt_e = f"{e*100.0:.2f}"
