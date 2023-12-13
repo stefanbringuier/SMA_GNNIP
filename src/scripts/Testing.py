@@ -8,7 +8,7 @@ from Calculators import *
 
 from CalculateEOS import *
 
-from CalculateElastic import *
+#from CalculateElastic import *
 from CalculatePhonons import *
 
 # Surpress warning from dependencies for which I can do nothing about.
@@ -142,7 +142,7 @@ def main():
     """
     )
     # NOT VALIDATED
-    calculate_elastic_constants(db_path_file, args.structure, (args.model, asecalc))
+#    calculate_elastic_constants(db_path_file, args.structure, (args.model, asecalc))
 
     return None
 

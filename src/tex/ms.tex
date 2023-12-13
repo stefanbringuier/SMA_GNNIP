@@ -21,7 +21,7 @@
 \title{Assessing Phonon Properties of Shape Memory Alloys using Graph Neural Network Potentials}
 
 % Author list
-\author[1]{Stefan Bringuier\corref{cor1}}
+\author[1]{Stefan Bringuier\corref{cor1}}[role=Lead Researcher,orcid=0000-0001-6753-1437]
 \ead{stefanbringuier@gmail.com}
 \cortext[cor1]{Corresponding author}
 \affiliation[1]{organization={Indpendent Researcher},
@@ -44,9 +44,46 @@ Shape Memory Alloys (SMAs) such as NiTi are pivotal in vibrational dampening,rob
  % Main body with filler text
 \section{Introduction}
 \label{sec:intro}
+Shape memory alloys derive their unique displacive phase transformations from the dynamic instablity that occurs during the application of temperature, strain, or stress. The origin of this instability occurs due to softening or symmetry breaking of the phonon modes in the phase. Therefore, improved understanding of the phonon characteristics of the different phases that can occur for a given SMA is particular important. One of the challenges is in performing such calculations, which typically employ density functional theory in order to determine the atomic forces, which in turn are used to construct the dynamical matrix. However, the use of classical interatomic potentials can alleviate some of this computational burden. \par
+
+Recently, there as been a growing effort in the development of machine learning potentials. These deviate from traditional physics approaches to interatomic potentials, which have historically been inspired from more accurate methods like tight-binding method. In machine learning potentials, one describes the atoms and structure using descriptors of features, these are typically learned or prescribed.
+
+
+The main inquiry of this work is to asses the GNN interatomic potentials on binary SMA NiTi and PbTi primarily through the phonon predictions. Our analysis aims to provide a qualitative perspective based on previously studied phonon phenomena of these systems. The findings here will provide guidnace for future use of GNN interatomic potentials for the development other binary, and more so, ternary and quaternary SMAs. IMportantly, the use of pretrained base models for these systems acts as an initial seed and can be used to fine-tune future GNN potentials for better SMA disocovery works. \par
+
+
 
 \section{Computation Methodology}
 \label{sec:methods}
+
+\subsection{Workflow}
+\label{sec:workflow}
+The ground-state structures for the NiTi phases \textit{B2}, \textit{B19}, \textit{B19'}, and \textit{BCO} are generated using the atomic simulation environment (ASE) package (cite). This requires that the unit cell parameters, basis atoms, and spacegroup number be provided. These initial reference parameters for these structures have been taken from the materials project (cite specific DOIs for the structures). The energy and forces on the atoms are determined using the calculator interface routines which enables the assesment of different interatomic potentials for the same ASE structure. Similarly, for all EOS, phonon, and elastic constant claculations each step is performed for a specific interatomic potential via the ASE calculator interface. We not that this is done in different python computing environments using \href{https://github.com/showyourwork/showyourwork}{\showyourwork} package.\par
+
+First the structures are optimized using ASE local optimization routines. The forces were converged to $10^{-4}\,\text{eV}/\AA$ and utlize the FIRE optimizater, but found other local optimization options found same ground-state structures. To ensure that the unit cell parameters were adjusted along with the atomic coordinates and that the crystal symmetry was not broken, we utlized the ASE constraint and filter routines during optimization of the structures. \par
+
+To determine the equation of state, we started with the obtained ground-state structures. To adjust the volume of the unit cell, we then apply an isotropic strain tensor to the cell and scale the atomic coordinates
+
+\begin{equation}
+  \label{eq:isotropic_strain}
+  T=\begin{bmatrix}
+    \epsilon & 0 & 0 \\
+    0 & \epsilon & 0 \\
+    0 & 0 & \epsilon \\
+  \end{bmatrix}
+\end{equation}
+
+
+were $\epsilon$ is the fraction strain applied to the unit cell. To ensure that the strain is indeed isotropic we provide a quality check on the symmetry of the distorted structure. The isotropic strain is applied in compression and tension, from $-11\%$ to $11\%$, which gave a good range to asses the EOS curves and obtain fits. We fit the EOS to a standard polynomial which provides values for the equilibrium volume, energy, and bulk modulus. In order to compare respective equations of state amongst the different phases, we normalize the volume of each phase with respect to the obtained ground-state volume. \par
+
+Phonon calculations are done using the ASE phonons module, which uses the finite-difference method via small displacement of atoms in a reference cell. This requires the use of a supercell of the reference structure. In order to ensure convergence of this method, one needs to sweep different supercell sizes and how the displacement size impacts the phonon eigenvalues and vectors. This process was done initially for each interatomic potential and structure. Details on the settings are provided in the appendix. \par
+
+The ASE structures provide a routine for sampling the irreducible Brillouin zone for the specific structure, however, a significant amount of additional symmetry points are include in the band path. For this reason we only focus on high-symmetry points in the IBZ, given that the monoclinic and othorhombic phases are low symmetry structures. The exception is the cubic structure which we sample the full IBZ. The IBZ and points symmetry point locations can be seen in appendix \ref{sec:appx_ibz}. The final phonon dispersion diagrams are plot along these points. \par
+
+To better understand dynamic instability in the various structures, same isotropic strain in eq.~\ref{eq:isotropic_strain} is used and respetive phonon bandstructures are calculated. These are then plotted to observed the onset or change of the instability of different branches. \par
+
+The elastic constants have been calculated using ....
+
 
 \begin{itemize}
 \item Discuss EAM potentials Mutter and Zhong.
@@ -80,7 +117,7 @@ Shape Memory Alloys (SMAs) such as NiTi are pivotal in vibrational dampening,rob
 
 \subsection{NiTi: Equation of States}
 \label{subsec:nitieos}
-\cite{Luger2021}
+
 The thermodynamic equation of state (EOS) is a standard assement of the phase stability of materials at a give condition. In the context of atomic calculations the equation of state can be determined at ground-state (i.e., 0K) to asses the phase stability of the different crystals. The equation of state can be represented as a pressure vs. volume or more commonly as the energy per atom  vs the ratio of the isotropically strained volume to that of the equilibrium volume. One criteria for a interatomic potential is that it accurately refelcts the EOS curves for different phases. This entails the construction of a convex hull which represents the minimum energy curve accross the structures for the volume strain conditions. \par
 
 The EOS curves for the \ce{NiTi} structures \textit{B2}, \textit{B19}, \textit{B19'}, \textit{B33}, and \textit{Pbcm}  for the different potentials studied in this work are shown in fig.~\ref{fig:eos}. The two EAM potentials, show that at 0 strain ($V/V_o = 1.0$) both the \textit{B19P} and \textit{B33} phases are stable. I believe this is the first reporting of the \textit{B33} phase for these two fittings of the EAM potential for \ce{NiTi}. Its important to note that these potentials have been developed to capture the displacive phase transformation between \textit{B19P} to \textit{B2}. This is shown in fig.~\ref{fig:eos}(a,b) with the stability indicated upon compressive isotropic strain. A mininum appears around $\approx 0.9$. At tensile isotropic strains the \textit{B19P} phase is stable up till around $1.18$ where the \textit{Pbcm} phase shows stability. An interesting note is that these two fittings of the EAM potential show a double well curve for the \textit{B2} phase. \par
@@ -93,6 +130,19 @@ The MACE potential shown in fig.~\ref{fig:eos}(e) has a very different set of EO
 Finally, the ALIGNN potential EOS was generated, but a few issues arose during the calculations. The most prominant was the difficulty in convergence of the structural optimzation to the specified tolerance (see \ref{sec:methods}. Secondly the calculated cohesive energies differs from the UIP-GNN by a factor $\approx 2$ and by $1$ eV for the EAM potentials. The \textit{B19P} phase is the stable at zero strain and for a considerable portion of the compressive, but all of the tensile. At compressive strain beyond $\approx 0.94$ the \textit{B2} phase is stable. 
 
 It is observed that for all but the ALIGNN potential, that upon high tensile isotropic strain, the \textit{Pbcm} phase is the most stable. \par
+
+
+\begin{figure}[ht!]
+    \script{PlotNiTiCohesiveEnergy.py}
+    \begin{centering}
+        \includegraphics[width=\linewidth]{figures/NiTi_CohesiveEnergy.png}
+        \caption{
+          Comparison of predicted cohesive energy for respective ground-state structure and model.
+        }
+        \label{fig:ecoh}
+    \end{centering}
+\end{figure}
+
 
 \begin{figure}[ht!]
     \script{PlotNiTiEOS.py}
@@ -126,20 +176,20 @@ It is observed that for all but the ALIGNN potential, that upon high tensile iso
 \begin{figure}[ht!]
     \script{PlotNoStrainPhonons.py}
     \begin{centering}
-        \includegraphics[width=\linewidth]{figures/B19P_combined_models_phonon_bandstructures.png}
-        \caption{
-          Phonon bandstructure of B19P phase for all models.
-        }
-        \label{fig:allmodels_no_strainphonon_B19P}
-    \end{centering}
-\end{figure}
-
-\begin{figure}[ht!]
-    \script{PlotNoStrainPhonons.py}
-    \begin{centering}
         \includegraphics[width=\linewidth]{figures/B19_combined_models_phonon_bandstructures.png}
         \caption{
-          Phonon bandstructure of B19 phase for all models.
+          Ground-state phonon bandstructure of B19 phase for all models.
+        }
+        \label{fig:allmodels_no_strainphonon_B19P}
+    \end{centering}
+\end{figure}
+
+\begin{figure}[ht!]
+    \script{PlotNoStrainPhonons.py}
+    \begin{centering}
+        \includegraphics[width=\linewidth]{figures/B19P_combined_models_phonon_bandstructures.png}
+        \caption{
+          Ground-state phonon bandstructure of \textit{B19}$^\prime$ phase for all models.
         }
         \label{fig:allmodels_no_strainphonon_B19P}
     \end{centering}
@@ -149,9 +199,9 @@ It is observed that for all but the ALIGNN potential, that upon high tensile iso
 \begin{figure}[ht!]
     \script{PlotNoStrainPhonons.py}
     \begin{centering}
-        \includegraphics[width=\linewidth]{figures/B19P_combined_models_phonon_bandstructures.png}
+        \includegraphics[width=\linewidth]{figures/BCO_combined_models_phonon_bandstructures.png}
         \caption{
-          Phonon bandstructure of BCO phase for all models.
+          Ground-state phonon bandstructure of BCO phase for all models.
         }
         \label{fig:allmodels_no_strainphonon_B19P}
     \end{centering}
@@ -189,8 +239,23 @@ It is observed that for all but the ALIGNN potential, that upon high tensile iso
 \end{figure}
 
 
+The B2 phase of NiTi exhibits notable phonon instabilities, particularly at the \textit{M} point in the Brillouin zone. These instabilities are characterized by imaginary modes, represented as negative phonon frequencies, indicating a dynamical instability in this crystal structure. The \textit{M} point, located at the edge of the Brillouin zone, corresponds to a wave vector of $\left[\frac{1}{2}, \frac{1}{2}, 0\right]$ in units of the reciprocal lattice vectors. The phonon dispersion curves for NiTi in the B2 phase reveal a softening of the acoustic modes at the \textit{M} point, suggesting a propensity for a structural phase transition. \par
 
-\subsection{NiTiCu: Equation of States}
+The mode Gruneisen parameter, $\gamma$, plays a pivotal role in understanding the stabilization of the NiTi B2 phase under external strain, particularly in the context of phonon instabilities at the M point. The mode Gruneisen parameter is defined as,
+
+\begin{equation}
+  \label{eq:modegruneisen}
+  \gamma = -\frac{V}{\omega}\left(\frac{\partial \omega}{\partial V}\right)
+\end{equation},
+
+where $V$ is the volume, usually taken at equilibrium, and $\omega$ is the phonon frequency. For the B2 phase of NiTi, the negative phonon frequencies at the M point indicate an instability that can be modulated by applying strain. The strain perturbs the lattice volume, thereby altering the phonon frequencies. The effect of this strain can be quantitatively assessed using the mode Gruneisen parameter, which describes how the phonon frequencies change with volume. A positive $\gamma$ suggests that the phonon frequency increases as the volume decreases under strain, potentially stabilizing the lattice. In the case of NiTi, applying compressive strain may increase the frequencies of the soft modes at the M point, thus stabilizing the B2 phase and delaying or suppressing the martensitic transformation. This interplay between strain and phonon behavior, quantified by $\gamma$, is crucial in tailoring the mechanical properties of shape memory and superelastic materials.
+
+
+\variable{output/Table_NiTi_M_ModeGruneisen.tex}
+
+
+
+\subsection{PbTi: Equation of States}
 
 
 \section{Conclusion}
@@ -201,7 +266,7 @@ We observe that the M3GNet and CHGnet capture the M-point instability of the B2 
 
 
 \bibliographystyle{naturemag}
-\bibliography{bib}
+\bibliography{references}
 
 
 \section*{CR\lowercase{e}d\lowercase{i}T author statement}
@@ -210,10 +275,31 @@ S.B: Conceptualization, Formal Analysis, Investigation, Methodology, Software, V
 
 
 \section*{Reproducibilty and Data Availability}
-This study was carried out using the reproducibility software \href{https://github.com/showyourwork/showyourwork}{\showyourwork} \cite{Luger2021}, which leverages continuous integration to programmatically download the data from \href{https://zenodo.org/}{zenodo.org}, create the figures, and compile the manuscript. Each figure caption contains two links: one to the dataset stored on zenodo used in the corresponding figure, and the other to the script used to make the figure (at the commit corresponding to the current build of the manuscript). The git repository associated to this study is publicly available at \url{https://github.com/stefanbringuier/SMA_Phonons_GNNIP} and allows anyone to re-build the entire manuscript. The datasets generated by this paper are stored at \url{xyz}.
+This study was carried out using the reproducibility software \href{https://github.com/showyourwork/showyourwork}{\showyourwork}, which leverages continuous integration to programmatically download the data from \href{https://zenodo.org/}{zenodo.org}, create the figures, and compile the manuscript. Each figure caption contains two links: one to the dataset stored on zenodo used in the corresponding figure, and the other to the script used to make the figure (at the commit corresponding to the current build of the manuscript). The git repository associated to this study is publicly available at \url{https://github.com/stefanbringuier/SMA_Phonons_GNNIP} and allows anyone to re-build the entire manuscript. The datasets generated by this paper are stored at \url{xyz}.
 
 \section*{Acknowledgements}
 
 \appendix
+\subsection{Irreducible Brillouin Zones}
+\label{sec:appx_ibz}
+
+The irreducible Brillouin zones for the the different crystals investigated in this study are provided below. The high-symmetry points are indicated. Additionally the coordinates of the high-symmetry points in the IBZ are shown in the tables below. In Ref. xxx the  specific implementation of the band path sampling and definitions are provided.
+
+\begin{figure}[ht!]                                                                                      
+    \script{AppendixPlotBZ.py}                                                                           
+    \begin{centering}                                                                                    
+      \includegraphics[width=0.5\linewidth]{figures/B2_BrillouinZonePointsSampled.png} 
+      \vspace{1mm}                                                                                       
+      \includegraphics[width=0.5\linewidth]{figures/B19_BrillouinZonePointsSampled.png}
+      \vspace{1mm}
+      \includegraphics[width=0.5\linewidth]{figures/BCO_BrillouinZonePointsSampled.png}
+      \vspace{1mm}                                                                                       
+      \caption{The irreducible Brillouin zones for (top) B2(\#221) (middle) B19/B19P(\#11), and (bottom) BCO(\#63) crystal structures}                                                                                  \label{fig:ibz}                                                                          
+    \end{centering}                                                                                      
+\end{figure} 
+
+\variable{output/B2_SpecialSymmetryPointsBZ.tex}
+\variable{output/B19_SpecialSymmetryPointsBZ.tex}
+\variable{output/BCO_SpecialSymmetryPointsBZ.tex}
 
 \end{document}

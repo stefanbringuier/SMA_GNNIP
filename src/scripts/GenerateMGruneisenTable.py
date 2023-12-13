@@ -6,6 +6,9 @@ from ConfigsUtils import *
 
 
 def GenerateMModeGruneisen(dbname, output_filename):
+    """
+    Only calculate at the M point, which for  B2 phase for NiTi is where dynamical instability occurs.
+    """
     db = connect(dbname)
     unique_structure_types = set(entry.structure_name for entry in db.select())
 

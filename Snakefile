@@ -53,6 +53,12 @@ rule aggregate_niti_db:
     shell:
         "touch {output.aggregated}"
 
+# NOTE: My intent is to cache the database, but I think this is not needed
+# I believe the purpose behind caching is to store intermediate results between
+# rules/workflows. For example if you need to fetch a database and had rules
+# that kept doing this, then you could cache that fetch. I think!.
+# What I was tyring to do was create the action of storing the databse once its
+# created because I'm frequentyly changeing whats being added to the database.
 rule cache_niti_db:
     input:
         db="src/data/" + NiTi_DATABASE,
@@ -63,7 +69,20 @@ rule cache_niti_db:
         True
     shell:
         "mkdir -p src/data/CACHED && cp src/data/{NiTi_DATABASE} src/data/CACHED/"
-        
+
+
+# Rule for plotting NiTi Cohesive Energy
+rule plot_niti_ecoh:
+    input:
+        script="src/scripts/PlotNiTiCohesiveEnergy.py",
+        aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done"
+    output:
+        figure="src/tex/figures/NiTi_CohesiveEnergy.png"
+    conda:
+        "env/ase.yml"
+    shell:
+        "python src/scripts/PlotNiTiCohesiveEnergy.py {NiTi_DATABASE}"
+
 # Rule for plotting NiTi EOS
 rule plot_niti_eos:
     input:
@@ -158,3 +177,20 @@ rule generate_niti_m_mode_gruneisen:
         "env/ase.yml"
     shell:
         "python src/scripts/GenerateMGruneisenTable.py {NiTi_DATABASE}"
+
+rule generate_niti_bz_appendix:
+    input:
+        script="src/scripts/AppendixPlotBZ.py",
+    output:
+        "src/tex/figures/B2_BrillouinZonePointsSampled.png",
+        "src/tex/figures/B19_BrillouinZonePointsSampled.png",
+        "src/tex/figures/B19P_BrillouinZonePointsSampled.png",
+        "src/tex/figures/BCO_BrillouinZonePointsSampled.png",
+        "src/tex/output/B2_SpecialSymmetryPointsBZ.tex",
+        "src/tex/output/B19_SpecialSymmetryPointsBZ.tex",
+        "src/tex/output/B19P_SpecialSymmetryPointsBZ.tex",
+        "src/tex/output/BCO_SpecialSymmetryPointsBZ.tex",
+    conda:
+        "env/ase.yml"
+    script:
+        "src/scripts/AppendixPlotBZ.py"

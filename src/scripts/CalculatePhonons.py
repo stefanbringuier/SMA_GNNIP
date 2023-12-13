@@ -13,7 +13,7 @@ from ase.io import write
 from ase.constraints import StrainFilter, UnitCellFilter
 from ase.spacegroup.symmetrize import FixSymmetry, check_symmetry
 
-
+from NiTiStructures import *
 from ConfigsUtils import *
 
 EV_to_THz = 241.799050402293e0
@@ -51,7 +51,7 @@ def PlotBandstructure(bs, dos, info, ymaxlim=9.0, of="."):
     ax.set_xticklabels(xlabels)
 
     ax.set_xlim((0.0, q_points[-1]))
-    ax.set_ylim((-0.5, ymaxlim))
+    ax.set_ylim((-2.0, ymaxlim))
     ax.set_ylabel("Frequency ($\mathrm{THz}$)", fontsize=22)
 
     dosax.fill_between(
@@ -63,7 +63,8 @@ def PlotBandstructure(bs, dos, info, ymaxlim=9.0, of="."):
         lw=1,
     )
 
-    dosax.set_ylim((0, ymaxlim))
+    ymaxlim = np.max(energies_THz) * 1.05
+    dosax.set_ylim((-2.0, ymaxlim))
     dosax.set_yticks([])
     dosax.set_xticks([])
     dosax.set_xlabel("DOS", fontsize=18)
@@ -159,7 +160,7 @@ def GetPhonons(
         delta=displacement,
         center_refcell=center_refcell,
     )
-    phonons.clean()
+
     phonons.run()
     phonons.read(acoustic=True)
     phonons.clean()
@@ -197,10 +198,12 @@ def CalculatePhonons(
     cell_relaxed = entry.cell
 
     structure = crystal(entry.toatoms(), spacegroup=spg)
-    bandpath = structure.get_cell().bandpath(npoints=bspts)
+    # NOTE: Structure cell must be same as cell_relaxed
+
     structure.set_calculator(calculator)
     structure.info["name"] = entry.structure_name
-    bandpath = structure.get_cell().bandpath(npoints=bspts, eps=1.0e-6)
+    #bandpath = structure.get_cell().bandpath(npoints=bspts, eps=1.0e-6)
+    bandpath,directions = get_bandpath(structure)
 
     # Ideally we want to enfoce these filters.
     # We cannot break symmetry and strain tensor must comply.
@@ -209,17 +212,18 @@ def CalculatePhonons(
     # sf = StrainFilter(structure)
     strain_phonons = {}
     for e in strain:
-        # isotropic_strain = np.array([e, e, e, 0, 0, 0])
-        # sf.set_positions(isotropic_strain)
-        isotropic_strain = np.array(
-            [[1.0 + e, 0.0, 0.0], [0.0, 1.0 + e, 0.0], [0.0, 0.0, 1.0 + e]]
-        )
+        
         mod_structure = structure.copy()
         mod_structure.set_calculator(calculator)
-        mod_structure.set_cell(cell_relaxed * isotropic_strain, scale_atoms=True)
+        a,b,c,alpha,beta,gamma = cell_relaxed.cellpar()
+        # NOTE: Isotropic strain
+        a_s,b_s,c_s = [ x*(1.0 + e) for x in (a,b,c) ]
+        mod_structure.set_cell([a_s,b_s,c_s,alpha,beta,gamma],scale_atoms=True)
 
         # Check symmetry isn't broken
-        new_spg = get_spacegroup(mod_structure)
+        # NOTE: This won't catch all abuse. If structure is monoclinic angle
+        # might not be conserved yet still be same spacegroup.
+        new_spg = get_spacegroup(mod_structure,symprec=1e-06)
         if new_spg.no != spg:
             ValueError(
                 f"Symmetry was broken! Determined strained crystal spacegroup is {new_spg}."
@@ -261,6 +265,7 @@ def CalculatePhonons(
         bandstructure_data = {
             "labels": bandstructure.get_labels()[2],
             "label_locs": bandstructure.get_labels()[1].tolist(),
+            "q_vec_labels": directions,
             "q_points": bandstructure.get_labels()[0].tolist(),
             "band_index": {
                 str(i): ev_list_by_band[i][0] for i in range(len(ev_list_by_band))
