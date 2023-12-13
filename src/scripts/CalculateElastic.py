@@ -1,91 +1,110 @@
 import paths
+from copy import deepcopy
 
 from ase.db import connect
 import ase.units as units
 from ase.spacegroup import crystal
+from ase.calculators.lammpslib import LAMMPSlib
 
-
-#from parcalc import ParCalculate
 from elastic import get_elementary_deformations
 from elastic.elastic import get_cij_order
 from elastic import get_elastic_tensor
 
-from ase.calculators.lammpslib import LAMMPSlib
 
-from queue import Empty
+def serial_calculate(systems, calculator):
+    """
+    Create the list of systems with a calculator for elastic constant calculations. This is done in serial.
 
-from multiprocessing import Process, Queue
+    Args:
+        systems (Union[list(ASE.Atoms),ASE.Atoms]): atomic structures that contain deformations
+        calculator (ASE.calculators): Internal ASE calculator instance
 
-import time
-import os
-import tempfile
-import shutil
-from copy import deepcopy
-from subprocess import check_output
-from contextlib import contextmanager
+    Returns:
+        list(systems)
+    """
 
+    if type(systems) != type([]):
+        sysl = [systems]
+    else:
+        sysl = systems
 
-def SerialCalculate(systems,calc,cleanup=True,prefix="Calc_"):
-
-    if type(systems) != type([]) :
-        sysl=[systems]
-    else :
-        sysl=systems
-    basedir=os.getcwd()
-    res=[]
-    for n,s in enumerate(sysl):
-        if isinstance(calc, LAMMPSlib):
-            s.set_calculator(calc)
+    res = []
+    for n, s in enumerate(sysl):
+        if isinstance(calculator, LAMMPSlib):
+            s.set_calculator(calculator)
         else:
-            s.set_calculator(deepcopy(calc))
-        s.get_calculator().block=False
-        place=tempfile.mkdtemp(prefix=prefix, dir=basedir)
-        os.chdir(place)
-        s.get_calculator().working_dir=place
-        #print("Start at :", place)
-        s.get_potential_energy()
-        os.chdir(basedir)
-        time.sleep(0.2)
-        res.append([n,s])
-        print("Workers started:", len(sysl))
+            s.set_calculator(deepcopy(calculator))
 
-    return [r for ns,s in enumerate(sysl) for nr,r in res if nr==ns]
+        s.get_potential_energy()
+        res.append([n, s])
+
+    return [r for ns, s in enumerate(sysl) for nr, r in res if nr == ns]
 
 
 def calculate_elastic_constants(
-    dbname, structure, potential, npoints=10, displacement=2.0
+    dbname,
+    structure_name,
+    potential,
+    npoints=10,
+    displacement=2.0,
+    update=True,
 ):
     """
-    displacement: percentage of length and angles
-    npoints: number of iterations along displacement
+    Calculate the elastic constants for a given structure and potential and write it to an
+    ASE database file. The structure is retrieved from the database.
+
+    Args:
+        dbname (string): The path of the ASE database file.
+        structure_name (string): The name of the structure in the ASE database file.
+        potential (string): The name of the potential style.
+        npoints (int,10):  Optional, sets the number of displacement points.
+        displacement (int/float,2.0): Optional, the min and max atomic displacement.
+        update (bool,True): Optional, wheter or not to update ASE database file.
+
+    Returns:
+        None
+
+    Notes:
+        Writes the results from the calculation to `dbname`
     """
-    
+
     db = connect(dbname)
     potname = potential[0]
-    calc = potential[1]
+    calculator = potential[1]
 
-        
-        
-    for entry in db.select(structure_name=structure, model_name=potname):
+    for entry in db.select(structure_name=structure_name, model_name=potname):
         spg = entry.spacegroup
         structure = crystal(entry.toatoms(), spacegroup=spg)
-        # Need to set some defaults
-        calc.clean = potential[1].reset
-        # calc.set(isif=2)
-        structure.calc = calc
+        # calculator.clean = potential[1].reset
+        structure.calc = calculator
 
         systems = get_elementary_deformations(structure, n=npoints, d=displacement)
 
-        # Run the stress calculations on deformed cells
-        calcpath = str(paths.data / potname.upper() / "Elastic_Calc_")
-        result = SerialCalculate(systems, calc, prefix=calcpath)
+     
+        result = serial_calculate(systems, calculator)
 
-        # Elastic tensor by internal routine
         ordering = get_cij_order(structure)
         cij, _ = get_elastic_tensor(structure, systems=result)
         cij /= units.GPa
 
         C = dict(zip(ordering, cij))
-        db.update(entry.id, data={"elastic_constants": C})
+
+
+        if update:
+            db.update(entry.id, data={"elastic_constants": C})
+        else:
+            return C
 
     return None
+
+
+if __name__ == "__main__":
+    # Testing data
+    print("!!! TESTING ElasticCalculation.py !!!")
+    from Calculators import *
+    calculator = get_ase_calculator()
+    dbname = paths.data / "NiTi_Structures.json"
+    structure_name = "B2"
+    potential = ("Zhong",calculator)
+    C = calculate_elastic_constants(dbname, structure_name, potential, update=False)
+    assert list(C.values()) == [0.0,0.0,0.0]
