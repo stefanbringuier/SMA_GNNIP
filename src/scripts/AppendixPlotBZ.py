@@ -2,7 +2,7 @@ import paths
 
 import matplotlib.pyplot as plt
 
-from NiTiStructures import *
+from Structures import *
 
 
 structure_names = ["B2", "B19", "B19P", "BCO"]
