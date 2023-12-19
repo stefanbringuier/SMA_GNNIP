@@ -3,6 +3,8 @@ import argparse
 import os
 import paths
 
+import numpy as np
+
 from ase.db import connect
 from Structures import get_structure
 from Calculators import get_ase_calculator
@@ -42,6 +44,7 @@ def main():
             "MutterASE",
             "Zhong",
             "ZhongASE",
+            "Ko",
             "M3GNet",
             "CHGNet",
             "MACE",

@@ -133,9 +133,9 @@ It is observed that for all but the ALIGNN potential, that upon high tensile iso
 
 
 \begin{figure}[ht!]
-    \script{PlotNiTiCohesiveEnergy.py}
+    \script{PlotCohesiveEnergy.py}
     \begin{centering}
-        \includegraphics[width=\linewidth]{figures/NiTi_CohesiveEnergy.png}
+        \includegraphics[width=\linewidth]{figures/NiTi_CohesiveEnergyPlot.png}
         \caption{
           Comparison of predicted cohesive energy for respective ground-state structure and model.
         }
@@ -145,9 +145,9 @@ It is observed that for all but the ALIGNN potential, that upon high tensile iso
 
 
 \begin{figure}[ht!]
-    \script{PlotNiTiEOS.py}
+    \script{PlotEOS.py}
     \begin{centering}
-        \includegraphics[width=\linewidth]{figures/NiTi_EOS_Comparison.png}
+        \includegraphics[width=\linewidth]{figures/NiTi_EquationOfStates.png}
         \caption{
             The equation of state curves for different \ce{NiTi} structures for (a) Mutter (EAM) (b) Zhong (EAM) (c) M3GNet (d) CHGNet (e) MACE and (f) ALIGNN interatomic potentials. The x-axis is the ratio of the isotropic strained unit cell volume, $V$,  with respect to the ground-state unit cell volume, $V_o$.
         }
@@ -163,56 +163,56 @@ It is observed that for all but the ALIGNN potential, that upon high tensile iso
 \label{subsubsec:b2}
 
 \begin{figure}[ht!]
-    \script{PlotNoStrainPhonons.py}
+    \script{PlotPhonons.py}
     \begin{centering}
-        \includegraphics[width=\linewidth]{figures/B2_combined_models_phonon_bandstructures.png}
+        \includegraphics[width=\linewidth]{figures/NiTi_B2_ModelsPhononBandstructures.png}
         \caption{
           Ground-state, no isotropic strain, Phonon bandstructure of B2 phase for all models. The Mutter and Zhong EAM potentials differ in that Mutter predicts no dynamic instability of the B2 phase at 0K. 
         }
-        \label{fig:allmodels_no_strainphonon_b2}
+        \label{fig:allmodels_b2}
     \end{centering}
 \end{figure}
 
 \begin{figure}[ht!]
-    \script{PlotNoStrainPhonons.py}
+    \script{PlotPhonons.py}
     \begin{centering}
-        \includegraphics[width=\linewidth]{figures/B19_combined_models_phonon_bandstructures.png}
+        \includegraphics[width=\linewidth]{figures/NiTi_B19_ModelsPhononBandstructures.png}
         \caption{
           Ground-state phonon bandstructure of B19 phase for all models.
         }
-        \label{fig:allmodels_no_strainphonon_B19P}
+        \label{fig:allmodels_B19P}
     \end{centering}
 \end{figure}
 
 \begin{figure}[ht!]
-    \script{PlotNoStrainPhonons.py}
+    \script{PlotPhonons.py}
     \begin{centering}
-        \includegraphics[width=\linewidth]{figures/B19P_combined_models_phonon_bandstructures.png}
+        \includegraphics[width=\linewidth]{figures/NiTi_B19P_ModelsPhononBandstructures.png}
         \caption{
           Ground-state phonon bandstructure of \textit{B19}$^\prime$ phase for all models.
         }
-        \label{fig:allmodels_no_strainphonon_B19P}
+        \label{fig:allmodels_B19P}
     \end{centering}
 \end{figure}
 
 
 \begin{figure}[ht!]
-    \script{PlotNoStrainPhonons.py}
+    \script{PlotPhonons.py}
     \begin{centering}
-        \includegraphics[width=\linewidth]{figures/BCO_combined_models_phonon_bandstructures.png}
+        \includegraphics[width=\linewidth]{figures/NiTi_BCO_ModelsPhononBandstructures.png}
         \caption{
           Ground-state phonon bandstructure of BCO phase for all models.
         }
-        \label{fig:allmodels_no_strainphonon_B19P}
+        \label{fig:allmodels_B19P}
     \end{centering}
 \end{figure}
 
 \begin{figure}[ht!]
     \script{PlotEAMPhonons.py}
     \begin{centering}
-        \includegraphics[width=0.5\linewidth]{figures/Mutter_B2_combined_strain_phonon_bandstructures.png}
+        \includegraphics[width=0.5\linewidth]{figures/NiTi_Mutter_B2_StrainsPhononBandstructures.png}
         \vspace{1mm}
-        \includegraphics[width=0.5\linewidth]{figures/Zhong_B2_combined_strain_phonon_bandstructures.png}
+        \includegraphics[width=0.5\linewidth]{figures/NiTi_Zhong_B2_StrainsPhononBandstructures.png}
         \caption{
            Phonon dispersion of B2 structure for the Mutter (top) and Zhong (bottom)  EAM potentials at different isotropic strains. The optical branches have been made more transparent to emphasis the behavior in the TA$_1$ and TA$_2$ branches. The color indicates direction from compressive to tensile strain. Note that the strain percent shown is with respect to isotropic changes (i.e. volume). 
         }
@@ -226,11 +226,11 @@ It is observed that for all but the ALIGNN potential, that upon high tensile iso
 \begin{figure}[ht!]
     \script{PlotGNNPhonons.py}
     \begin{centering}
-      \includegraphics[width=0.5\linewidth]{figures/M3GNet_B2_combined_strain_phonon_bandstructures.png}
+      \includegraphics[width=0.5\linewidth]{figures/NiTi_M3GNet_B2_StrainsPhononBandstructures.png}
       \vspace{1mm}
-      \includegraphics[width=0.5\linewidth]{figures/CHGNet_B2_combined_strain_phonon_bandstructures.png}
+      \includegraphics[width=0.5\linewidth]{figures/NiTi_CHGNet_B2_StrainsPhononBandstructures.png}
       \vspace{1mm}
-      \includegraphics[width=0.5\linewidth]{figures/MACE_B2_combined_strain_phonon_bandstructures.png}
+      \includegraphics[width=0.5\linewidth]{figures/NiTi_MACE_B2_StrainsPhononBandstructures.png}
       \caption{
         Phonon dispersion of B2 structure for the (a) M3GNet, (b) CHGNet, and (c) MACE potentials for different isotropic strains. Similar transcparency is used as done in \ref{fig:mutter_zhong_phonon_b2}.
       }
@@ -286,7 +286,7 @@ This study was carried out using the reproducibility software \href{https://gith
 The irreducible Brillouin zones for the the different crystals investigated in this study are provided below. The high-symmetry points are indicated. Additionally the coordinates of the high-symmetry points in the IBZ are shown in the tables below. In Ref. xxx the  specific implementation of the band path sampling and definitions are provided.
 
 \begin{figure}[ht!]                                                                                      
-    \script{AppendixPlotBZ.py}                                                                           
+    \script{AppendixBZ.py}                                                                           
     \begin{centering}                                                                                    
       \includegraphics[width=0.5\linewidth]{figures/B2_BrillouinZonePointsSampled.png} 
       \vspace{1mm}                                                                                       

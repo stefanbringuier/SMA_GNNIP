@@ -9,6 +9,7 @@ from ase.constraints import StrainFilter
 from ase.units import kJ
 from ase.eos import EquationOfState
 
+from MinimizeStructure import minimize_structure
 
 def to_scalar(value):
     if isinstance(value, np.ndarray) and value.size == 1:
@@ -71,7 +72,7 @@ def calculate_eos(structure,
         plot_eos(eos,model,species,name)
         
 
-    return (v0, e0, B, volumes, energies)
+    return (eos_eq, v0, e0, B, volumes, energies)
 
 def plot_eos(eos,potential_name,specie_names,structure_name):
     # Plot and save EOS
@@ -110,7 +111,7 @@ def get_min_structure_and_calculate_eos(structure,
 
     nextrow, opt_structure = minimize_structure(structure,potential,write_db=dbname)
              
-    v0,e0,B,volumes,energies = calculate_eos(opt_structure,potential,strain)
+    eos_eq, v0,e0,B,volumes,energies = calculate_eos(opt_structure,potential,strain)
 
     db = connect(dbname)
     db.update(id=nextrow,

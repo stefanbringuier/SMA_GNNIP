@@ -1,10 +1,19 @@
 ORDER = {
     "Mutter": 1,
     "Zhong": 2,
-    "M3GNet": 3,
-    "CHGNet": 4,
-    "MACE": 5,
-    "ALIGNN": 6,
+    "Ko" : 3,
+    "M3GNet": 4,
+    "CHGNet": 5,
+    "MACE": 6,
+}
+
+SUBPLOT_ORDER = {
+    "a": "Mutter",
+    "b": "Zhong",
+    "c": "Ko",
+    "d": "M3GNet",
+    "e": "CHGNet",
+    "f": "MACE",
 }
 
 
@@ -28,6 +37,7 @@ def get_phonon_config(structure_name, potential):
         "B2": {
             "Mutter": ((8, 8, 8), 0.0935, 200),
             "Zhong": ((8, 8, 8), 0.0935, 200),
+            "Ko": ((8, 8, 8), 0.0935, 200),
             "M3GNet": ((8, 8, 8), 0.260, 200),
             "CHGNet": ((8, 8, 8), 0.030, 200),
             "MACE": ((8, 8, 8), 0.010, 200),
@@ -36,6 +46,7 @@ def get_phonon_config(structure_name, potential):
         "B19": {
             "Mutter": ((7, 9, 7), 0.05, 200),
             "Zhong": ((7, 9, 7), 0.05, 200),
+            "Ko": ((7, 9, 7), 0.05, 200),
             "M3GNet": ((7, 9, 7), 0.05, 200),
             "CHGNet": ((7, 9, 7), 0.05, 200),
             "MACE": ((7, 9, 7), 0.05, 200),
@@ -44,6 +55,7 @@ def get_phonon_config(structure_name, potential):
         "B19P": {
             "Mutter": ((8, 6, 4), 0.05, 200),
             "Zhong": ((8, 6, 4), 0.05, 200),
+            "Ko": ((8, 6, 4), 0.05, 200),
             "M3GNet": ((8, 6, 4), 0.05, 200),
             "CHGNet": ((8, 6, 4), 0.05, 200),
             "MACE": ((8, 6, 4), 0.05, 200),
@@ -52,6 +64,7 @@ def get_phonon_config(structure_name, potential):
         "BCO": {
             "Mutter": ((8, 4, 6), 0.05, 200),
             "Zhong": ((8, 4, 6), 0.05, 200),
+            "Ko": ((8, 4, 6), 0.05, 200),
             "M3GNet": ((8, 4, 6), 0.05, 200),
             "CHGNet": ((8, 4, 6), 0.05, 200),
             "MACE": ((8, 4, 6), 0.05, 200),

@@ -35,7 +35,7 @@ def get_ase_calculator(model="MutterASE"):
     if model == "Mutter":
         from ase.calculators.lammpslib import LAMMPSlib
 
-        potential_file = str(paths.static / "NiTi_<utter.eam.fs")
+        potential_file = str(paths.static / "NiTi_Mutter.eam.fs")
         cmds = ["pair_style eam/fs", f"pair_coeff * *  {potential_file} Ni Ti"]
         amds = ["thermo_style custom etotal lx ly lz vol pxx pyy pzz pxy pxz pyz press"]
         asecalc = LAMMPSlib(lmpcmds=cmds, amendments=amds, keep_alive=True)
@@ -47,6 +47,7 @@ def get_ase_calculator(model="MutterASE"):
     elif model == "Zhong":
         from ase.calculators.lammpslib import LAMMPSlib
 
+        potential_file = str(paths.static / "NiTi_Zhong.eam.fs")
         cmds = ["pair_style eam/fs", f"pair_coeff * *  {potential_file} Ni Ti"]
         amds = ["thermo_style custom etotal lx ly lz vol pxx pyy pzz pxy pxz pyz press"]
         asecalc = LAMMPSlib(lmpcmds=cmds, amendments=amds, keep_alive=True)
@@ -62,12 +63,12 @@ def get_ase_calculator(model="MutterASE"):
         m3gnet_params = matgl.load_model("M3GNet-MP-2021.2.8-PES")
         asecalc = M3GNetCalculator(m3gnet_params, stress_weight=1.0)
 
-    elif args.model == "CHGNet":
+    elif model == "CHGNet":
         from chgnet.model.dynamics import CHGNetCalculator
 
         asecalc = CHGNetCalculator(stress_weight=1.0)
 
-    elif args.model == "MACE":
+    elif model == "MACE":
         from mace.calculators import MACECalculator
 
         asecalc = MACECalculator(
@@ -76,12 +77,21 @@ def get_ase_calculator(model="MutterASE"):
             default_dtype="float32",
         )
 
-    elif args.model == "ALIGNN":
+    elif model == "ALIGNN":
         from alignn.ff.ff import AlignnAtomwiseCalculator, default_path
 
         alignn_params = default_path()
         asecalc = AlignnAtomwiseCalculator(path=alignn_params, device="cpu")
 
+    elif model == "Ko":
+        from ase.calculators.lammpslib import LAMMPSlib
+
+        library_file = str(paths.static / "NiTi_Ko.meam.library")
+        potential_file = str(paths.static / "NiTi_Ko.meam.potential")
+        cmds = ["pair_style meam", f"pair_coeff * *  {library_file} Ni Ti {potential_file} Ni Ti"]
+        amds = ["thermo_style custom etotal lx ly lz vol pxx pyy pzz pxy pxz pyz press"]
+        asecalc = LAMMPSlib(lmpcmds=cmds, amendments=amds,  log_file='test.log',keep_alive=True)
+        
     return asecalc
 
 

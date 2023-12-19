@@ -250,7 +250,7 @@ def get_path_directions(path):
             start_coords = special_points[start_point]
             end_coords = special_points[end_point]
 
-            direction = start_coords - end_coords
+            direction = start_coords + end_coords
 
             direction_str = []
             for component in direction:
@@ -348,13 +348,13 @@ def spacegroup63_bandpath(
 
 # Get a path and return the directions
 def get_bandpath(structure, npoints=200):
-    if structure.info["name"] == "B19P":
+    if structure.info["structure_name"] == "B19P":
         path, directions = spacegroup11_bandpath(structure, npoints=npoints)
-    elif structure.info["name"] == "B19":
+    elif structure.info["structure_name"] == "B19":
         path, directions = spacegroup51_bandpath(structure, npoints=npoints)
-    elif structure.info["name"] == "B2":
+    elif structure.info["structure_name"] == "B2":
         path, directions = spacegroup221_bandpath(structure, npoints=npoints)
-    elif structure.info["name"] == "BCO":
+    elif structure.info["structure_name"] == "BCO":
         path, directions = spacegroup63_bandpath(structure, npoints=npoints)
     else:
         raise ValueError("Not valid structure")
