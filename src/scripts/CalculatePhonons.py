@@ -8,13 +8,15 @@ from ase.spacegroup import crystal
 # from ase.constraints import StrainFilter, UnitCellFilter
 from ase.spacegroup.symmetrize import FixSymmetry, check_symmetry
 from ase.phonons import Phonons
-from ase.db.core import Database, connect
+from ase.db import connect
+from ase.spectrum.band_structure import BandStructure
 
 from Structures import *
 from Config import get_phonon_config
 from PlotPhonons import plot_default_phonons
 
 EV_to_THz = 241.799050402293e0
+
 
 def get_phonons(
     structure,
@@ -26,6 +28,7 @@ def get_phonons(
     displacement=0.03,
     center_refcell=True,
     lorentz_width=4.5e-4,
+    visualize_modes=False,
 ):
     """
     displacement is in Angstrom and is atom movement.
@@ -48,11 +51,15 @@ def get_phonons(
     phonons.run()
     phonons.read(acoustic=True)
     phonons.clean()
-
-    bs = phonons.get_band_structure(bandpath, verbose=False)
+    omegas = phonons.band_structure(bandpath.kpts, born=False, verbose=False)
+    bs = BandStructure(bandpath, energies=omegas[None])
+    # bs = phonons.get_band_structure(bandpath, verbose=False)
     dos = phonons.get_dos(kpts=doskpts).sample_grid(npts=dospts, width=lorentz_width)
 
-    return bs, dos, phonons
+    # if visualize_modes:
+    #    pass #write_mode_visual(f"{potential[0]}_", phonons,structure,of=phfolder)
+
+    return bs, dos
 
 
 def calculate_phonons(
@@ -112,7 +119,7 @@ def calculate_phonons(
 
         stress = mod_structure.get_stress()
         volume = mod_structure.get_cell().volume
-        bandstructure, dos, ph = get_phonons(
+        bandstructure, dos = get_phonons(
             mod_structure,
             potential,
             bandpath,
@@ -146,6 +153,18 @@ def calculate_phonons(
         dos_energies = dos.get_energies() * EV_to_THz
         dos_energies_list = dos_energies.tolist()
 
+        # TODO: Create LA, TA, LO, LA labels & store modes
+        # >>> for i in range(100):
+        # ki=k[i,:]
+        # qi=v[i,:,:,:]
+        # label = []
+        # tai = 1
+        # li = 1
+        # for j in range(3):
+        # p = np.dot(ki,qi[j,0,:])
+        # if p == 1:
+        #     label.append("L{li}")
+
         # Create a dictionary for band structure data
         bandstructure_data = {
             "labels": bandstructure.get_labels()[2],
@@ -169,5 +188,4 @@ def calculate_phonons(
 
     db.update(entry.id, data={"strain_phonons": strain_phonons})
 
-    # write_mode_visual(f"{potname}_a={a:.3f}_NiTi-B2", ph, B2,of=of)
     return None

@@ -1,0 +1,22 @@
+# Date: 12 Dec., 2023
+# Implemented by: Stefan Bringuier
+# Contact: stefanbringuier@gmail.com
+# Details: Optimized 2NN MEAM potential parameter set for the Ni-Ti system
+# Reference: Ko, Won-Seok, et al. Physical Review B 92, 13, 2015): 134107. https://doi.org/10.1103/PhysRevB.92.134107.
+# Parameters for Ni-Ti interactions. See Table IV.
+# Additional Files: NiTi_Ko.meam.library
+
+lattce(1,2) = 'b2'      # Reference structure for NiTi
+Ec(1,2) = 4.96          # Enthalpy of formation of the reference structure
+re(1,2) = 2.612         # Equilibrium nearest-neighbor distance
+alpha(1,2) = 5.6283     # Pair potential via bulk modulus
+rho0(1) = 1             # Density parameters for Ni
+rho0(2) = 1             # Density parameters for Ti
+Cmin(1,2,1) = 0.25      # C Ni-Ti-Ni min
+Cmin(2,1,2) = 0.09      # C Ti-Ni-Ti min
+Cmin(1,1,2) = 0.49      # C Ni-Ni-Ti min
+Cmin(2,2,1) = 1.60      # C Ti-Ti-Ni min
+Cmax(1,2,1) = 1.70      # C Ni-Ti-Ni max
+Cmax(2,1,2) = 1.70      # C Ti-Ni-Ti max
+Cmax(1,1,2) = 1.40      # C Ni-Ni-Ti max
+Cmax(2,2,1) = 1.70      # C Ti-Ti-Ni max

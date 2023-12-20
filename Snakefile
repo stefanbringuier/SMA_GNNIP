@@ -22,43 +22,98 @@ rule create_db:
     shell:
         "python src/scripts/NewASEDatabase.py {DATABASE}; touch {output.create}"
 
-rule calculate:
+# Original rule that does everything
+# rule calculate:
+#     input:
+#         db=ancient("src/data/" + DATABASE),
+#         script="src/scripts/Generate.py",
+# 	create="src/data/COMPLETED_TASKS/created.database.done",
+#         minimize="src/scripts/MinimizeStructure.py",
+#         eos="src/scripts/CalculateEOS.py",
+#         #config="src/scripts/Config.py", # phonon settings, this gets changed to converge so commented
+#         phonons="src/scripts/CalculatePhonons.py",
+#         elastic="src/scripts/CalculateElastic.py"
+#     output:
+#         done=touch("src/data/COMPLETED_TASKS/{structure}_{model}.done")
+#     conda:
+#         lambda wildcards: get_env_file(wildcards.model)
+#     params:
+#         structure=lambda wildcards: wildcards.structure,
+#         model=lambda wildcards: wildcards.model,
+#         n_strain_phonons=13
+#     shell:
+#         "python {input.script} --dbname {DATABASE} --structure {params.structure} --model {params.model} --nph {params.n_strain_phonons}"
+
+rule minimize_and_calculate_eos:
     input:
-        db=ancient("src/data/" + DATABASE),
-        script="src/scripts/Generate.py",
-	create="src/data/COMPLETED_TASKS/created.database.done",
         minimize="src/scripts/MinimizeStructure.py",
-        eos="src/scripts/CalculateEOS.py",
-        #config="src/scripts/Config.py", # phonon settings, this gets changed to converge so commented
-        phonons="src/scripts/CalculatePhonons.py",
-        elastic="src/scripts/CalculateElastic.py"
+        script="src/scripts/CalculateEOS.py",
+        db=ancient("src/data/" + DATABASE),
+	create="src/data/COMPLETED_TASKS/created.database.done"
     output:
-        done=touch("src/data/COMPLETED_TASKS/{structure}_{model}.done")
+        done=touch("src/data/COMPLETED_TASKS/{structure}_{model}.min_eos.done")
     conda:
         lambda wildcards: get_env_file(wildcards.model)
     params:
+        runner="src/scripts/CalculationRunner.py",
         structure=lambda wildcards: wildcards.structure,
         model=lambda wildcards: wildcards.model,
-        n_strain_phonons=13
     shell:
-        "python {input.script} --dbname {DATABASE} --structure {params.structure} --model {params.model} --nph {params.n_strain_phonons}"
+        "python {params.runner} --calc_type min_eos --dbname {DATABASE} --structure {params.structure} --model {params.model}"
 
+rule calculate_phonons:
+    input:
+        config="src/scripts/Config.py", # phonon settings, this gets changed to converge so commented
+        script="src/scripts/CalculatePhonons.py",
+        db=ancient("src/data/" + DATABASE),
+	create="src/data/COMPLETED_TASKS/created.database.done",
+        mineos="src/data/COMPLETED_TASKS/{structure}_{model}.min_eos.done"
+    output:
+        done=touch("src/data/COMPLETED_TASKS/{structure}_{model}.phonons.done")
+    conda:
+        lambda wildcards: get_env_file(wildcards.model)
+    params:
+        runner="src/scripts/CalculationRunner.py",
+        structure=lambda wildcards: wildcards.structure,
+        model=lambda wildcards: wildcards.model,
+    shell:
+        "python {params.runner} --calc_type phonons --dbname {DATABASE} --structure {params.structure} --model {params.model}"
+
+rule calculate_elastic:
+    input:
+        script="src/scripts/CalculateElastic.py",
+        db=ancient("src/data/" + DATABASE),
+	create="src/data/COMPLETED_TASKS/created.database.done",
+        mineos="src/data/COMPLETED_TASKS/{structure}_{model}.min_eos.done"
+    output:
+        done=touch("src/data/COMPLETED_TASKS/{structure}_{model}.elastic.done")
+    conda:
+        lambda wildcards: get_env_file(wildcards.model)
+    params:
+        runner="src/scripts/CalculationRunner.py",
+        structure=lambda wildcards: wildcards.structure,
+        model=lambda wildcards: wildcards.model,
+    shell:
+        "python {params.runner} --calc_type elastic --dbname {DATABASE} --structure {params.structure} --model {params.model}"
+
+### THIS IS ALL NiTi Rules ###
+           
 # Rule to aggregate the NiTi to database
 rule aggregate_niti_db:
     input:
-        done=expand("src/data/COMPLETED_TASKS/{structure}_{model}.done", structure=NiTi_STRUCTURES, model=NiTi_MODELS),
         db="src/data/" + DATABASE,
 	create="src/data/COMPLETED_TASKS/created.database.done",
         minimize="src/scripts/MinimizeStructure.py",
         eos="src/scripts/CalculateEOS.py",
         phonons="src/scripts/CalculatePhonons.py",
         elastic="src/scripts/CalculateElastic.py",
+        mineos_calc=expand("src/data/COMPLETED_TASKS/{structure}_{model}.min_eos.done", structure=NiTi_STRUCTURES, model=NiTi_MODELS),
+        phonons_calc=expand("src/data/COMPLETED_TASKS/{structure}_{model}.phonons.done", structure=NiTi_STRUCTURES, model=NiTi_MODELS),
+        elastic_calc=expand("src/data/COMPLETED_TASKS/{structure}_{model}.elastic.done", structure=NiTi_STRUCTURES, model=NiTi_MODELS),
     output:
         aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done"
     shell:
         "touch {output.aggregated}"
-# TODO: For PtTi need to create an aggregate rule
-
 
 # NOTE: My intent is to cache the database, but I think this is not needed
 # I believe the purpose behind caching is to store intermediate results between
@@ -108,17 +163,19 @@ rule plot_niti_eos:
     shell:
         "python src/scripts/PlotEOS.py {DATABASE} {params.chemsys}"
 
-# # Rule for generating NiTi equilibrium table
-# rule generate_niti_equil_table:
-#     input:
-#         script="src/scripts/GenerateNiTiEquilTable.py",
-#         aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done"
-#     output:
-#         table="src/tex/output/Table_NiTi_Equilibrium_Structures.tex"
-#     conda:
-#         "env/ase.yml"
-#     shell:
-#         "python src/scripts/GenerateNiTiEquilTable.py {DATABASE}"
+# Rule for generating NiTi equilibrium table
+rule generate_niti_equil_table:
+    input:
+        script="src/scripts/GenerateEquilibriumTable.py",
+        aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done"
+    output:
+        table="src/tex/output/Table_NiTi_Equilibrium_Structures.tex"
+    conda:
+        "env/ase.yml"
+    params:
+        chemsys="NiTi"
+    shell:
+        "python src/scripts/GenerateEquilibriumTable.py {DATABASE} {params.chemsys}"
 
 
 # Rule for plotting NiTi phonons

@@ -15,7 +15,7 @@ def NiTi_B2_Structure(a=3.04, b=3.04, c=3.04, alpha=90.0, beta=90.0, gamma=90.0)
     )
     
     B2.info["structure_name"] = "B2"
-            
+    B2.info["chemsys"] = "NiTi"
     return B2
 
 
@@ -33,6 +33,7 @@ def NiTi_B33_Structure(a=2.888, b=9.398, c=4.042, alpha=90.0, beta=90.0, gamma=9
     )
 
     B33.info["structure_name"] = "B33"
+    B33.info["chemsys"] = "NiTi"
     return B33
 
 
@@ -51,7 +52,7 @@ def NiTi_Cmcm_Structure(a=2.90, b=3.99, c=4.90, alpha=90.0, beta=107.01, gamma=9
     )
 
     Cmcm.info["structure_name"] = "Cmcm"
-    
+    Cmcm.info["chemsys"] = "NiTi"
     return Cmcm
 
 
@@ -69,6 +70,7 @@ def NiTi_BCO_Structure(a=2.8987, b=9.3619, c=3.9870, alpha=90.0, beta=90.0, gamm
     )
 
     BCO.info["structure_name"] = "BCO"
+    BCO.info["chemsys"] = "NiTi"
     return BCO
 
 
@@ -86,7 +88,7 @@ def NiTi_B19_Structure(a=4.09, b=2.86, c=4.59, alpha=90.0, beta=90.0, gamma=90.0
     )
 
     B19.info["structure_name"] = "B19"
-
+    B19.info["chemsys"] = "NiTi"
     return B19
 
 
@@ -107,7 +109,7 @@ def NiTi_B19P_Structure(
     )
 
     B19P.info["structure_name"] = "B19P"
-    
+    B19P.info["chemsys"] = "NiTi"
     return B19P
 
 
@@ -116,8 +118,6 @@ def NiTi_B19P_2_Structure(
 ):
     """
     I don't know what this structure represents, MP says its not ground state
-
-
 
     Structure: https://materialsproject.org/materials/mp-1179013
 
@@ -133,7 +133,7 @@ def NiTi_B19P_2_Structure(
     )
 
     B19P_2.info["structure_name"] = "B19"
-
+    B19P_2.info["chemsys"] = "NiTi"
     return B19P_2
 
 
@@ -152,7 +152,7 @@ def NiTi_Pbcm_Structure(a=2.572, b=9.029, c=4.176, alpha=90.0, beta=90.0, gamma=
     )
 
     Pbcm.info["structure_name"] = "Pbcm"
-
+    PBcm.info["chemsys"] = "NiTi"
     return Pbcm
 
 
@@ -174,7 +174,7 @@ def NiTi_B32_Structure(a=6.11, b=6.11, c=11.47, alpha=90.0, beta=90.0, gamma=90.
     )
 
     B32.info["structure_name"] = "B32"
-
+    B32.info["chemsys"] = "NiTi"
     return B32
 
 
@@ -199,7 +199,7 @@ def NiTi_R_Phase_Structure(
     )
 
     R_Phase.info["structure_name"] = "R_Phase"
-
+    R_Phase.info["chemsys"] = "NiTi"
     return R_Phase
 
 
@@ -220,7 +220,6 @@ def get_structure(structure_name):
         raise ValueError(f"Unknown structure: {structure_name}")
 
     structure = structure_functions[structure_name]()
-    structure.info = {"structure_name": structure_name}
 
     return structure
 

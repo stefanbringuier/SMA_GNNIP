@@ -96,7 +96,8 @@ def plot_default_phonons(bs, dos, info, ymaxlim=9.0, of="."):
         )
     )
     fig.clear()
-
+    plt.close(fig)
+    
     return None
 
 
@@ -168,7 +169,7 @@ def plot_individual_phonon_bandstructure(dbname, chemsys, model_name, structure_
                 )
                 plt.savefig(paths.data / fname)
                 plt.close(fig)
-
+                
     return None
 
 
@@ -280,6 +281,8 @@ def plot_all_strains_phonons(
             / f"{chemsys}_{model_name}_{structure_name}_StrainsPhononBandstructures.png",
             dpi=600,
         )
+
+    plt.close(fig)
 
     return None
 
