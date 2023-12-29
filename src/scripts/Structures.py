@@ -13,9 +13,29 @@ def NiTi_B2_Structure(a=3.04, b=3.04, c=3.04, alpha=90.0, beta=90.0, gamma=90.0)
         cellpar=[a, b, c, alpha, beta, gamma],
         pbc=True,
     )
-    
+
     B2.info["structure_name"] = "B2"
     B2.info["chemsys"] = "NiTi"
+    return B2
+
+
+def PtTi_B2_Structure(a=3.17, b=3.17, c=3.17, alpha=90.0, beta=90.0, gamma=90.0):
+    """
+    Austenite phase.
+    Ref. Kadkhodaei, S.; van de Walle, Acta Materialia 2018, 147, 296–303.
+    https://doi.org/10.1016/j.actamat.2018.01.025.
+    Suppl. Mater. Appendix A
+    """
+    B2 = crystal(
+        ["Pt", "Ti"],
+        [(0, 0, 0), (0.5, 0.5, 0.5)],
+        spacegroup=221,
+        cellpar=[a, b, c, alpha, beta, gamma],
+        pbc=True,
+    )
+
+    B2.info["structure_name"] = "B2"
+    B2.info["chemsys"] = "PtTi"
     return B2
 
 
@@ -89,6 +109,26 @@ def NiTi_B19_Structure(a=4.09, b=2.86, c=4.59, alpha=90.0, beta=90.0, gamma=90.0
 
     B19.info["structure_name"] = "B19"
     B19.info["chemsys"] = "NiTi"
+    return B19
+
+
+def PbTi_B19_Structure(a=4.61, b=2.76, c=4.86, alpha=90.0, beta=90.0, gamma=90.0):
+    """
+    Pmma (spacegroup 51)
+    Ref. Kadkhodaei, S.; van de Walle, Acta Materialia 2018, 147, 296–303.
+    https://doi.org/10.1016/j.actamat.2018.01.025.
+    Suppl. Mater. Appendix A
+    """
+    B19 = crystal(
+        ["Pb", "Ti"],
+        [(0.25, 0.0, 0.6874), (0.25, 0.50, 0.1958)],
+        cellpar=[a, b, c, alpha, beta, gamma],
+        pbc=True,
+        spacegroup=51,
+    )
+
+    B19.info["structure_name"] = "B19"
+    B19.info["chemsys"] = "PbTi"
     return B19
 
 
@@ -203,18 +243,24 @@ def NiTi_R_Phase_Structure(
     return R_Phase
 
 
-def get_structure(structure_name):
-    structure_functions = {
-        "B2": NiTi_B2_Structure,
-        "B19": NiTi_B19_Structure,
-        "B19P": NiTi_B19P_Structure,
-        "B33": NiTi_B33_Structure,
-        "Cmcm": NiTi_Cmcm_Structure,
-        "BCO": NiTi_BCO_Structure,
-        "Pbcm": NiTi_Pbcm_Structure,
-        "B32": NiTi_B32_Structure,
-        "R_Phase": NiTi_R_Phase_Structure,
-    }
+def get_structure(chemsys, structure_name):
+    if chemsys == "NiTi":
+        structure_functions = {
+            "B2": NiTi_B2_Structure,
+            "B19": NiTi_B19_Structure,
+            "B19P": NiTi_B19P_Structure,
+            "B33": NiTi_B33_Structure,
+            "Cmcm": NiTi_Cmcm_Structure,
+            "BCO": NiTi_BCO_Structure,
+            "Pbcm": NiTi_Pbcm_Structure,
+            "B32": NiTi_B32_Structure,
+            "R_Phase": NiTi_R_Phase_Structure,
+        }
+    elif chemsys == "PtTi":
+        structure_functions = {
+            "B2": PtTi_B2_Structure,
+            "B19": PbTi_B19_Structure,
+        }
 
     if structure_name not in structure_functions:
         raise ValueError(f"Unknown structure: {structure_name}")
@@ -279,50 +325,6 @@ def spacegroup221_bandpath(
     return path, directions
 
 
-def spacegroup11_bandpath(
-    structure,
-    special_points={
-        "G": [0.0, 0.0, 0.0],
-        "Y": [0.5, 0.0, 0.0],
-        "Z": [0.0, 0.5, 0.0],
-        "B": [0.0, 0.0, 0.5],
-        "C": [0.5, 0.5, 0.0],
-        "A": [0.5, 0.0, 0.5],
-        "D": [0.0, 0.5, 0.5],
-        "E": [0.5, 0.5, 0.5],
-    },
-    npoints=200,
-):
-    """
-    Ref. https://www.cryst.ehu.es/cgi-bin/cryst/programs/nph-kv-list    
-    """
-    cell = structure.cell
-    highsym_path = "DGYAGEZG"
-    path = cell.bandpath(highsym_path,special_points=special_points,npoints=npoints)
-    directions = get_path_directions(path)
-    return path, directions
-
-def spacegroup51_bandpath(
-    structure,
-    special_points={
-        "G": [0.0, 0.0, 0.0],
-        "Y": [0.0, 0.5, 0.0],
-        "Z": [0.0, 0.0, 0.5],
-        "B": [0.0, 0.5, 0.5],
-        "C": [0.5, 0.5, 0.0],
-        "A": [0.5, 0.0, 0.5],
-        "D": [0.5, 0.5, 0.0],
-        "E": [0.5, 0.5, 0.5],
-    },
-    npoints=200,
-):
-    cell = structure.cell
-    highsym_path = "BGYAGEZG"
-    path = cell.bandpath(highsym_path,special_points=special_points,npoints=npoints)
-    directions = get_path_directions(path)
-    return path, directions
-
-
 def spacegroup63_bandpath(
     structure,
     special_points={
@@ -340,7 +342,56 @@ def spacegroup63_bandpath(
     """
     cell = structure.cell
     highsym_path = "SGZRGT"
-    path = cell.bandpath(highsym_path,special_points=special_points,npoints=npoints)
+    path = cell.bandpath(highsym_path, special_points=special_points, npoints=npoints)
+    directions = get_path_directions(path)
+    return path, directions
+
+
+def spacegroup51_bandpath(
+    structure,
+    special_points={
+        "G": [0.0, 0.0, 0.0],
+        "Y": [0.0, 0.5, 0.0],
+        "Z": [0.0, 0.0, 0.5],
+        "B": [0.0, 0.5, 0.5],
+        "C": [0.5, 0.5, 0.0],
+        "A": [0.5, 0.0, 0.5],
+        "D": [0.5, 0.5, 0.0],
+        "E": [0.5, 0.5, 0.5],
+    },
+    npoints=200,
+):
+    """
+    Need to verify special points  because c-axis is taken as largest in NiTi/PbTi B19.
+    """
+
+    cell = structure.cell
+    highsym_path = "BGYAGEZG"
+    path = cell.bandpath(highsym_path, special_points=special_points, npoints=npoints)
+    directions = get_path_directions(path)
+    return path, directions
+
+
+def spacegroup11_bandpath(
+    structure,
+    special_points={
+        "G": [0.0, 0.0, 0.0],
+        "Y": [0.5, 0.0, 0.0],
+        "Z": [0.0, 0.5, 0.0],
+        "B": [0.0, 0.0, 0.5],
+        "C": [0.5, 0.5, 0.0],
+        "A": [0.5, 0.0, 0.5],
+        "D": [0.0, 0.5, 0.5],
+        "E": [0.5, 0.5, 0.5],
+    },
+    npoints=200,
+):
+    """
+    Ref. https://www.cryst.ehu.es/cgi-bin/cryst/programs/nph-kv-list
+    """
+    cell = structure.cell
+    highsym_path = "DGYAGEZG"
+    path = cell.bandpath(highsym_path, special_points=special_points, npoints=npoints)
     directions = get_path_directions(path)
     return path, directions
 
@@ -359,4 +410,3 @@ def get_bandpath(structure, npoints=200):
         raise ValueError("Not valid structure")
 
     return path, directions
-

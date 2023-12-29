@@ -7,8 +7,9 @@
 report.html
 arxiv.tar.gz
 
-# Figure output
+# LaTeX and Figure output
 src/tex/figures/*
+src/tex/auto/*
 
 # Miscellaneous
 __pycache__

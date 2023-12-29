@@ -73,7 +73,7 @@ def generate_structure_table(dbname, chemsys, output_filename):
         file.write("\\endfirsthead\n")
         file.write("\\caption[]{Equilibrium structures for NiTi. (Continued)}\\\\\n")
         file.write("\\hline\n")
-        file.write("Structure\n(Spacegroup \#) & Unit Cell \\\\\n")
+        file.write("Structure\\\\(Spacegroup \#) & Unit Cell \\\\\n")
         file.write("\\endhead\n")
         file.write("\\hline\n")
         file.write("\\endfoot\n")

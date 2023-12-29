@@ -27,10 +27,14 @@ def get_ase_calculator(model="MutterASE"):
         ASE.calculators
 
     Notes:
-        For the EAM potentials there is the option to select the 
-        internal ASE calculator for EAM. This works but does not 
-        provide the stress there for we return a customEAM object 
+        For the EAM potentials there is the option to select the
+        internal ASE calculator for EAM. This works but does not
+        provide the stress there for we return a customEAM object
         which returns a zero stress array.
+
+        EAM/MEAM potentials are referenced via first author last
+        name, this means no specification of chemical system is
+        required.
     """
     if model == "Mutter":
         from ase.calculators.lammpslib import LAMMPSlib
@@ -55,6 +59,30 @@ def get_ase_calculator(model="MutterASE"):
     elif model == "ZhongASE":
         potential_file = str(paths.static / "NiTi_Zhong.eam.fs")
         asecalc = CustomEAM(potential=potential_file)
+
+    elif model == "Ko":
+        from ase.calculators.lammpslib import LAMMPSlib
+
+        library_file = str(paths.static / "NiTi_Ko.meam.library")
+        potential_file = str(paths.static / "NiTi_Ko.meam.potential")
+        cmds = [
+            "pair_style meam",
+            f"pair_coeff * *  {library_file} Ni Ti {potential_file} Ni Ti",
+        ]
+        amds = ["thermo_style custom etotal lx ly lz vol pxx pyy pzz pxy pxz pyz press"]
+        asecalc = LAMMPSlib(lmpcmds=cmds, amendments=amds, keep_alive=True)
+
+    elif model == "Kim":
+        from ase.calculators.lammpslib import LAMMPSlib
+
+        library_file = str(paths.static / "PtTi_Kim.meam.library")
+        potential_file = str(paths.static / "PtTi_Kim.meam.potential")
+        cmds = [
+            "pair_style meam",
+            f"pair_coeff * *  {library_file} Ni Ti {potential_file} Ni Ti",
+        ]
+        amds = ["thermo_style custom etotal lx ly lz vol pxx pyy pzz pxy pxz pyz press"]
+        asecalc = LAMMPSlib(lmpcmds=cmds, amendments=amds, keep_alive=True)
 
     elif model == "M3GNet":
         import matgl
@@ -83,15 +111,6 @@ def get_ase_calculator(model="MutterASE"):
         alignn_params = default_path()
         asecalc = AlignnAtomwiseCalculator(path=alignn_params, device="cpu")
 
-    elif model == "Ko":
-        from ase.calculators.lammpslib import LAMMPSlib
-
-        library_file = str(paths.static / "NiTi_Ko.meam.library")
-        potential_file = str(paths.static / "NiTi_Ko.meam.potential")
-        cmds = ["pair_style meam", f"pair_coeff * *  {library_file} Ni Ti {potential_file} Ni Ti"]
-        amds = ["thermo_style custom etotal lx ly lz vol pxx pyy pzz pxy pxz pyz press"]
-        asecalc = LAMMPSlib(lmpcmds=cmds, amendments=amds,  log_file='test.log',keep_alive=True)
-        
     return asecalc
 
 

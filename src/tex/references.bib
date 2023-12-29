@@ -1,3 +1,144 @@
+@article{Alchagirov2003,
+  title = {Reply to ``{{Comment}} on `{{Energy}} and Pressure versus Volume:  {{Equations}} of State Motivated by the Stabilized Jellium Model' ''},
+  shorttitle = {Reply to ``{{Comment}} on `{{Energy}} and Pressure versus Volume},
+  author = {Alchagirov, Alim B. and Perdew, John P. and Boettger, Jonathan C. and Albers, R. C. and Fiolhais, Carlos},
+  year = {2003},
+  month = jan,
+  journal = {Physical Review B},
+  volume = {67},
+  number = {2},
+  pages = {026103},
+  publisher = {{American Physical Society}},
+  doi = {10.1103/PhysRevB.67.026103},
+  urldate = {2023-12-29},
+  abstract = {In a recent paper [Phys. Rev. B 63, 224115 (2001)], we proposed two equations of state based upon microscopic insight into the cohesion of a solid: the stabilized jellium equation of state (SJEOS) and its augmented version (ASJEOS). In this Reply, we address the issues raised by Holzapfel in his Comment on that paper. We show that, according to the number of independent fitting parameters used, our ASJEOS is comparable with Holzapfel's third-order adapted polynomial (AP3) and that the ASJEOS performs slightly better than AP3 for the materials (Al, Li, and Mo) and pressure range (P{$\lessequivlnt$}15Mbar) discussed in our paper. We compare the advantages and the disadvantages of ASJEOS and AP3, and discuss the behavior of the equations of state as they approach the strong-compression and strong-expansion limits.},
+  file = {/home/stefanbringuier/GoogleDrive/LITERATURE_AND_BOOKS/REFERENCES/Alchagirov et al_2003_Reply to ``Comment on `Energy and pressure versus volume.pdf;/home/stefanbringuier/Zotero/storage/VTU8C7KX/PhysRevB.67.html}
+}
+
+@article{Bartok2010,
+  title = {Gaussian {{Approximation Potentials}}: {{The Accuracy}} of {{Quantum Mechanics}}, without the {{Electrons}}},
+  shorttitle = {Gaussian {{Approximation Potentials}}},
+  author = {Bart{\'o}k, Albert P. and Payne, Mike C. and Kondor, Risi and Cs{\'a}nyi, G{\'a}bor},
+  year = {2010},
+  month = apr,
+  journal = {Physical Review Letters},
+  volume = {104},
+  number = {13},
+  pages = {136403},
+  publisher = {{American Physical Society}},
+  doi = {10.1103/PhysRevLett.104.136403},
+  urldate = {2023-12-28},
+  abstract = {We introduce a class of interatomic potential models that can be automatically generated from data consisting of the energies and forces experienced by atoms, as derived from quantum mechanical calculations. The models do not have a fixed functional form and hence are capable of modeling complex potential energy landscapes. They are systematically improvable with more data. We apply the method to bulk crystals, and test it by calculating properties at high temperatures. Using the interatomic potential to generate the long molecular dynamics trajectories required for such calculations saves orders of magnitude in computational cost.},
+  keywords = {Machine learning},
+  file = {/home/stefanbringuier/GoogleDrive/LITERATURE_AND_BOOKS/REFERENCES/Bartók et al_2010_Gaussian Approximation Potentials.pdf}
+}
+
+@inproceedings{Batatia2022,
+  title = {{{MACE}}: {{Higher Order Equivariant Message Passing Neural Networks}} for {{Fast}} and {{Accurate Force Fields}}},
+  shorttitle = {{{MACE}}},
+  booktitle = {Advances in {{Neural Information Processing Systems}}},
+  author = {Batatia, Ilyes and Kovacs, David Peter and Simm, Gregor N. C. and Ortner, Christoph and Csanyi, Gabor},
+  year = {2022},
+  month = may,
+  urldate = {2023-12-29},
+  abstract = {Creating fast and accurate force fields is a long-standing challenge in computational chemistry and materials science. Recently, Equivariant Message Passing Neural Networks (MPNNs) have emerged as a powerful tool for building machine learning interatomic potentials, outperforming other approaches in terms of accuracy. However, they suffer from high computational cost and poor scalability. Moreover, most MPNNs only pass two-body messages leading to an intricate relationship between the number of layers and the expressivity of the features. This work introduces MACE, a new equivariant MPNN model that uses higher order messages, and demonstrates that this leads to an improved learning law. We show that by using four-body messages, the required number of message passing iterations reduces to just one, resulting in a fast and highly parallelizable model, reaching or exceeding state of the art accuracy on the rMD17 and 3BPA benchmark tasks. Our implementation is available at https://github.com/ACEsuit/mace.},
+  langid = {english},
+  file = {/home/stefanbringuier/GoogleDrive/LITERATURE_AND_BOOKS/REFERENCES/Batatia et al_2022_MACE.pdf}
+}
+
+@article{Bitzek2006,
+  title = {Structural {{Relaxation Made Simple}}},
+  author = {Bitzek, Erik and Koskinen, Pekka and G{\"a}hler, Franz and Moseler, Michael and Gumbsch, Peter},
+  year = {2006},
+  month = oct,
+  journal = {Physical Review Letters},
+  volume = {97},
+  number = {17},
+  pages = {170201},
+  publisher = {{American Physical Society}},
+  doi = {10.1103/PhysRevLett.97.170201},
+  urldate = {2023-12-29},
+  abstract = {We introduce a simple local atomic structure optimization algorithm which is significantly faster than standard implementations of the conjugate gradient method and often competitive with more sophisticated quasi-Newton schemes typically used in ab initio calculations. It is based on conventional molecular dynamics with additional velocity modifications and adaptive time steps. The surprising efficiency and especially the robustness and versatility of the method is illustrated using a variety of test cases from nanoscience, solid state physics, materials research, and biochemistry.}
+}
+
+@article{Chen2019,
+  title = {Graph {{Networks}} as a {{Universal Machine Learning Framework}} for {{Molecules}} and {{Crystals}}},
+  author = {Chen, Chi and Ye, Weike and Zuo, Yunxing and Zheng, Chen and Ong, Shyue Ping},
+  year = {2019},
+  month = may,
+  journal = {Chemistry of Materials},
+  volume = {31},
+  number = {9},
+  pages = {3564--3572},
+  publisher = {{American Chemical Society}},
+  issn = {0897-4756},
+  doi = {10.1021/acs.chemmater.9b01294},
+  urldate = {2023-12-29},
+  abstract = {Graph networks are a new machine learning (ML) paradigm that supports both relational reasoning and combinatorial generalization. Here, we develop universal MatErials Graph Network (MEGNet) models for accurate property prediction in both molecules and crystals. We demonstrate that the MEGNet models outperform prior ML models such as the SchNet in 11 out of 13 properties of the QM9 molecule data set. Similarly, we show that MEGNet models trained on {$\sim$}60 000 crystals in the Materials Project substantially outperform prior ML models in the prediction of the formation energies, band gaps, and elastic moduli of crystals, achieving better than density functional theory accuracy over a much larger data set. We present two new strategies to address data limitations common in materials science and chemistry. First, we demonstrate a physically intuitive approach to unify four separate molecular MEGNet models for the internal energy at 0 K and room temperature, enthalpy, and Gibbs free energy into a single free energy MEGNet model by incorporating the temperature, pressure, and entropy as global state inputs. Second, we show that the learned element embeddings in MEGNet models encode periodic chemical trends and can be transfer-learned from a property model trained on a larger data set (formation energies) to improve property models with smaller amounts of data (band gaps and elastic moduli).},
+  keywords = {GNN},
+  file = {/home/stefanbringuier/GoogleDrive/LITERATURE_AND_BOOKS/REFERENCES/Chen et al_2019_Graph Networks as a Universal Machine Learning Framework for Molecules and.pdf}
+}
+
+@article{Chen2022,
+  title = {A Universal Graph Deep Learning Interatomic Potential for the Periodic Table},
+  author = {Chen, Chi and Ong, Shyue Ping},
+  year = {2022},
+  month = nov,
+  journal = {Nature Computational Science},
+  volume = {2},
+  number = {11},
+  pages = {718--728},
+  publisher = {{Nature Publishing Group}},
+  issn = {2662-8457},
+  doi = {10.1038/s43588-022-00349-3},
+  urldate = {2023-12-29},
+  abstract = {Interatomic potentials (IAPs), which describe the potential energy surface of atoms, are a fundamental input for atomistic simulations. However, existing IAPs are either fitted to narrow chemistries or too inaccurate for general applications. Here we report a universal IAP for materials based on graph neural networks with three-body interactions (M3GNet). The M3GNet IAP was trained on the massive database of structural relaxations performed by the Materials Project over the past ten years and has broad applications in structural relaxation, dynamic simulations and property prediction of materials across diverse chemical spaces. About 1.8 million materials from a screening of 31 million hypothetical crystal structures were identified to be potentially stable against existing Materials Project crystals based on M3GNet energies. Of the top 2,000 materials with the lowest energies above the convex hull, 1,578 were verified to be stable using density functional theory calculations. These results demonstrate a machine learning-accelerated pathway to the discovery of synthesizable materials with exceptional properties.},
+  copyright = {2022 The Author(s), under exclusive licence to Springer Nature America, Inc.},
+  langid = {english},
+  keywords = {Atomistic models,Computational methods,Materials science},
+  file = {/home/stefanbringuier/GoogleDrive/LITERATURE_AND_BOOKS/REFERENCES/Chen_Ong_2022_A universal graph deep learning interatomic potential for the periodic table.pdf}
+}
+
+@article{Choudhary2021,
+  title = {Atomistic {{Line Graph Neural Network}} for Improved Materials Property Predictions},
+  author = {Choudhary, Kamal and DeCost, Brian},
+  year = {2021},
+  month = nov,
+  journal = {npj Computational Materials},
+  volume = {7},
+  number = {1},
+  pages = {1--8},
+  publisher = {{Nature Publishing Group}},
+  issn = {2057-3960},
+  doi = {10.1038/s41524-021-00650-1},
+  urldate = {2023-12-29},
+  abstract = {Graph neural networks (GNN) have been shown to provide substantial performance improvements for atomistic material representation and modeling compared with descriptor-based machine learning models. While most existing GNN models for atomistic predictions are based on atomic distance information, they do not explicitly incorporate bond angles, which are critical for distinguishing many atomic structures. Furthermore, many material properties are known to be sensitive to slight changes in bond angles. We present an Atomistic Line Graph Neural Network (ALIGNN), a GNN architecture that performs message passing on both the interatomic bond graph and its line graph corresponding to bond angles. We demonstrate that angle information can be explicitly and efficiently included, leading to improved performance on multiple atomistic prediction tasks. We ALIGNN models for predicting 52 solid-state and molecular properties available in the JARVIS-DFT, Materials project, and QM9 databases. ALIGNN can outperform some previously reported GNN models on atomistic prediction tasks with better or comparable model training speed.},
+  copyright = {2021 This is a U.S. government work and not under copyright protection in the U.S.; foreign copyright protection may apply},
+  langid = {english},
+  keywords = {GNN},
+  file = {/home/stefanbringuier/GoogleDrive/LITERATURE_AND_BOOKS/REFERENCES/Choudhary_DeCost_2021_Atomistic Line Graph Neural Network for improved materials property predictions.pdf}
+}
+
+@article{Deng2023,
+  title = {{{CHGNet}} as a Pretrained Universal Neural Network Potential for Charge-Informed Atomistic Modelling},
+  author = {Deng, Bowen and Zhong, Peichen and Jun, KyuJung and Riebesell, Janosh and Han, Kevin and Bartel, Christopher J. and Ceder, Gerbrand},
+  year = {2023},
+  month = sep,
+  journal = {Nature Machine Intelligence},
+  volume = {5},
+  number = {9},
+  pages = {1031--1041},
+  publisher = {{Nature Publishing Group}},
+  issn = {2522-5839},
+  doi = {10.1038/s42256-023-00716-3},
+  urldate = {2023-12-29},
+  abstract = {Large-scale simulations with complex electron interactions remain one of the greatest challenges for atomistic modelling. Although classical force fields often fail to describe the coupling between electronic states and ionic rearrangements, the more accurate ab initio molecular dynamics suffers from computational complexity that prevents long-time and large-scale simulations, which are essential to study technologically relevant phenomena. Here we present the Crystal Hamiltonian Graph Neural Network (CHGNet), a graph neural network-based machine-learning interatomic potential (MLIP) that models the universal potential energy surface. CHGNet is pretrained on the energies, forces, stresses and magnetic moments from the Materials Project Trajectory Dataset, which consists of over 10\,years of density functional theory calculations of more than 1.5\,million inorganic structures. The explicit inclusion of magnetic moments enables CHGNet to learn and accurately represent the orbital occupancy of electrons, enhancing its capability to describe both atomic and electronic degrees of freedom. We demonstrate several applications of CHGNet in solid-state materials, including charge-informed molecular dynamics in LixMnO2, the finite temperature phase diagram for LixFePO4 and Li diffusion in garnet conductors. We highlight the significance of charge information for capturing appropriate chemistry and provide insights into ionic systems with additional electronic degrees of freedom that cannot be observed by previous MLIPs.},
+  copyright = {2023 This is a U.S. Government work and not under copyright protection in the US; foreign copyright protection may apply},
+  langid = {english},
+  keywords = {Atomistic models,Computational science,Energy modelling},
+  file = {/home/stefanbringuier/GoogleDrive/LITERATURE_AND_BOOKS/REFERENCES/Deng et al_2023_CHGNet as a pretrained universal neural network potential for charge-informed.pdf}
+}
+
 @article{Gur2017,
   title = {Evolution of Internal Strain in Austenite Phase during Thermally Induced Martensitic Phase Transformation in {{NiTi}} Shape Memory Alloys},
   author = {Gur, Sourav and Manga, Venkateswara Rao and Bringuier, Stefan and Muralidharan, Krishna and Frantziskonis, George N.},
@@ -10,6 +151,7 @@
   doi = {10.1016/j.commatsci.2017.03.012},
   urldate = {2023-12-03},
   abstract = {New insight into the temperature dependent evolution of internal strain in the austenite phase during the martensitic phase transformation in NiTi shape memory alloys is provided via classical molecular dynamics simulations that employ well-established interatomic potentials for NiTi. It is shown, for the first time, that the developed strain tensor in the austenite phase is tetragonal in nature, with exponential temperature-dependence. Equally importantly, it is found that the developed internal strain (parallel to the habit plane) in the austenite varies linearly with the evolving martensite phase fraction. Interestingly, the Richard's equation is found to describe the temperature dependence of the martensite phase fraction as well as the internal strain components parallel to the habit plane in the austenite phase. An analysis of the temperature dependent phonon dispersion of strained austenite revealed the competition between phonon softening of the TA2 branch and internal strain that leads to stabilization of the austenite phase in the two phase regime.},
+  keywords = {My Publications},
   file = {/home/stefanbringuier/GoogleDrive/LITERATURE_AND_BOOKS/REFERENCES/Gur_2017_Evolution_of_internal_strain_in_austenite_phase_during_thermally_induced.pdf}
 }
 
@@ -26,7 +168,25 @@
   doi = {10.1103/PhysRevB.94.214110},
   urldate = {2023-12-04},
   abstract = {For NiTi-based alloys, the shape memory effect is governed by a transition from a low-temperature martensite phase to a high-temperature austenite phase. Despite considerable experimental and computational work, basic questions regarding the stability of the phases and the martensitic phase transition remain unclear even for the simple case of binary, equiatomic NiTi. We perform ab initio molecular dynamics simulations to describe the temperature-dependent behavior of NiTi and resolve several of these outstanding issues. Structural correlation functions and finite temperature phonon spectra are evaluated to determine phase stability. We show that finite temperature, entropic effects stabilize the experimentally observed martensite (B19') and austenite (B2) phases while destabilizing the theoretically predicted (B33) phase. Free energy computations based on ab initio thermodynamic integration confirm these results and permit estimates of the transition temperature between the phases. In addition to the martensitic phase transition, we predict a new transition between the B33 and B19' phases. The role of defects in suppressing phase transformation temperatures is discussed.},
+  keywords = {NiTi},
   file = {/home/stefanbringuier/GoogleDrive/LITERATURE_AND_BOOKS/REFERENCES/Haskins_2016_Ab_initio_simulations_of_phase_stability_and_martensitic_transitions_in_NiTi.pdf}
+}
+
+@article{Jain2013,
+  title = {Commentary: {{The Materials Project}}: {{A}} Materials Genome Approach to Accelerating Materials Innovation},
+  shorttitle = {Commentary},
+  author = {Jain, Anubhav and Ong, Shyue Ping and Hautier, Geoffroy and Chen, Wei and Richards, William Davidson and Dacek, Stephen and Cholia, Shreyas and Gunter, Dan and Skinner, David and Ceder, Gerbrand and Persson, Kristin A.},
+  year = {2013},
+  month = jul,
+  journal = {APL Materials},
+  volume = {1},
+  number = {1},
+  pages = {011002},
+  issn = {2166-532X},
+  doi = {10.1063/1.4812323},
+  urldate = {2023-12-28},
+  abstract = {Accelerating the discovery of advanced materials is essential for human welfare and sustainable, clean energy. In this paper, we introduce the Materials Project (www.materialsproject.org), a core program of the Materials Genome Initiative that uses high-throughput computing to uncover the properties of all known inorganic materials. This open dataset can be accessed through multiple channels for both interactive exploration and data mining. The Materials Project also seeks to create open-source platforms for developing robust, sophisticated materials analyses. Future efforts will enable users to perform ``rapid-prototyping'' of new materials in silico, and provide researchers with new avenues for cost-effective, data-driven materials design.},
+  keywords = {Materials Project}
 }
 
 @article{Kadkhodaei2018,
@@ -39,10 +199,25 @@
   pages = {296--303},
   issn = {1359-6454},
   doi = {10.1016/j.actamat.2018.01.025},
-  urldate = {2023-12-13},
+  urldate = {2023-12-27},
   abstract = {The design of shape memory alloys (SMA) demands detailed knowledge of their thermodynamic properties and of the underlying atomic-level mechanisms governing their shape-memory behavior. This knowledge is traditionally obtained via atomistic simulations, but these systems have so far resisted such efforts due to the presence of phonon instabilities and associated spontaneous symmetry breaking. In this study, we investigate the thermodynamics of PtTi, a novel and promising SMA (and of the related better-known NiTi SMA, for comparison purposes) using recently developed first-principles computational method specifically designed to tackle this issue. The method efficiently explores the system's potential energy surface by discrete sampling of local minima, combined with a continuous sampling of the vicinity of these local minima via a constrained harmonic lattice dynamic approach. Our calculations provide a complete and atomic-level-based model for these compounds' free energy and shed some light on the ongoing search for the precise structure of dynamically stabilized high temperature phases in SMAs.},
-  keywords = {Ab initio calculation,Phonon instability,Shape memory alloys,Thermodynamic modeling},
-  file = {/home/stefanbringuier/Zotero/storage/PYVG94MJ/S1359645418300569.html}
+  keywords = {PtTi,Shape memory alloys},
+  file = {/home/stefanbringuier/GoogleDrive/LITERATURE_AND_BOOKS/REFERENCES/Kadkhodaei_van de Walle_2018_First-principles calculations of thermal properties of the mechanically.pdf}
+}
+
+@article{Kim2017,
+  title = {Second Nearest-Neighbor Modified Embedded-Atom Method Interatomic Potentials for the {{Pt-M}} ({{M}} = {{Al}}, {{Co}}, {{Cu}}, {{Mo}}, {{Ni}}, {{Ti}}, {{V}}) Binary Systems},
+  author = {Kim, Jin-Soo and Seol, Donghyuk and Ji, Joonho and Jang, Hyo-Sun and Kim, Yongmin and Lee, Byeong-Joo},
+  year = {2017},
+  month = dec,
+  journal = {Calphad},
+  volume = {59},
+  pages = {131--141},
+  issn = {0364-5916},
+  doi = {10.1016/j.calphad.2017.09.005},
+  urldate = {2023-12-28},
+  abstract = {Interatomic potentials for Pt-M (M = Al, Co, Cu, Mo, Ni, Ti, V) binary systems have been developed on the basis of the second nearest-neighbor modified embedded-atom method (2NN MEAM) formalism. The parameters of pure Mo have also been newly developed to solve a problem in the previous 2NN MEAM potential in which the sigma and {$\alpha$}-Mn structures become more stable than the bcc structure. The potentials reproduce various materials properties of alloys (structural, thermodynamic and order-disorder transition temperature) in reasonable agreements with relevant experimental data and other calculations. The applicability of the developed potentials to atomistic investigations for the shape and atomic configuration of Pt bimetallic nanoparticles is demonstrated.},
+  keywords = {MEAM}
 }
 
 @article{Ko2015,
@@ -58,7 +233,8 @@
   doi = {10.1103/PhysRevB.92.134107},
   urldate = {2023-12-03},
   abstract = {Phase transitions in nickel-titanium shape-memory alloys are investigated by means of atomistic simulations. A second nearest-neighbor modified embedded-atom method interatomic potential for the binary nickel-titanium system is determined by improving the unary descriptions of pure nickel and pure titanium, especially regarding the physical properties at finite temperatures. The resulting potential reproduces accurately the hexagonal-close-packed to body-centered-cubic phase transition in Ti and the martensitic B2-B19{${'}$} transformation in equiatomic NiTi. Subsequent large-scale molecular-dynamics simulations validate that the developed potential can be successfully applied for studies on temperature- and stress-induced martensitic phase transitions related to core applications of shape-memory alloys. A simulation of the temperature-induced phase transition provides insights into the effect of sizes and constraints on the formation of nanotwinned martensite structures with multiple domains. A simulation of the stress-induced phase transition of a nanosized pillar indicates a full recovery of the initial structure after the loading and unloading processes, illustrating a superelastic behavior of the target system.},
-  file = {/home/stefanbringuier/GoogleDrive/LITERATURE_AND_BOOKS/REFERENCES/Ko_2015_Development_and_application_of_a_Ni-Ti_interatomic_potential_with_high.pdf;/home/stefanbringuier/Zotero/storage/5KDQGR9Z/NiTi_Ko.meam.library;/home/stefanbringuier/Zotero/storage/AZ99DII8/NiTi_Ko.meam.potential}
+  keywords = {MEAM},
+  file = {/home/stefanbringuier/GoogleDrive/LITERATURE_AND_BOOKS/REFERENCES/Ko_2015_Development_and_application_of_a_Ni-Ti_interatomic_potential_with_high.pdf;/home/stefanbringuier/Zotero/storage/EPIB52NI/NiTi_Ko.meam.potential;/home/stefanbringuier/Zotero/storage/R676XDH6/NiTi_Ko.meam.library}
 }
 
 @article{Kumar2020,
@@ -73,7 +249,24 @@
   doi = {10.1016/j.mtla.2020.100602},
   urldate = {2023-12-13},
   abstract = {Remarkable shape memory property of Nitinol (NiTi) originates from a diffusion-free reversible phase transition it exhibits upon cooling from the cubic austenite to a low-symmetry martensite structure. Atomistic mechanisms of this martensitic transformation (MT) and consequent emergence of its various low-symmetry structures are not understood yet. Starting with first-principles density functional theoretical calculations, we present here a phonon-based model and its statistical mechanical analysis to obtain atomistic insights into martensitic phases and transformation in NiTi. We uncover seven order parameters that are relevant to the MT in NiTi. From Monte Carlo simulations of an effective model Hamiltonian derived to capture its low energy landscape, we determine its soft phonons and establish the cell-doubling M5{${'}$} mode as the primary order parameter. Using Landau theoretical analysis, we show that relative strengths of its third-order coupling with secondary order parameters (e.g. strain) determine the symmetry of low-T structures emerging at its MT. These couplings can be used as the descriptors of stability of martensitic phases that will guide the strategies to improve the shape memory of NiTi through substitutional alloying.},
-  keywords = {Free energy and martensitic phase transformation,NiTi,Phonon,Shape memory}
+  keywords = {NiTi,Phonon}
+}
+
+@article{Larsen2017,
+  title = {The Atomic Simulation Environment{\textemdash}a {{Python}} Library for Working with Atoms},
+  author = {Larsen, Ask Hjorth and Mortensen, Jens J{\o}rgen and Blomqvist, Jakob and Castelli, Ivano E. and Christensen, Rune and Du{\l}ak, Marcin and Friis, Jesper and Groves, Michael N. and Hammer, Bj{\o}rk and Hargus, Cory and Hermes, Eric D. and Jennings, Paul C. and Jensen, Peter Bjerre and Kermode, James and Kitchin, John R. and Kolsbjerg, Esben Leonhard and Kubal, Joseph and Kaasbjerg, Kristen and Lysgaard, Steen and Maronsson, J{\'o}n Bergmann and Maxson, Tristan and Olsen, Thomas and Pastewka, Lars and Peterson, Andrew and Rostgaard, Carsten and Schi{\o}tz, Jakob and Sch{\"u}tt, Ole and Strange, Mikkel and Thygesen, Kristian S. and Vegge, Tejs and Vilhelmsen, Lasse and Walter, Michael and Zeng, Zhenhua and Jacobsen, Karsten W.},
+  year = {2017},
+  month = jun,
+  journal = {Journal of Physics: Condensed Matter},
+  volume = {29},
+  number = {27},
+  pages = {273002},
+  publisher = {{IOP Publishing}},
+  issn = {0953-8984},
+  doi = {10.1088/1361-648X/aa680e},
+  urldate = {2023-12-28},
+  abstract = {The atomic simulation environment (ASE) is a software package written in the Python programming language with the aim of setting up, steering, and analyzing atomistic simulations. In ASE, tasks are fully scripted in Python. The powerful syntax of Python combined with the NumPy array library make it possible to perform very complex simulation tasks. For example, a sequence of calculations may be performed with the use of a simple `for-loop' construction. Calculations of energy, forces, stresses and other quantities are performed through interfaces to many external electronic structure codes or force fields using a uniform interface. On top of this calculator interface, ASE provides modules for performing many standard simulation tasks such as structure optimization, molecular dynamics, handling of constraints and performing nudged elastic band calculations.},
+  langid = {english}
 }
 
 @article{Mutter2010,
@@ -89,7 +282,25 @@
   doi = {10.1103/PhysRevB.82.224201},
   urldate = {2023-12-13},
   abstract = {By means of molecular-dynamics simulations, temperature-driven diffusionless structural phase transitions in equiatomic and nearly equiatomic ordered nickel-titanium alloys were investigated. For this purpose, a model potential from the literature was adopted [W. S. Lai and B. X. Liu, J. Phys.: Condens. Matter 12, L53 (2000)], which is based on the tight-binding model in second moment approximation. The model predicts a stable B19{${'}$} phase at low temperatures and a nearly cubic B2 phase at high temperatures. After an analysis of crystallography and energetics of the emerging structures, the experimentally known strong dependence of transition temperatures on composition is confirmed and related to lattice instability. Free-energy calculations finally give insight into the driving forces of the phase transitions and reveal free energy barriers inhibiting them below the transition temperatures.},
+  keywords = {EAM},
   file = {/home/stefanbringuier/GoogleDrive/LITERATURE_AND_BOOKS/REFERENCES/Mutter_Nielaba_2010_Simulation of structural phase transitions in NiTi.pdf;/home/stefanbringuier/Zotero/storage/6JTXC683/PhysRevB.82.html}
+}
+
+@misc{Riebesell2023,
+  title = {Matbench {{Discovery}} -- {{An}} Evaluation Framework for Machine Learning Crystal Stability Prediction},
+  author = {Riebesell, Janosh and Goodall, Rhys E. A. and Jain, Anubhav and Benner, Philipp and Persson, Kristin A. and Lee, Alpha A.},
+  year = {2023},
+  month = aug,
+  number = {arXiv:2308.14920},
+  eprint = {2308.14920},
+  primaryclass = {cond-mat},
+  publisher = {{arXiv}},
+  doi = {10.48550/arXiv.2308.14920},
+  urldate = {2023-12-29},
+  abstract = {Matbench Discovery simulates the deployment of machine learning (ML) energy models in a high-throughput search for stable inorganic crystals. We address the disconnect between (i) thermodynamic stability and formation energy and (ii) in-domain vs out-of-distribution performance. Alongside this paper, we publish a Python package to aid with future model submissions and a growing online leaderboard with further insights into trade-offs between various performance metrics. To answer the question which ML methodology performs best at materials discovery, our initial release explores a variety of models including random forests, graph neural networks (GNN), one-shot predictors, iterative Bayesian optimizers and universal interatomic potentials (UIP). Ranked best-to-worst by their test set F1 score on thermodynamic stability prediction, we find CHGNet {$>$} M3GNet {$>$} MACE {$>$} ALIGNN {$>$} MEGNet {$>$} CGCNN {$>$} CGCNN+P {$>$} Wrenformer {$>$} BOWSR {$>$} Voronoi tessellation fingerprints with random forest. The top 3 models are UIPs, the winning methodology for ML-guided materials discovery, achieving F1 scores of {\textasciitilde}0.6 for crystal stability classification and discovery acceleration factors (DAF) of up to 5x on the first 10k most stable predictions compared to dummy selection from our test set. We also highlight a sharp disconnect between commonly used global regression metrics and more task-relevant classification metrics. Accurate regressors are susceptible to unexpectedly high false-positive rates if those accurate predictions lie close to the decision boundary at 0 eV/atom above the convex hull where most materials are. Our results highlight the need to focus on classification metrics that actually correlate with improved stability hit rate.},
+  archiveprefix = {arxiv},
+  keywords = {Machine learning},
+  file = {/home/stefanbringuier/GoogleDrive/LITERATURE_AND_BOOKS/REFERENCES/Riebesell et al_2023_Matbench Discovery -- An evaluation framework for machine learning crystal.pdf}
 }
 
 @article{Tang2022,
@@ -105,6 +316,41 @@
   urldate = {2023-12-13},
   abstract = {Nickel-titanium (NiTi) shape memory alloys (SMA) are widely used, however simulating the martensitic transformation of NiTi from first principles remains challenging. In this work, we developed a neural network interatomic potential (NNIP) for near-equiatomic Ni-Ti system through active-learning based acquisitions of density functional theory (DFT) training data, which achieves state-of-the-art accuracy. Phonon dispersion and potential-of-mean-force calculations of the temperature-dependent free energy have been carried out. This NNIP predicts temperature-induced, stress-induced, and defect-induced martensitic transformations from atomic simulations, in significant agreement with experiments. The NNIP can directly simulate the superelasticity of NiTi nanowires, providing a tool to guide their design.},
   file = {/home/stefanbringuier/GoogleDrive/LITERATURE_AND_BOOKS/REFERENCES/Tang et al_2022_High accuracy neural network interatomic potential for NiTi shape memory alloy.pdf}
+}
+
+@article{Thompson2015,
+  title = {Spectral Neighbor Analysis Method for Automated Generation of Quantum-Accurate Interatomic Potentials},
+  author = {Thompson, A. P. and Swiler, L. P. and Trott, C. R. and Foiles, S. M. and Tucker, G. J.},
+  year = {2015},
+  month = mar,
+  journal = {Journal of Computational Physics},
+  volume = {285},
+  pages = {316--330},
+  issn = {0021-9991},
+  doi = {10.1016/j.jcp.2014.12.018},
+  urldate = {2023-12-28},
+  abstract = {We present a new interatomic potential for solids and liquids called Spectral Neighbor Analysis Potential (SNAP). The SNAP potential has a very general form and uses machine-learning techniques to reproduce the energies, forces, and stress tensors of a large set of small configurations of atoms, which are obtained using high-accuracy quantum electronic structure (QM) calculations. The local environment of each atom is characterized by a set of bispectrum components of the local neighbor density projected onto a basis of hyperspherical harmonics in four dimensions. The bispectrum components are the same bond-orientational order parameters employed by the GAP potential [1]. The SNAP potential, unlike GAP, assumes a linear relationship between atom energy and bispectrum components. The linear SNAP coefficients are determined using weighted least-squares linear regression against the full QM training set. This allows the SNAP potential to be fit in a robust, automated manner to large QM data sets using many bispectrum components. The calculation of the bispectrum components and the SNAP potential are implemented in the LAMMPS parallel molecular dynamics code. We demonstrate that a previously unnoticed symmetry property can be exploited to reduce the computational cost of the force calculations by more than one order of magnitude. We present results for a SNAP potential for tantalum, showing that it accurately reproduces a range of commonly calculated properties of both the crystalline solid and the liquid phases. In addition, unlike simpler existing potentials, SNAP correctly predicts the energy barrier for screw dislocation migration in BCC tantalum.},
+  keywords = {Machine learning},
+  file = {/home/stefanbringuier/GoogleDrive/LITERATURE_AND_BOOKS/REFERENCES/Thompson et al_2015_Spectral neighbor analysis method for automated generation of quantum-accurate.pdf}
+}
+
+@article{Thompson2022,
+  title = {{{LAMMPS}} - a Flexible Simulation Tool for Particle-Based Materials Modeling at the Atomic, Meso, and Continuum Scales},
+  author = {Thompson, Aidan P. and Aktulga, H. Metin and Berger, Richard and Bolintineanu, Dan S. and Brown, W. Michael and Crozier, Paul S. and {in 't Veld}, Pieter J. and Kohlmeyer, Axel and Moore, Stan G. and Nguyen, Trung Dac and Shan, Ray and Stevens, Mark J. and Tranchida, Julien and Trott, Christian and Plimpton, Steven J.},
+  year = {2022},
+  month = feb,
+  journal = {Computer Physics Communications},
+  volume = {271},
+  doi = {10.1016/j.cpc.2021.108171}
+}
+
+@misc{Togo2018,
+  title = {Spglib: A Software Library for Crystal Symmetry Search},
+  author = {Togo, Atsushi and Tanaka, Isao},
+  year = {2018},
+  eprint = {1808.01590},
+  primaryclass = {cond-mat.mtrl-sci},
+  archiveprefix = {arxiv}
 }
 
 @article{Wu2022,
@@ -123,6 +369,23 @@
   file = {/home/stefanbringuier/Zotero/storage/VNP57ER6/PhysRevB.106.html}
 }
 
+@article{Xie2018,
+  title = {Crystal {{Graph Convolutional Neural Networks}} for an {{Accurate}} and {{Interpretable Prediction}} of {{Material Properties}}},
+  author = {Xie, Tian and Grossman, Jeffrey C.},
+  year = {2018},
+  month = apr,
+  journal = {Physical Review Letters},
+  volume = {120},
+  number = {14},
+  pages = {145301},
+  publisher = {{American Physical Society}},
+  doi = {10.1103/PhysRevLett.120.145301},
+  urldate = {2023-12-29},
+  abstract = {The use of machine learning methods for accelerating the design of crystalline materials usually requires manually constructed feature vectors or complex transformation of atom coordinates to input the crystal structure, which either constrains the model to certain crystal types or makes it difficult to provide chemical insights. Here, we develop a crystal graph convolutional neural networks framework to directly learn material properties from the connection of atoms in the crystal, providing a universal and interpretable representation of crystalline materials. Our method provides a highly accurate prediction of density functional theory calculated properties for eight different properties of crystals with various structure types and compositions after being trained with 104 data points. Further, our framework is interpretable because one can extract the contributions from local chemical environments to global properties. Using an example of perovskites, we show how this information can be utilized to discover empirical rules for materials design.},
+  keywords = {GNN},
+  file = {/home/stefanbringuier/GoogleDrive/LITERATURE_AND_BOOKS/REFERENCES/Xie_Grossman_2018_Crystal Graph Convolutional Neural Networks for an Accurate and Interpretable.pdf}
+}
+
 @article{Zhong2011,
   title = {Atomistic Study of Nanotwins in {{NiTi}} Shape Memory Alloys},
   author = {Zhong, Yuan and Gall, Ken and Zhu, Ting},
@@ -136,5 +399,6 @@
   doi = {10.1063/1.3621429},
   urldate = {2023-12-13},
   abstract = {Atomistic simulations are performed to study the structure and geometrical limit of nanoscale twins in NiTi shape memory alloys. We analyze compound twins as narrow as {$\sim$}1 nm, involving a few atomic layers. A novel nanotwinned structure is found, forming through the martensitic transformation of sublattices. We predict the temperatures of phase transformation, which are consistent with experimental measurements. The results provide an atomistic basis for further study of nanometer length scale effects on the martensitic phase transformation and shape memory behavior.},
+  keywords = {EAM},
   file = {/home/stefanbringuier/GoogleDrive/LITERATURE_AND_BOOKS/REFERENCES/Zhong et al_2011_Atomistic study of nanotwins in NiTi shape memory alloys.pdf}
 }

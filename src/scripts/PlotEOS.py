@@ -28,7 +28,7 @@ def plot_eos(
     fontsize=8,
     tick_fontsize=6,
     legend_fontsize=8,
-    legend_ncol=3,
+    legend_ncol=5,
     label_notes="EOS_Labels.txt",
 ):
 

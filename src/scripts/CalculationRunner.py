@@ -128,6 +128,7 @@ def main():
             "Zhong",
             "ZhongASE",
             "Ko",
+            "Kim",
             "M3GNet",
             "CHGNet",
             "MACE",
@@ -174,6 +175,7 @@ def main():
         help="Maximum strain for phonon calcs, fractional",
     )
     parser.add_argument("--eos_fit", type=str, default="sj", help="EOS fit function")
+    parser.add_argument("--chemsys", type=str, default="NiTi", help="Chemical system")
     parser.add_argument(
         "--calc_type",
         type=str,
@@ -187,7 +189,7 @@ def main():
     outfolder = paths.data / args.model.upper()
     os.makedirs(outfolder, exist_ok=True)
 
-    structure = get_structure(args.structure)
+    structure = get_structure(args.chemsys,args.structure)
     asecalc = get_ase_calculator(args.model)
     structure.calc = asecalc
     structure.info["model_name"] = args.model
@@ -212,7 +214,6 @@ def main():
         elastic_calc(db_path_file, structure, (args.model, asecalc))
 
     return None
-
 
 if __name__ == "__main__":
     main()
