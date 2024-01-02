@@ -3,8 +3,11 @@
 \usepackage{showyourwork}
 
 %% Packages
+\usepackage{orcidlink}
 \usepackage[utf8]{inputenc}
 \usepackage{fontspec}
+\usepackage{fontawesome5}
+\usepackage{amssymb}
 \usepackage{amsmath}
 \usepackage{siunitx}
 \usepackage[version=4]{mhchem}
@@ -12,17 +15,24 @@
 %% Handles multipage table. Not sure allowed by pub.
 \usepackage{longtable}
 \usepackage{subcaption}
+\usepackage{listings}
+\lstset{
+  basicstyle=\ttfamily,
+  columns=fullflexible,
+  frame=single,
+  breaklines=true,
+  postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
+}
 
+% \journal{Computational Materials Science}
 
-
-% Begin!
 \begin{document}
 
-% Title
+
 \title{Assessing Phonon Properties of Shape Memory Alloys using Graph Neural Network Potentials}
 
 % Author list
-\author[1]{Stefan Bringuier\corref{cor1}}[role=Lead Researcher,orcid=0000-0001-6753-1437]
+\author[1]{Stefan Bringuier\corref{cor1}\orcidlink{0000-0001-6753-1437}}
 \ead{stefanbringuier@gmail.com}
 \cortext[cor1]{Corresponding author}
 \affiliation[1]{organization={Indpendent Researcher},
@@ -49,11 +59,11 @@ Shape memory alloys derive their unique displacive phase transformations from th
 
 Recently, there as been a growing effort in the development of machine learning potentials. These deviate from traditional physics approaches to interatomic potentials, which have historically been inspired from more accurate methods like tight-binding method. In machine learning potentials, one describes the atoms and structure using descriptors of features, these are typically learned or prescribed. The features can be prescribed in isolation or combination of  structural, compositional, and property characteristics of the material data point. Futhermore, one may choose to fined new representations via unsurpervised learning. \par
 
-The subsequent step once the featureization process is completed is to determine a suitable neural network archetcture which can learn the target property or properties given the feature inputs. In the case of atomistic simulations the target is prediction of the potential energy surface and corresponding gradients (i.e., forces). Two of the most early attempts to do this were the works of \citeauthor{Bartok2010} and \citeauthor{Thompson2015}, whereby projection onto higher-dimensional basis, such as bispectrum componenets of local neighbor density, is learned in order to describe the atomic environments. The energy per atom is then determined by these learned features by employing linear regression or non-linear Gaussian process regression. \par
+The subsequent step once the featureization process is completed is to determine a suitable neural network archetcture which can learn the target property or properties given the feature inputs. In the case of atomistic simulations the target is prediction of the potential energy surface and corresponding gradients (i.e., forces). Two of the most early attempts to do this were the works of \citet{Bartok2010} and \citet{Thompson2015}, whereby projection onto higher-dimensional basis, such as bispectrum componenets of local neighbor density, is learned in order to describe the atomic environments. The energy per atom is then determined by these learned features by employing linear regression or non-linear Gaussian process regression. \par
 
-While these early attempts were successfully, they could only include structural details to learn new features from. Futhermore, the training process was typically restricted to a limited number of elemental constieunts and therefore for each chemical system and phases of interest one needs to provide a suitable training dataset. To move beyond such limitations, groups began using graph neural network (GNN) architectures and message passing scheme to represent the atomic structures as nodes and edges. This enabled two distinctions, first being that the nodes and edges corresponding to the atoms and bonds could include features, and secondly the learning could be done over a large structural and compositional space enabling a generalization\footnote{Typically these are referred to as Universal interatomic potentials or forcefields since they in theory generalize well to any chemical system or phase.}. The use of GNNs is efficient in representing structure-composition-property inputs to additional NN layers for predicting potential energy surfaces and gradients and was initially pursued in the CGCNN, MEGNet, and ALIGNN potentials.\cite{Choudhary2021,Chen2019,Xie2018}. The differences between the approaches are predominately in atomic and bond features, nearest-neighbor graph, and specific NN archetcture. \par
+While these early attempts were successfully, they could only include structural details to learn new features from. Futhermore, the training process was typically restricted to a limited number of elemental constieunts and therefore for each chemical system and phases of interest one needs to provide a suitable training dataset. To move beyond such limitations, groups began using graph neural network (GNN) architectures and message passing scheme to represent the atomic structures as nodes and edges \cite{Reiser2022}. This enabled two distinctions, first being that the nodes and edges corresponding to the atoms and bonds could include features, and secondly the learning could be done over a large structural and compositional space enabling a generalization\footnote{Typically these are referred to as Universal interatomic potentials or forcefields since they in theory generalize well to any chemical system or phase.}. The use of GNNs is efficient in representing structure-composition-property inputs to additional NN layers for predicting potential energy surfaces and gradients and was initially pursued in the CGCNN, MEGNet, and ALIGNN potentials \cite{Choudhary2021,Chen2019,Xie2018}. The differences between the approaches are predominately in atomic and bond features, nearest-neighbor graph, and specific NN archetcture. \par
 
-The training of these early GNN utlized large density functional theory calculation repositories and mostly tuned the learning cost function to ground-state structure and energy. This resulted in mean-absolute-errors and other measures of performance that could be improved upon.\cite{Riebesell2023} More recently there have been significant improvements in both training data used and the GNN architecture that show promise for truly approaching a general interatomic potential suitable for static and dynamic atomistic calculations of multicomponents and multiphases. If succesfull, identifying and designing new potential SMA materials using GNN interatomic potentials could have tremendous impact on technology. Therefore, the primary goal is to provide a qualitative assement of predictions of the equations of state, phonon bandstructure, and elastic constants for various phases of NiTi and PtTi using three GNN potentials intended for general use: M3GNet, CHGNet, and MACE.\cite{Chen2022,Deng2023,Batatia2022} We note that the \cite{Riebesell2023} provides a summarized performance over these GNN over materials project database, but does not specifically address SMA and phonon characteristics. \par   
+The training of these early GNN utlized large density functional theory calculation repositories and mostly tuned the learning cost function to ground-state structure and energy. This resulted in mean-absolute-errors and other measures of performance that could be improved upon \cite{Riebesell2023}. More recently there have been significant improvements in both training data used and the GNN architecture that show promise for truly approaching a general interatomic potential suitable for static and dynamic atomistic calculations of multicomponents and multiphases. If succesfull, identifying and designing new potential SMA materials using GNN interatomic potentials could have tremendous impact on technology. Therefore, the primary goal is to provide a qualitative assement of predictions of the equations of state, phonon bandstructure, and elastic constants for various phases of NiTi and PtTi using three GNN potentials intended for general use: M3GNet, CHGNet, and MACE \cite{Chen2022,Deng2023,Batatia2022}. We note that the \citet{Riebesell2023} provides a summarized performance over these GNN using the materials project database, but does not specifically address SMA and phonon characteristics. \par   
 
 
 \section{Computation Methodology}
@@ -61,9 +71,9 @@ The training of these early GNN utlized large density functional theory calculat
 
 \subsection{Workflow}
 \label{sec:workflow}
-The ground-state structures for the NiTi phases \textit{B2}, \textit{B19}, \textit{B19'}, and \textit{BCO} are generated using the atomic simulation environment (ASE) package \cite{Larsen2017}. This requires that the unit cell parameters, basis atoms, and spacegroup number be provided. The initial unit cell parameters and basis corrdinates for these structures have been taken from the materials project\cite{Jain2013} and several references \cite{Haskins2016,Kadkhodaei2018}. The initial structures for NiTi are shown in fig~\ref{fig:niti_structures} and are adapted for PtTi as well given same spacegroup symmetries. The energy and forces on the atoms are determined using the ASE calculator interfaces for EAM, MEAM, M3GNet, CHGNet, and MACE.\cite{Mutter2010,Zhong2011,Ko2015,Kim2017,Chen2022,Deng2023,Batatia2022} The EAM and MEAM potential interfaces are achieved through the use of LAMMPS python library\cite{Thompson2022} and ASE. The ALIGNN ASE calculator interface was also implemented, however, we found that the predictions for NiTi and PtTi to be unreliable.\par
+The ground-state structures for the NiTi phases \textit{B2}, \textit{B19}, \textit{B19'}, and \textit{BCO} are generated using the atomic simulation environment (ASE) package \cite{Larsen2017}. This requires that the unit cell parameters, basis atoms, and spacegroup number be provided. The initial unit cell parameters and basis corrdinates for these structures have been taken from the materials project \cite{Jain2013} and several references \cite{Haskins2016,Kadkhodaei2018}. The initial structures for NiTi are shown in fig~\ref{fig:niti_structures} and are adapted for PtTi as well given same spacegroup symmetries. The energy and forces on the atoms are determined using the ASE calculator interfaces for EAM, MEAM, M3GNet, CHGNet, and MACE.\cite{Mutter2010,Zhong2011,Ko2015,Kim2017,Chen2022,Deng2023,Batatia2022} The EAM and MEAM potential interfaces are achieved through the use of LAMMPS python library \cite{Thompson2022} and ASE. The ALIGNN ASE calculator interface was also implemented, however, we found that the predictions for NiTi and PtTi to be unreliable are not included in this study.\par
 
-For each combination of potential/model, chemical system, and phase we perform calcualtions for the structure minimization, equation of state (EOS), phonons, and elastic constants. To determine the finite-temperature phase transitions we utlize an isothermal-isobaric ensemble via molecular dynamics simulations. The thermostating and barostating is done with Nose-Hoover and Parrinello-Rahman dynamics and the tempertaure is adjusted in a quasi-static manner which entails equlibrating the simulation for 10 ns while decrementing the temperature by 10 Kelvin; the pressure is kept constant at 1 bar. We note that in order to achieve the different computing environments required by the GNN potentials we leverage the ability to specify the  python computing environments while using \href{https://github.com/showyourwork/showyourwork}{\showyourwork} package.\par
+For each combination of potential/model, chemical system, and phase we perform calcualtions for the structure minimization, equation of state (EOS), phonons, and elastic constants. To determine the finite-temperature phase transitions we utlize an isothermal-isobaric ensemble via molecular dynamics simulations. The thermostating and barostating is done with Nose-Hoover and Parrinello-Rahman dynamics and the tempertaure is adjusted in a quasi-static manner which entails equlibrating the simulation for 10 ns while decrementing the temperature by 10 Kelvin; the pressure is kept constant at 1 bar. We note that in order to achieve the different computing environments required by the GNN potentials we leverage the ability to specify the python computing environments using \href{https://github.com/showyourwork/showyourwork}{\showyourwork} package.\par
 
 \begin{figure}[ht!]
     \script{VisualizedStructures.py}
@@ -76,9 +86,10 @@ For each combination of potential/model, chemical system, and phase we perform c
     \end{centering}
 \end{figure}
 
-Prior to any property calculations or dynamics the structures are optimized using the FIRE\cite{Bitzek2006} local optimizer with the forces converged to $2\cdot 10^{-3}\,\text{eV}/\AA$. We observed that other local optimization routines found same ground-state structures. To ensure that the unit cell parameters were adjusted along with the atomic coordinates and that the crystal symmetry was not broken, we utlized a constraint and filter during the optimization process. \par
+Prior to any property calculations or dynamics the structures are optimized using the FIRE\cite{Bitzek2006} local optimizer with the forces converged to $2\cdot 10^{-3}$eV/\AA. We observed that other local optimization routines find the same ground-state structures. To ensure that the unit cell parameters were adjusted along with the atomic coordinates and that the crystal symmetry is not broken, we utlize a constraint and filter during the optimization process. \par
 
-The equation of state of state can be obtained by varying the cell volume and calculating the total system energy without allowing for atomic relaxations. From the obtained ground-state structures the unit cell volume is adjusted by applying an isotropic strain,
+\subsubsection{Equation of State}
+The EOS can be obtained by varying the cell volume and calculating the total system energy without allowing for atomic relaxations. Starting with the obtained ground-state structures the unit cell volume is adjusted by applying an isotropic strain,
 
 \begin{equation}
   \label{eq:isotropic_strain}
@@ -89,39 +100,35 @@ The equation of state of state can be obtained by varying the cell volume and ca
   \end{bmatrix}
 \end{equation},
 
-to the cell and scaling the fractional atomic coordinates. Here $\epsilon$ is the fraction strain applied to the unit cell. To ensure that the strain is indeed isotropic we provide a quality check on the symmetry of the distorted structure using the spacegroup package \textit{spglib}.\cite{Togo2018} The isotropic strain is applied in compression and tension, from $-11\%$ to $11\%$, which gave a good range to asses the EOS curves and obtain fits. We fit the EOS to a third order inverse polynomial,
+to the cell and scaling the fractional atomic coordinates. Here $\epsilon$ is the fraction strain applied to the unit cell. To ensure that the strain is indeed isotropic we provide a quality check on the symmetry of the distorted structure using the spacegroup package \textit{spglib} \cite{Togo2018}. The isotropic strain is applied in compression and tension, from $-11\%$ to $11\%$, which gave a good range to characterize the EOS curves and obtain analytical fits. We fit the EOS using a third order inverse polynomial,
 
 \begin{equation}
   \label{eq:eos_fit}
   E(V) = c_0 + c_1 t + c_2 t^2 + c_3 t^3, \quad \text{where} \quad t = V^{-\frac{1}{3}}
 \end{equation},
 
-where the fit coefficients are used to determine equilibrium volume, system energy, and bulk modulus \cite{Alchagirov2003}. In order to compare respective equations of state amongst the different phases, we normalize the strained volume of each phase with respect to the obtained minimized ground-state volume. \par
+where the coefficients are used to determine equilibrium volume, system energy, and bulk modulus \cite{Alchagirov2003} at 0K. In order to compare respective EOS amongst the different phases, we normalize the strained volume of each phase with respect to the obtained minimized ground-state volume. \par
 
-Phonon calculations are done using the ASE phonons module, which uses the finite-difference method via small displacement of atoms in a reference cell. This requires the use of a supercell of the reference structure. In order to ensure convergence of this method, one needs to sweep different supercell sizes and how the displacement size impacts the phonon eigenvalues and vectors. This process was done initially for each interatomic potential and structure. Details on the settings are provided in the appendix. \par
+\subsubsection{Phonon Bandstructures}
+Phonon calculations are performend using finite-difference method via small displacement of atoms in a reference cell.\cite{Alfe2009} In the small displacement method, atoms in the primitive cell are slightly displaced to calculate forces on other atoms, constructing the force constant matrix, which, when used with the dynamical matrix, allows computing phonon frequencies at any q-vector in the Brillouin zone. This requires typically requires the use of a supercell of the original unit cell. In order to ensure convergence of this method, one needs to sweep different supercell sizes and atomic displacements. This process is done for each interatomic potential and structure. The supercells used in this work  have a repeat in any one direction ranging from $5-8$ and depends on the crystal system. The atomic displacement ranges from $0.03-0.26$\AA\,and was found to strongly depend on interatomic potential and crystal system. Details on the settings are provided in the appendix~\ref{sec:phonon_calc_config}. \par
 
-The ASE structures provide a routine for sampling the irreducible Brillouin zone for the specific structure, however, a significant amount of additional symmetry points are include in the band path. For this reason we only focus on high-symmetry points in the IBZ, given that the monoclinic and othorhombic phases are low symmetry structures. The exception is the cubic structure which we sample the full IBZ. The IBZ and points symmetry point locations can be seen in appendix \ref{sec:appx_ibz}. The final phonon dispersion diagrams are plot along these points. \par
+In order to sample high-symmetry points in the irreducible Brillouin zone (IBZ) for specific structures, we sample from locations specified in the Bilbao crystallographic \textit{KVEC} utility\cite{Aroyo2014}, although the ASE structures object does provide a standardized routine for sampling the irreducible Brillouin zone for the specific structures.\cite{Setyawan2010}. We predominately focus on high-symmetry points in the IBZ that correspond to the corners and along directions known to exhibit phonon instabilities. The IBZ and points symmetry point locations can be seen in appendix \ref{sec:appx_ibz}. The final phonon dispersion diagrams are plot along these points. \par
 
-To better understand dynamic instability in the various structures, same isotropic strain in eq.~\ref{eq:isotropic_strain} is used and respetive phonon bandstructures are calculated. These are then plotted to observed the onset or change of the instability of different branches. \par
+To better understand dynamic instability in the various structures, the same isotropic strain in eq.~\ref{eq:isotropic_strain} is used and the repsective phonon bandstructures are calculated. These are then plotted to observed the onset or change in stability or instability of phonon different branches. \par
 
-The elastic constants have been calculated using ....
+\subsubsection{Elastic Constants}
 
 
-\begin{itemize}
-\item Discuss EAM potentials Mutter and Zhong.
-\item GNN potentials M3GNet, CHGNet, MACE, ALIGNN
-\item EOS calcs
-\item Phonon calcs with strain.
-  
-  The calculation of the phonon dispersion is based on the dynamical matrix which in term is obtained from the fourier transform of the force-constant matrix. There are different numerical methods to obtain the force-constant matrix. Here we employ the finite-difference small displacement method (cite alfe), whereby atoms in a supercell are displaced by a small amount to ensure they remain within the harmonic (i.e., linear-response) regime. Then the force-constants are calculated. To obtain the dynamical matrix we sample reciprocal space on a given mesh within the irreducible Brillouin zone (BZ). Finally, we diagonalize the dynamical matrix along high-symmetry paths to obtain the phonon bands and eigenfrequencies. \par
+\subsubsection{Finite-Temperature Phase Transitions}
 
-  Since the the finite-difference is a numerical approximation technique, one has to check convergence of the calculation for various models. In this work we have found that for most models and the avaible resources a supercell of $8\times8\times8$ is sufficient to converge, we also utlize the acoustic sum rule (add ref). The only stand-out for using that supercell is with use of the ALIGNN model, we found that supercells any larger than $5\times5\times5$ had considerable memory and we the required resources were unavilable. Despite this we find suitable convergence, althoug the ALIGNN model in general was not good at reproducing the NiTi phonon bandstructures. \par
+\subsection{Physics Based Potentials}
+\label{sec:physics_potentials}
 
-  The displacement was choosen for all calculations to be $0.01\AA$ and the number of points along the BZ path in reciprocal space was 150. These values seemed to give the best trade-off of convergence for all the models. We also calculate the phonon does on a $30\times30\time30$ reciprocal space grid and use lorentz smoothing, the DOS can be found in the supplemental material.\par
+The EAM and MEAM potentials are 
 
-  
-\item elastic constants.
-\end{itemize}
+
+\subsection{Graph Neural Network Potentials}
+
 
 
 \section{Results}
@@ -282,7 +289,7 @@ This word aimed to provide an assement of the of GNN univeral interatomic potent
 We observe that the M3GNet and CHGnet capture the M-point instability of the B2 phase, however, no stablizing isotropic strain is observed. With regard to the MACE, very good agrement is found with the phonon bandstructure and that from ab-initio methods. The ALIGNN potential was found not to be suitable of NiTi.
 
 
-\bibliographystyle{naturemag}
+\bibliographystyle{elsarticle-num-names}
 \bibliography{references}
 
 
@@ -297,6 +304,13 @@ This study was carried out using the reproducibility software \href{https://gith
 \section*{Acknowledgements}
 
 \appendix
+\subsection{Phonon Calculation Configurations}
+\label{sec:phonon_calc_config}
+
+The code used to generate the phonon configuration settings for each potential mode and structure are shown the table below. Settings are used for both NiTi and PtTi systems.
+
+\variable{output/Phonons_ConfigSettingsCode.tex}
+
 \subsection{Irreducible Brillouin Zones}
 \label{sec:appx_ibz}
 
@@ -321,5 +335,6 @@ The irreducible Brillouin zones for the the different crystals investigated in t
 \variable{output/B19_SpecialSymmetryPointsBZ.tex}
 \variable{output/B19P_SpecialSymmetryPointsBZ.tex}
 \variable{output/BCO_SpecialSymmetryPointsBZ.tex}
+
 
 \end{document}

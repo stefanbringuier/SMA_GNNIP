@@ -15,6 +15,39 @@
   file = {/home/stefanbringuier/GoogleDrive/LITERATURE_AND_BOOKS/REFERENCES/Alchagirov et al_2003_Reply to ``Comment on `Energy and pressure versus volume.pdf;/home/stefanbringuier/Zotero/storage/VTU8C7KX/PhysRevB.67.html}
 }
 
+@article{Alfe2009,
+  title = {{{PHON}}: {{A}} Program to Calculate Phonons Using the Small Displacement Method},
+  shorttitle = {{{PHON}}},
+  author = {Alf{\`e}, Dario},
+  year = {2009},
+  month = dec,
+  journal = {Computer Physics Communications},
+  series = {40 {{YEARS OF CPC}}: {{A}} Celebratory Issue Focused on Quality Software for High Performance, Grid and Novel Computing Architectures},
+  volume = {180},
+  number = {12},
+  pages = {2622--2633},
+  issn = {0010-4655},
+  doi = {10.1016/j.cpc.2009.03.010},
+  urldate = {2024-01-02},
+  abstract = {The program phon calculates force constant matrices and phonon frequencies in crystals. From the frequencies it also calculates various thermodynamic quantities, like the Helmholtz free energy, the entropy, the specific heat and the internal energy of the harmonic crystal. The procedure is based on the small displacement method, and can be used in combination with any program capable to calculate forces on the atoms of the crystal. In order to examine the usability of the method, I present here two examples: metallic Al and insulating MgO. The phonons of these two materials are calculated using density functional theory. The small displacement method results are compared with those obtained using the linear response method. In the case of Al the method provides accurate phonon frequencies everywhere in the Brillouin Zone (BZ). In the case of MgO the longitudinal branch of the optical phonons near the centre of the BZ is incorrectly described as degenerate with the two transverse branches, because the non-analytical part of the dynamical matrix is ignored here; however, thermodynamic properties like the Helmholtz free are essentially unaffected. Program summary Program title: PHON Catalogue identifier: AEDP\_v1\_0 Program summary URL: http://cpc.cs.qub.ac.uk/summaries/AEDP\_v1\_0.html Program obtainable from: CPC Program Library, Queen's University, Belfast, N. Ireland Licensing provisions: Standard CPC licence, http://cpc.cs.qub.ac.uk/licence/licence.html No. of lines in distributed program, including test data, etc.: 19\,580 No. of bytes in distributed program, including test data, etc.: 612\,193 Distribution format: tar.gz Programming language: Fortran 90 Computer: Any Unix, Linux Operating system: Unix RAM: Depends on super-cell size, but usually negligible Classification: 7.8 External routines: Subprograms ZHEEV and DSYEV (Lapack); needs BLAS. A tutorial is provided with the distribution which requires the installation of the quantum-espresso package (http://www.quantum-espresso.org) Nature of problem: Stable crystals at low temperature can be well described by expanding the potential energy around the atomic equilibrium positions. The movements of the atoms around their equilibrium positions can then be described using harmonic theory, and is characterised by global vibrations called phonons, which can be identified by vectors in the Brillouin zone of the crystal, and there are 3 phonon branches for each atom in the primitive cell. The problem is to calculate the frequencies of these phonons for any arbitrary choice of q-vector in the Brillouin zone. Solution method: The small displacement method: each atom in the primitive cell is displaced by a small amount, and the forces induced on all the other atoms in the crystal are calculated and used to construct the force constant matrix. Supercells of {$\sim$}100 atoms are usually large enough to describe the force constant matrix up to the range where its elements have fallen to negligibly small values. The force constant matrix is then used to compute the dynamical matrix at any chosen q-vector in the Brillouin zone, and the diagonalisation of the dynamical matrix provides the squares of the phonon frequencies. The PHON code needs external programs to calculate these forces, and it can be used with any program capable of calculating forces in crystals. The most useful applications are obtained with codes based on density functional theory, but there is no restriction on what can be used. Running time: Negligible, typically a few seconds (or at most a few minutes) on a PC. It can take longer if very dense meshes of q-points are needed, for example, to compute very accurate phonon density of states.},
+  keywords = {Phonons,Tools},
+  file = {/home/stefanbringuier/Zotero/storage/TQJ94BML/S0010465509001064.html}
+}
+
+@article{Aroyo2014,
+  title = {Brillouin-Zone Database on the {\emph{Bilbao Crystallographic Server}}},
+  author = {Aroyo, Mois I. and Orobengoa, Danel and {de la Flor}, Gemma and Tasci, Emre S. and {Perez-Mato}, J. Manuel and Wondratschek, Hans},
+  year = {2014},
+  month = mar,
+  journal = {Acta Crystallographica Section A},
+  volume = {70},
+  number = {2},
+  pages = {126--137},
+  doi = {10.1107/S205327331303091X},
+  abstract = {The Brillouin-zone database of the \emph{Bilbao Crystallographic Server} (http://www.cryst.ehu.es) offers \textbf{k}-vector tables and figures which form the background of a classification of the irreducible representations of all 230 space groups. The symmetry properties of the wavevectors are described by the so-called reciprocal-space groups and this classification scheme is compared with the classification of Cracknell \emph{et al.} [\emph{Kronecker Product Tables}, Vol. 1, \emph{General Introduction and Tables of Irreducible Representations of Space Groups} (1979). New York: IFI/Plenum]. The compilation provides a solution to the problems of uniqueness and completeness of space-group representations by specifying the independent parameter ranges of general and special \textbf{k} vectors. Guides to the \textbf{k}-vector tables and figures explain the content and arrangement of the data. Recent improvements and modifications of the Brillouin-zone database, including new tables and figures for the trigonal, hexagonal and monoclinic space groups, are discussed in detail and illustrated by several examples.},
+  keywords = {Tools}
+}
+
 @article{Bartok2010,
   title = {Gaussian {{Approximation Potentials}}: {{The Accuracy}} of {{Quantum Mechanics}}, without the {{Electrons}}},
   shorttitle = {Gaussian {{Approximation Potentials}}},
@@ -286,6 +319,26 @@
   file = {/home/stefanbringuier/GoogleDrive/LITERATURE_AND_BOOKS/REFERENCES/Mutter_Nielaba_2010_Simulation of structural phase transitions in NiTi.pdf;/home/stefanbringuier/Zotero/storage/6JTXC683/PhysRevB.82.html}
 }
 
+@article{Reiser2022,
+  title = {Graph Neural Networks for Materials Science and Chemistry},
+  author = {Reiser, Patrick and Neubert, Marlen and Eberhard, Andr{\'e} and Torresi, Luca and Zhou, Chen and Shao, Chen and Metni, Houssam and {van Hoesel}, Clint and Schopmans, Henrik and Sommer, Timo and Friederich, Pascal},
+  year = {2022},
+  month = nov,
+  journal = {Communications Materials},
+  volume = {3},
+  number = {1},
+  pages = {1--18},
+  publisher = {{Nature Publishing Group}},
+  issn = {2662-4443},
+  doi = {10.1038/s43246-022-00315-6},
+  urldate = {2024-01-02},
+  abstract = {Machine learning plays an increasingly important role in many areas of chemistry and materials science, being used to predict materials properties, accelerate simulations, design new structures, and predict synthesis routes of new materials. Graph neural networks (GNNs) are one of the fastest growing classes of machine learning models. They are of particular relevance for chemistry and materials science, as they directly work on a graph or structural representation of molecules and materials and therefore have full access to all relevant information required to characterize materials. In this Review, we provide an overview of the basic principles of GNNs, widely used datasets, and state-of-the-art architectures, followed by a discussion of a wide range of recent applications of GNNs in chemistry and materials science, and concluding with a road-map for the further development and application of GNNs.},
+  copyright = {2022 The Author(s)},
+  langid = {english},
+  keywords = {Atomistic models,Computational methods,Computer science,Method development,Scientific data},
+  file = {/home/stefanbringuier/GoogleDrive/LITERATURE_AND_BOOKS/REFERENCES/Reiser et al_2022_Graph neural networks for materials science and chemistry.pdf}
+}
+
 @misc{Riebesell2023,
   title = {Matbench {{Discovery}} -- {{An}} Evaluation Framework for Machine Learning Crystal Stability Prediction},
   author = {Riebesell, Janosh and Goodall, Rhys E. A. and Jain, Anubhav and Benner, Philipp and Persson, Kristin A. and Lee, Alpha A.},
@@ -301,6 +354,24 @@
   archiveprefix = {arxiv},
   keywords = {Machine learning},
   file = {/home/stefanbringuier/GoogleDrive/LITERATURE_AND_BOOKS/REFERENCES/Riebesell et al_2023_Matbench Discovery -- An evaluation framework for machine learning crystal.pdf}
+}
+
+@article{Setyawan2010,
+  title = {High-Throughput Electronic Band Structure Calculations: {{Challenges}} and Tools},
+  shorttitle = {High-Throughput Electronic Band Structure Calculations},
+  author = {Setyawan, Wahyu and Curtarolo, Stefano},
+  year = {2010},
+  month = aug,
+  journal = {Computational Materials Science},
+  volume = {49},
+  number = {2},
+  pages = {299--312},
+  issn = {0927-0256},
+  doi = {10.1016/j.commatsci.2010.05.010},
+  urldate = {2024-01-02},
+  abstract = {The article is devoted to the discussion of the high-throughput approach to band structures calculations. We present scientific and computational challenges as well as solutions relying on the developed framework (Automatic Flow, AFLOW/ACONVASP). The key factors of the method are the standardization and the robustness of the procedures. Two scenarios are relevant: (1) independent users generating databases in their own computational systems (off-line approach) and (2) teamed users sharing computational information based on a common ground (on-line approach). Both cases are integrated in the framework: for off-line approaches, the standardization is automatic and fully integrated for the 14 Bravais lattices, the primitive and conventional unit cells, and the coordinates of the high symmetry k-path in the Brillouin zones. For on-line tasks, the framework offers an expandable web interface, where the user can prepare and set up calculations following the proposed standard. Few examples of band structures are included. LSDA+U parameters (U, J) are also presented for Nd, Sm, and Eu.},
+  keywords = {ACONVASP,AFLOW,Brillouin zone integration,Combinatorial materials science,Computer simulation,High-throughput,VASP},
+  file = {/home/stefanbringuier/GoogleDrive/LITERATURE_AND_BOOKS/REFERENCES/Setyawan_Curtarolo_2010_High-throughput electronic band structure calculations.pdf;/home/stefanbringuier/Zotero/storage/ARJTS67S/S0927025610002697.html}
 }
 
 @article{Tang2022,
@@ -341,7 +412,8 @@
   month = feb,
   journal = {Computer Physics Communications},
   volume = {271},
-  doi = {10.1016/j.cpc.2021.108171}
+  doi = {10.1016/j.cpc.2021.108171},
+  keywords = {Tools}
 }
 
 @misc{Togo2018,
@@ -350,7 +422,8 @@
   year = {2018},
   eprint = {1808.01590},
   primaryclass = {cond-mat.mtrl-sci},
-  archiveprefix = {arxiv}
+  archiveprefix = {arxiv},
+  keywords = {Tools}
 }
 
 @article{Wu2022,

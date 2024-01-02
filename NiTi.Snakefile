@@ -156,3 +156,16 @@ rule generate_niti_bz_appendix:
         "env/ase.yml"
     script:
         "src/scripts/AppendixBZ.py"
+
+rule show_phonon_config_appendix:
+    input:
+        config="src/scripts/Config.py",
+        script="src/scripts/WriteCodeToTex.py"
+    output:
+        code_listing="src/tex/output/Phonons_ConfigSettingsCode.tex"
+    params:
+        code="Config.py",
+        funcname="get_phonon_config",
+        output="Phonons_ConfigSettingsCode.tex",
+    shell:
+        "python src/scripts/WriteCodeToTex.py {params.code} {params.funcname} {params.output}"
