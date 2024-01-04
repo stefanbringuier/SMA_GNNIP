@@ -111,11 +111,18 @@ def get_ase_calculator(model="MutterASE"):
     elif model == "MACE":
         from mace.calculators import MACECalculator
 
+        #chkpoint = "2023-08-14-mace-universal.model"
+        chkpoint = "2023-12-03-mace-128-L1_epoch-199.model"
         asecalc = MACECalculator(
-            model_path=str(paths.static / "2023-08-14-mace-universal.model"),
+            model_paths=str(paths.static / chkpoint),
             device="cpu",
             default_dtype="float32",
         )
+
+        #Alternative API for newer MACE
+        #from mace.calculators import mace_mp
+        #asecalc = mace_mp() # return the default medium ASE calculator equivalent to mace_mp(model="medium")
+        #asecalc = mace_mp(model="large") # return a larger model
 
     elif model == "ALIGNN":
         from alignn.ff.ff import AlignnAtomwiseCalculator, default_path

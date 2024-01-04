@@ -71,6 +71,10 @@ The training of these early GNN utlized large density functional theory calculat
 
 \subsection{Workflow}
 \label{sec:workflow}
+To promote reproducible research and align with findable, accessible, interoper-able and reusable (FAIR) principles\cite{Walsh2024}, we utilize \showyourwork python workflow\cite{Luger2021} and several open source python packages. Instructions for reproducing calculation data, figures, tables, and manuscript are provided in appendix~\ref{sec:appx_reproduce} and corresponding github repo\footnote{\url{https://github.com/stefanbringuier/SMA_Phonons_GNNIP}}. \par
+
+\subsection{Calculation Details}
+\label{sec:calc_details}
 The ground-state structures for the NiTi phases \textit{B2}, \textit{B19}, \textit{B19'}, and \textit{BCO} are generated using the atomic simulation environment (ASE) package \cite{Larsen2017}. This requires that the unit cell parameters, basis atoms, and spacegroup number be provided. The initial unit cell parameters and basis corrdinates for these structures have been taken from the materials project \cite{Jain2013} and several references \cite{Haskins2016,Kadkhodaei2018}. The initial structures for NiTi are shown in fig~\ref{fig:niti_structures} and are adapted for PtTi as well given same spacegroup symmetries. The energy and forces on the atoms are determined using the ASE calculator interfaces for EAM, MEAM, M3GNet, CHGNet, and MACE.\cite{Mutter2010,Zhong2011,Ko2015,Kim2017,Chen2022,Deng2023,Batatia2022} The EAM and MEAM potential interfaces are achieved through the use of LAMMPS python library \cite{Thompson2022} and ASE. The ALIGNN ASE calculator interface was also implemented, however, we found that the predictions for NiTi and PtTi to be unreliable are not included in this study.\par
 
 For each combination of potential/model, chemical system, and phase we perform calcualtions for the structure minimization, equation of state (EOS), phonons, and elastic constants. To determine the finite-temperature phase transitions we utlize an isothermal-isobaric ensemble via molecular dynamics simulations. The thermostating and barostating is done with Nose-Hoover and Parrinello-Rahman dynamics and the tempertaure is adjusted in a quasi-static manner which entails equlibrating the simulation for 10 ns while decrementing the temperature by 10 Kelvin; the pressure is kept constant at 1 bar. We note that in order to achieve the different computing environments required by the GNN potentials we leverage the ability to specify the python computing environments using \href{https://github.com/showyourwork/showyourwork}{\showyourwork} package.\par
@@ -86,7 +90,7 @@ For each combination of potential/model, chemical system, and phase we perform c
     \end{centering}
 \end{figure}
 
-Prior to any property calculations or dynamics the structures are optimized using the FIRE\cite{Bitzek2006} local optimizer with the forces converged to $2\cdot 10^{-3}$eV/\AA. We observed that other local optimization routines find the same ground-state structures. To ensure that the unit cell parameters were adjusted along with the atomic coordinates and that the crystal symmetry is not broken, we utlize a constraint and filter during the optimization process. \par
+Prior to any property calculations or dynamics the structures are optimized using the FIRE\cite{Bitzek2006} local optimizer with the forces converged to $2\cdot 10^{-3}$eV/\AA. We observed that other local optimization routines find the same ground-state structures. To ensure that the unit cell parameters were adjusted along with the atomic coordinates and that the crystal symmetry is not broken, we utlize a constraint and filter during the optimization process. The optimized lattice parameters as well as basis atoms for all structures and models are provided in appendix \ref{sec:opt_structures}. \par
 
 \subsubsection{Equation of State}
 The EOS can be obtained by varying the cell volume and calculating the total system energy without allowing for atomic relaxations. Starting with the obtained ground-state structures the unit cell volume is adjusted by applying an isotropic strain,
@@ -110,7 +114,7 @@ to the cell and scaling the fractional atomic coordinates. Here $\epsilon$ is th
 where the coefficients are used to determine equilibrium volume, system energy, and bulk modulus \cite{Alchagirov2003} at 0K. In order to compare respective EOS amongst the different phases, we normalize the strained volume of each phase with respect to the obtained minimized ground-state volume. \par
 
 \subsubsection{Phonon Bandstructures}
-Phonon calculations are performend using finite-difference method via small displacement of atoms in a reference cell.\cite{Alfe2009} In the small displacement method, atoms in the primitive cell are slightly displaced to calculate forces on other atoms, constructing the force constant matrix, which, when used with the dynamical matrix, allows computing phonon frequencies at any q-vector in the Brillouin zone. This requires typically requires the use of a supercell of the original unit cell. In order to ensure convergence of this method, one needs to sweep different supercell sizes and atomic displacements. This process is done for each interatomic potential and structure. The supercells used in this work  have a repeat in any one direction ranging from $5-8$ and depends on the crystal system. The atomic displacement ranges from $0.03-0.26$\AA\,and was found to strongly depend on interatomic potential and crystal system. Details on the settings are provided in the appendix~\ref{sec:phonon_calc_config}. \par
+Phonon calculations are performend using finite-difference method via small displacement (i.e., harmonic approximation) of atoms in a reference cell \cite{Alfe2009}. In the small displacement method, atoms in the primitive cell are slightly displaced to calculate forces on other atoms, constructing the force constant matrix, which, when used with the dynamical matrix, allows computing phonon frequencies at any q-vector in the Brillouin zone. This requires typically requires the use of a supercell of the original unit cell. In order to ensure convergence of this method, one needs to sweep different supercell sizes and atomic displacements. This process is done for each interatomic potential and structure. The supercells used in this work  have a repeat in any one direction ranging from $5-8$ and depends on the crystal system. The atomic displacement ranges from $0.03-0.26$\AA\,and was found to strongly depend on interatomic potential and crystal system. Details on the settings are provided in the appendix~\ref{sec:phonon_calc_config}. \par
 
 In order to sample high-symmetry points in the irreducible Brillouin zone (IBZ) for specific structures, we sample from locations specified in the Bilbao crystallographic \textit{KVEC} utility\cite{Aroyo2014}, although the ASE structures object does provide a standardized routine for sampling the irreducible Brillouin zone for the specific structures.\cite{Setyawan2010}. We predominately focus on high-symmetry points in the IBZ that correspond to the corners and along directions known to exhibit phonon instabilities. The IBZ and points symmetry point locations can be seen in appendix \ref{sec:appx_ibz}. The final phonon dispersion diagrams are plot along these points. \par
 
@@ -118,6 +122,7 @@ To better understand dynamic instability in the various structures, the same iso
 
 \subsubsection{Elastic Constants}
 
+Similar to the phonon calculations the elastic constants within the harmonic approximation the elastic constants can be determined from linear-response of strain-stress calculations. Therefore, the calculation requires the use of crystal symmetry along with atomic displacements to determine respective elastic constant componenets. We use the \textit{Elastic}\cite{Jochym2018} python package which provides routines for generating the proper atomic displacement matrix given specific crystal spacegroup. The elastic constants are determined by solving a set of linear equations using singular value decomposition and given calculated strains and stress. The displacements occur with a min and max of 0.5\% and a total of 10 points are used. \par
 
 \subsubsection{Finite-Temperature Phase Transitions}
 
@@ -129,17 +134,15 @@ The EAM and MEAM potentials are
 
 \subsection{Graph Neural Network Potentials}
 
+The M3GNet has been implemented in the MatGL framework and we utlize the \texttt{M3GNet-MP-2021.2.8-PES} pretrained model.
 
+For CHGNet, we have used the \texttt{v0.3} series pretrained model.
+
+%The MACE potential pretrained \texttt{2023-12-03-mace-128-L1_epoch-199.model} checkpoint file.
 
 \section{Results}
 \label{sec:results}
 
-\subsection{NiTi: Ground State Structures}
-\label{subsec:nitigs}
-
-%\comment{Display results in tables}
-
-\variable{output/Table_NiTi_Equilibrium_Structures.tex}
 
 \subsection{NiTi: Equation of States}
 \label{subsec:nitieos}
@@ -278,9 +281,15 @@ where $V$ is the volume, usually taken at equilibrium, and $\omega$ is the phono
 
 \variable{output/Table_NiTi_M_ModeGruneisen.tex}
 
+\subsubsection{Elastic Constants}
+
+\variable{output/Table_NiTi_Elastic_Constants.tex}
 
 
 \subsection{PtTi: Equation of States}
+\label{sec:ptti_eos}
+
+
 
 \section{Conclusion}
 \label{sec:conclusion}
@@ -299,11 +308,23 @@ S.B: Conceptualization, Formal Analysis, Investigation, Methodology, Software, V
 
 
 \section*{Reproducibilty and Data Availability}
-This study was carried out using the reproducibility software \href{https://github.com/showyourwork/showyourwork}{\showyourwork}, which leverages continuous integration to programmatically download the data from \href{https://zenodo.org/}{zenodo.org}, create the figures, and compile the manuscript. Each figure caption contains two links: one to the dataset stored on zenodo used in the corresponding figure, and the other to the script used to make the figure (at the commit corresponding to the current build of the manuscript). The git repository associated to this study is publicly available at \url{https://github.com/stefanbringuier/SMA_Phonons_GNNIP} and allows anyone to re-build the entire manuscript. The datasets generated by this paper are stored at \url{xyz}.
+This study was carried out using the reproducibility software \href{https://github.com/showyourwork/showyourwork}{\showyourwork}\cite{Luger2021}, which leverages continuous integration to programmatically download the data from \href{https://zenodo.org/}{zenodo.org}(if needed), create the figures, and compile the manuscript. Each figure caption contains two links: one to the dataset stored on zenodo used in the corresponding figure, and the other to the script used to make the figure (at the commit corresponding to the current build of the manuscript). The git repository associated to this study is publicly available at \url{https://github.com/stefanbringuier/SMA_Phonons_GNNIP} and allows anyone to re-build the entire manuscript.\par
 
 \section*{Acknowledgements}
 
+\newpage
 \appendix
+
+\subsection{Workflow Reproducibility}
+\label{sec:appx_reproduce}
+
+TODO
+
+\subsection{NiTi: Ground State Structures}
+\label{sec:opt_structures}
+
+\variable{output/Table_NiTi_Equilibrium_Structures.tex}
+
 \subsection{Phonon Calculation Configurations}
 \label{sec:phonon_calc_config}
 

@@ -14,10 +14,10 @@ dependencies:
   - scipy
   - matplotlib
   - conda-forge::spglib
-  - ase
+  - ase=3.22.1
   - opt_einsum
   - prettytable
   - pandas
   - e3nn
   - pip:
-    - git+https://github.com/ACEsuit/mace.git
+    - git+https://github.com/ACEsuit/mace.git@v0.3.2

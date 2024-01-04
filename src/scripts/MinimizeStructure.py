@@ -4,7 +4,7 @@ from ase.constraints import UnitCellFilter
 from ase.spacegroup.symmetrize import FixSymmetry, check_symmetry
 
 
-def minimize_structure(structure, potential, write_db=None, fmax=2.0e-3, fstep=5000):
+def minimize_structure(structure, potential, write_db=None, fmax=5.0e-4, fstep=5000):
     """
     Minimize the ASE calculator using specific model and calculator.
 

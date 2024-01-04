@@ -6,5 +6,5 @@ dependencies:
   - pip:
       - spglib==2.1.0
       - ase==3.22.1
-      - matgl == 0.8.5
+      - matgl == 0.9.1
       - pandas==2.1.2

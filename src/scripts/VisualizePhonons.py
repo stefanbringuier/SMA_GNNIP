@@ -1,7 +1,7 @@
 from ase.io.trajectory import Trajectory
 from ase.io import write
 
-def WriteModeWisual(
+def visualize_phonon_mode(
     fileprefix,
     phonons,
     structure,

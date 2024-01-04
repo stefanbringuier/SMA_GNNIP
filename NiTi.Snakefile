@@ -80,20 +80,6 @@ rule plot_niti_eos:
     shell:
         "python src/scripts/PlotEOS.py {DATABASE} {params.chemsys}"
 
-# Rule for generating NiTi equilibrium table
-rule generate_niti_equil_table:
-    input:
-        script="src/scripts/GenerateEquilibriumTable.py",
-        aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done"
-    output:
-        table="src/tex/output/Table_NiTi_Equilibrium_Structures.tex"
-    conda:
-        "env/ase.yml"
-    params:
-        chemsys="NiTi"
-    shell:
-        "python src/scripts/GenerateEquilibriumTable.py {DATABASE} {params.chemsys}"
-
 
 # Rule for plotting NiTi phonons
 rule plot_niti_phonons:
@@ -139,6 +125,36 @@ rule generate_niti_m_mode_gruneisen:
          qpoint="M"
      shell:
          "python src/scripts/GruneisenParameters.py {DATABASE} {params.chemsys} {params.structure} {params.qpoint}"
+
+# Rule for generating NiTi equilibrium table
+rule generate_niti_elastic_table:
+    input:
+        script="src/scripts/GenerateElasticTable.py",
+        aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done"
+    output:
+        table="src/tex/output/Table_NiTi_Elastic_Constants.tex"
+    conda:
+        "env/ase.yml"
+    params:
+        chemsys="NiTi"
+    shell:
+        "python src/scripts/GenerateElasticTable.py {DATABASE} {params.chemsys}"
+
+
+# Appendix: Rule for generating NiTi equilibrium table
+rule generate_niti_equil_table:
+    input:
+        script="src/scripts/GenerateEquilibriumTable.py",
+        aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done"
+    output:
+        table="src/tex/output/Table_NiTi_Equilibrium_Structures.tex"
+    conda:
+        "env/ase.yml"
+    params:
+        chemsys="NiTi"
+    shell:
+        "python src/scripts/GenerateEquilibriumTable.py {DATABASE} {params.chemsys}"
+
 
 rule generate_niti_bz_appendix:
     input:

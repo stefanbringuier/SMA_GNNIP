@@ -1,5 +1,6 @@
 import os
 import numpy as np
+import pickle
 import paths
 
 from ase.spacegroup import get_spacegroup
@@ -28,16 +29,28 @@ def get_phonons(
     displacement=0.03,
     center_refcell=True,
     lorentz_width=4.5e-4,
-    visualize_modes=False,
 ):
     """
-    displacement is in Angstrom and is atom movement.
+    Calculate phonon properties of a given structure.
+
+    Args:
+        structure (ase.Atoms): Atomic structure for phonon calculations.
+        potential (tuple): Tuple containing potential model name and calculator object.
+        bandpath (ase.dft.kpoints.BandPath): Object defining the band path for phonon dispersion.
+        supercell (tuple of int, optional): Supercell dimensions. Defaults to (8, 8, 8).
+        doskpts (tuple of int, optional): k-point mesh for density of states. Defaults to (30, 30, 30).
+        dospts (int, optional): Number of points for density of states. Defaults to 150.
+        displacement (float, optional): Atom displacement in Angstrom for phonon calculation. Defaults to 0.03.
+        center_refcell (bool, optional): Whether to center the reference cell. Defaults to True.
+        lorentz_width (float, optional): Lorentzian broadening width. Defaults to 4.5e-4.
+
+    Returns:
+        tuple: Tuple containing band structure, density of states, and mode vectors.
     """
 
-    phfolder = (
-        str(paths.data / potential[0].upper() / structure.info["structure_name"])
-        + "-phonon-calc-files"
-    )
+    model = potential[0].upper()
+    structure_name = structure.info["structure_name"]
+    phfolder = str(paths.data / model / structure_name) + "-phonon-calc-files"
 
     phonons = Phonons(
         structure,
@@ -51,15 +64,17 @@ def get_phonons(
     phonons.run()
     phonons.read(acoustic=True)
     phonons.clean()
-    omegas = phonons.band_structure(bandpath.kpts, born=False, verbose=False)
+    omegas, mode_vecs = phonons.band_structure(
+        bandpath.kpts, modes=True, born=False, verbose=False
+    )
     bs = BandStructure(bandpath, energies=omegas[None])
-    # bs = phonons.get_band_structure(bandpath, verbose=False)
     dos = phonons.get_dos(kpts=doskpts).sample_grid(npts=dospts, width=lorentz_width)
 
-    # if visualize_modes:
-    #    pass #write_mode_visual(f"{potential[0]}_", phonons,structure,of=phfolder)
+    # Pickle Phonons for later, i.e., mode analysis, different band path.
+    with open(os.path.join(phfolder, "PhononsObject.pkl"), "wb") as file:
+        pickle.dump(phonons, file)
 
-    return bs, dos
+    return bs, dos, mode_vecs
 
 
 def calculate_phonons(
@@ -79,6 +94,19 @@ def calculate_phonons(
     ],
     plotting=False,
 ):
+    """
+    Calculate phonon properties under various strain conditions.
+
+    Args:
+        dbname (str): Name of the database for storing results.
+        structure_name (str): Name of the structure to analyze.
+        potential (tuple): Tuple containing potential model name and calculator object.
+        strain (list of float, optional): List of strain values to apply. Defaults to pre-defined list.
+        plotting (bool, optional): If True, plots the phonon band structure and DOS. Defaults to False.
+
+    Returns:
+        None: The function updates the database with calculated data but does not return anything.
+    """
     db = connect(dbname, append=True)
     potname = potential[0]
     calculator = potential[1]
@@ -119,7 +147,7 @@ def calculate_phonons(
 
         stress = mod_structure.get_stress()
         volume = mod_structure.get_cell().volume
-        bandstructure, dos = get_phonons(
+        bandstructure, dos, mode_vecs = get_phonons(
             mod_structure,
             potential,
             bandpath,
@@ -153,18 +181,6 @@ def calculate_phonons(
         dos_energies = dos.get_energies() * EV_to_THz
         dos_energies_list = dos_energies.tolist()
 
-        # TODO: Create LA, TA, LO, LA labels & store modes
-        # >>> for i in range(100):
-        # ki=k[i,:]
-        # qi=v[i,:,:,:]
-        # label = []
-        # tai = 1
-        # li = 1
-        # for j in range(3):
-        # p = np.dot(ki,qi[j,0,:])
-        # if p == 1:
-        #     label.append("L{li}")
-
         # Create a dictionary for band structure data
         bandstructure_data = {
             "labels": bandstructure.get_labels()[2],
@@ -174,6 +190,7 @@ def calculate_phonons(
             "band_index": {
                 str(i): ev_list_by_band[i][0] for i in range(len(ev_list_by_band))
             },
+            "mode_vecs": mode_vecs,
         }
 
         dos_data = {"weights": dos_weights_list, "energies": dos_energies_list}
