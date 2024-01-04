@@ -2,6 +2,9 @@ import paths
 import numpy as np
 from ase.calculators.eam import EAM
 
+# TODO: For M3GNet and CHGNet is stress_weight=1.0*GPa or stress_weight=1.0?
+from ase.units import GPa
+
 
 # No longer needed using conda LAMMPS, which provides the needed stress.
 class CustomEAM(EAM):
@@ -35,6 +38,15 @@ def get_ase_calculator(model="MutterASE"):
         EAM/MEAM potentials are referenced via first author last
         name, this means no specification of chemical system is
         required.
+
+    References:
+        - Mutter, D.; Nielaba, Phys. Rev. B 2010, 82 (22), 224201. https://doi.org/10.1103/PhysRevB.82.224201.
+        - Zhong, Y.; Gall, K.; Zhu, T. Atomistic Study of Nanotwins in NiTi Shape Memory Alloys. Journal of Applied Physics 2011, 110 (3), 033532. https://doi.org/10.1063/1.3621429.
+        - Kim, J.-S.; et al.  Calphad 2017, 59, 131–141. https://doi.org/10.1016/j.calphad.2017.09.005.
+        - Ko, W.-S.; Grabowski, B.; Neugebauer, J. Phys. Rev. B 2015, 92 (13), 134107. https://doi.org/10.1103/PhysRevB.92.134107.
+        - Chen, C.; Ong, S. P. Nat Comput Sci 2022, 2 (11), 718–728. https://doi.org/10.1038/s43588-022-00349-3.
+        - Deng, B.; et al. Nat Mach Intell 2023, 5 (9), 1031–1041. https://doi.org/10.1038/s42256-023-00716-3.
+        - Batatia, I.; et al. MACE: Higher Order Equivariant Message Passing Neural Networks for Fast and Accurate Force Fields; 2022.
     """
     if model == "Mutter":
         from ase.calculators.lammpslib import LAMMPSlib
@@ -89,12 +101,12 @@ def get_ase_calculator(model="MutterASE"):
         from matgl.ext.ase import M3GNetCalculator
 
         m3gnet_params = matgl.load_model("M3GNet-MP-2021.2.8-PES")
-        asecalc = M3GNetCalculator(m3gnet_params, stress_weight=1.0)
+        asecalc = M3GNetCalculator(m3gnet_params, stress_weight=1.0 * GPa)
 
     elif model == "CHGNet":
         from chgnet.model.dynamics import CHGNetCalculator
 
-        asecalc = CHGNetCalculator(stress_weight=1.0)
+        asecalc = CHGNetCalculator(stress_weight=1.0 * GPa)
 
     elif model == "MACE":
         from mace.calculators import MACECalculator

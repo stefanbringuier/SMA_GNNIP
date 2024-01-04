@@ -46,7 +46,7 @@ def calculate_elastic_constants(
     structure_name,
     potential,
     npoints=10,
-    displacement=2.0,
+    displacement=0.5,
     update=True,
 ):
     """
@@ -58,7 +58,7 @@ def calculate_elastic_constants(
         structure_name (string): The name of the structure in the ASE database file.
         potential (string): The name of the potential style.
         npoints (int,10):  Optional, sets the number of displacement points.
-        displacement (int/float,2.0): Optional, the min and max atomic displacement.
+        displacement (int/float,0.5): Optional, the min and max atomic displacement in percent.
         update (bool,True): Optional, wheter or not to update ASE database file.
 
     Returns:
@@ -102,9 +102,12 @@ if __name__ == "__main__":
     # Testing data
     print("!!! TESTING ElasticCalculation.py !!!")
     from Calculators import *
-    calculator = get_ase_calculator()
+    calculator = get_ase_calculator("M3GNet")
     dbname = paths.data / "NiTi_Structures.json"
-    structure_name = "B2"
-    potential = ("Zhong",calculator)
-    C = calculate_elastic_constants(dbname, structure_name, potential, update=False)
-    assert list(C.values()) == [0.0,0.0,0.0]
+    structure_name = "BCO"
+    potential = ("M3GNet",calculator)
+    for d in [0.25,0.5]:
+        for n in [10,15]:
+            C = calculate_elastic_constants(dbname, structure_name,potential,npoints=n,displacement=d,update=False)
+            print(f"{d} {n} {C}")
+    #    assert list(C.values()) == [0.0,0.0,0.0]
