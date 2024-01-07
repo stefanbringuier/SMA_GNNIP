@@ -1,11 +1,14 @@
 # Define common parameters
 # NOTE: ALIGNN is supported but results seem total wrong!
-NiTi_MODELS = ["Mutter","Zhong","Ko","M3GNet","CHGNet","MACE"]
+NiTi_MODELS = ["Mutter","Zhong","Ko","M3GNet","CHGNet","MACE","ALIGNN"]
 NiTi_STRUCTURES = ["B2","B19","B19P","BCO"]
 PtTi_MODELS = ["Kim","M3GNet","CHGNet","MACE"]
 PtTi_STRUCTURES = ["B2","B19"]
 
-DATABASE = "Results.json"
+from datetime import datetime
+date_str = datetime.now().strftime("%d%b%Y")
+DATABASE = f"Results_{date_str}.json"
+
 
 # Function to get environment file
 def get_env_file(model):

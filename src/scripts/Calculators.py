@@ -130,6 +130,12 @@ def get_ase_calculator(model="MutterASE"):
         alignn_params = default_path()
         asecalc = AlignnAtomwiseCalculator(path=alignn_params, device="cpu")
 
+    elif model == "DeepMD":
+        from deepmd.calculator import DP
+
+        model_params = str(paths.static / "NiTi_Tang.pb")
+        asecalc= DP(model=model_params)
+        
     return asecalc
 
 

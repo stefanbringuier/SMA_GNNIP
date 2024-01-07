@@ -1,18 +1,13 @@
-import os
-import numpy as np
-import pickle
 import paths
 
 from ase.spacegroup import get_spacegroup
 from ase.spacegroup import crystal
 
-# from ase.constraints import StrainFilter, UnitCellFilter
-from ase.spacegroup.symmetrize import FixSymmetry, check_symmetry
 from ase.phonons import Phonons
 from ase.db import connect
 from ase.spectrum.band_structure import BandStructure
 
-from Structures import *
+from Structures import get_bandpath
 from Config import get_phonon_config
 from PlotPhonons import plot_default_phonons
 
@@ -45,16 +40,16 @@ def get_phonons(
         lorentz_width (float, optional): Lorentzian broadening width. Defaults to 4.5e-4.
 
     Returns:
-        tuple: Tuple containing band structure, density of states, and mode vectors.
+        tuple: Tuple containing band structure, density of states, and dynamical matrix (ndarray)
     """
 
     model = potential[0].upper()
     structure_name = structure.info["structure_name"]
-    phfolder = str(paths.data / model / structure_name) + "-phonon-calc-files"
+    phfolder = str(paths.data / model / structure_name)
 
     phonons = Phonons(
         structure,
-        name=phfolder,
+        name=phfolder + "_PhononCalcFiles",
         calc=potential[1],
         supercell=supercell,
         delta=displacement,
@@ -64,17 +59,18 @@ def get_phonons(
     phonons.run()
     phonons.read(acoustic=True)
     phonons.clean()
-    omegas, mode_vecs = phonons.band_structure(
-        bandpath.kpts, modes=True, born=False, verbose=False
+
+    dyn_mat = phonons.D_N
+
+    # Calculate the band structure for provide path
+    # NOTE: No longer need modes here, will use dyn_mat if needed
+    omegas = phonons.band_structure(
+        bandpath.kpts, modes=False, born=False, verbose=False
     )
     bs = BandStructure(bandpath, energies=omegas[None])
     dos = phonons.get_dos(kpts=doskpts).sample_grid(npts=dospts, width=lorentz_width)
 
-    # Pickle Phonons for later, i.e., mode analysis, different band path.
-    with open(os.path.join(phfolder, "PhononsObject.pkl"), "wb") as file:
-        pickle.dump(phonons, file)
-
-    return bs, dos, mode_vecs
+    return bs, dos, dyn_mat
 
 
 def calculate_phonons(
@@ -82,15 +78,11 @@ def calculate_phonons(
     structure_name,
     potential,
     strain=[
-        -0.11000,
-        -0.09375,
-        -0.07750,
-        -0.06125,
-        -0.04500,
-        -0.02875,
-        -0.01250,
-        0.00375,
-        0.02000,
+        -0.02,
+        -0.01,
+        0.00,
+        0.01,
+        0.02,
     ],
     plotting=False,
 ):
@@ -101,11 +93,23 @@ def calculate_phonons(
         dbname (str): Name of the database for storing results.
         structure_name (str): Name of the structure to analyze.
         potential (tuple): Tuple containing potential model name and calculator object.
-        strain (list of float, optional): List of strain values to apply. Defaults to pre-defined list.
+        strain (list of float, optional): List of fractional strain values to apply. Defaults to pre-defined list.
         plotting (bool, optional): If True, plots the phonon band structure and DOS. Defaults to False.
 
     Returns:
         None: The function updates the database with calculated data but does not return anything.
+
+    Notes:
+       - The database entry for the phonons also contains the real-space dynamical matrix which
+         can be used to plot along different band paths or get modes. An example on how to do this
+       >>> from ase.db import connect
+       >>> from ase.phonons import Phonons
+       >>> db = connect("Results.json")
+       >>> entry = db.get(model_name="Zhong",structure_name="B2")
+       >>> ph = Phonons(entry.toatoms())
+       >>> D_N = entry['strain_phonons']['0.00']['dyn_mat']
+       >>> ph.D_N = D_N
+       >>> ph.get_band_structure(NEW_PATH_YOU_WANT)
     """
     db = connect(dbname, append=True)
     potname = potential[0]
@@ -123,17 +127,13 @@ def calculate_phonons(
     structure.info["structure_name"] = entry.structure_name
     bandpath, directions = get_bandpath(structure)
 
-    # Ideally we want to enfoce these filters. We cannot break symmetry
-    # and strain tensor must comply. But this doesn't work.
-    # structure.set_constraint(FixSymmetry(structure, symprec=1.0e-4))
-    # sf = StrainFilter(structure)
-
     strain_phonons = {}
     for e in strain:
         mod_structure = structure.copy()
+        mod_structure.info["epsilon"] = e
         mod_structure.set_calculator(calculator)
         a, b, c, alpha, beta, gamma = cell_relaxed.cellpar()
-        # NOTE: Isotropic strain
+        # NOTE: Isotropic strain tensor
         a_s, b_s, c_s = [x * (1.0 + e) for x in (a, b, c)]
         mod_structure.set_cell([a_s, b_s, c_s, alpha, beta, gamma], scale_atoms=True)
 
@@ -147,7 +147,7 @@ def calculate_phonons(
 
         stress = mod_structure.get_stress()
         volume = mod_structure.get_cell().volume
-        bandstructure, dos, mode_vecs = get_phonons(
+        bandstructure, dos, dyn_mat = get_phonons(
             mod_structure,
             potential,
             bandpath,
@@ -190,7 +190,6 @@ def calculate_phonons(
             "band_index": {
                 str(i): ev_list_by_band[i][0] for i in range(len(ev_list_by_band))
             },
-            "mode_vecs": mode_vecs,
         }
 
         dos_data = {"weights": dos_weights_list, "energies": dos_energies_list}
@@ -199,6 +198,7 @@ def calculate_phonons(
         strain_phonons[frmt_e] = {
             "bandstructure": bandstructure_data,
             "dos": dos_data,
+            "dyn_mat": dyn_mat,
             "volume": volume,
             "stress": stress,
         }

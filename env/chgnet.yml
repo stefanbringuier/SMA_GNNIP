@@ -6,5 +6,5 @@ dependencies:
   - pip:
       - spglib==2.1.0
       - ase==3.22.1
-      - chgnet == 0.3.3
+      - chgnet == 0.3.1
       - pandas==2.1.2
