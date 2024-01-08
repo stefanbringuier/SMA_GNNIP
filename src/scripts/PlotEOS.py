@@ -1,11 +1,10 @@
 import sys
 import numpy as np
-import os
+import warnings
 import paths
 
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
-from matplotlib.ticker import MultipleLocator, AutoLocator
 from cycler import cycler
 import seaborn as sns  # For color palette
 from ase.db import connect
@@ -52,7 +51,8 @@ def plot_eos(
     with open(label_file_path, "w") as label_file:
         for i, calculator_model in enumerate(calculator_models):
             if calculator_model not in SUBPLOT_ORDER.values():
-                raise ValueError(f"{calculator_model} model is not expected")
+                warnings.warn(f"{calculator_model} model results not used/expected", UserWarning)
+
 
             ax = axs[i] 
             alphabetic_label = f"({chr(97 + i)})"

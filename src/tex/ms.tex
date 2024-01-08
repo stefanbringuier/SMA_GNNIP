@@ -29,7 +29,7 @@
 \begin{document}
 
 
-\title{Assessing Phonon Properties of Shape Memory Alloys using Graph Neural Network Potentials}
+\title{Qualitative Assessesment of Graph Neural Network Potentials for  Phonon Properties of Shape Memory Alloys using Graph Neural Network Potentials}
 
 % Author list
 \author[1]{Stefan Bringuier\corref{cor1}\orcidlink{0000-0001-6753-1437}}
@@ -64,9 +64,7 @@ The subsequent step once the featureization process is completed is to determine
 
 While these early attempts using ML models were successfully, they may only include limited representations of structural and/or chemical details to learn new features from which could limit transferability. Futhermore, the training process was typically restricted to a limited number of elemental constieunts of the target material system. As a consequence,  for each chemical system and phases of interest one needs to provide a suitable training dataset. To move beyond such limitations, groups began using graph neural network (GNN) architectures and message passing scheme to represent the atomic structures as nodes and edges \cite{Reiser2022}. This enabled two distinctions, first being that the nodes and edges corresponding to the atoms and bonds could include features, and secondly the learning could be done over a large structural and compositional space enabling a generalization\footnote{Typically these are referred to as Universal interatomic potentials or forcefields since they in theory generalize well to any chemical system or phase.}. The use of GNNs is efficient in representing structure-composition-property inputs to additional NN layers for predicting potential energy surfaces and gradients and was initially pursued in the CGCNN, MEGNet, and ALIGNN potentials \cite{Choudhary2021,Chen2019,Xie2018}. The differences between the approaches are predominately in atomic and bond features, nearest-neighbor graph, and specific NN archetcture. \par
 
-The training of these early GNN utlized large density functional theory calculation repositories and mostly tuned the learning cost function to ground-state structure and energy. This resulted in mean-absolute-errors and other measures of performance that could be improved upon \cite{Riebesell2023}. More recently there have been significant improvements in both training data used and the GNN architecture that show promise for truly approaching a general interatomic potential suitable for static and dynamic atomistic calculations of multicomponents and multiphases. If succesfull, identifying and designing new potential SMA materials using GNN interatomic potentials could have tremendous impact on technology. Therefore, the primary goal is to provide a qualitative assessment of predictions of the equations of state, phonon bandstructure, and elastic constants for various phases of NiTi and PtTi using three GNN potentials intended for general use: M3GNet, CHGNet, and MACE \cite{Chen2022,Deng2023,Batatia2022}. We note that the \citet{Riebesell2023} provides a summarized performance over these GNN using the materials project database, but does not specifically address SMA and phonon characteristics. \par   
-
-
+The training of these early GNN utlized large density functional theory calculation repositories and mostly tuned the learning cost function to ground-state structure and energy. This resulted in mean-absolute-errors and other measures of performance that could be improved upon \cite{Riebesell2023}. More recently there have been significant improvements in both training data used and the GNN architecture that show promise for truly approaching a general interatomic potential suitable for static and dynamic atomistic calculations of multicomponents and multiphases. If succesfull, identifying and designing new potential SMA materials using GNN interatomic potentials could have tremendous impact on technology. Therefore, the primary goal is to provide a qualitative assessment of pre-trained GNN interatomic potentials that are promoted as being transferable across compositions and phases. We specfically focus on the predictions for equations of state, phonon bandstructure, and elastic constants for various phases of NiTi and PtTi using three GNN potentials: M3GNet, CHGNet, and MACE \cite{Chen2022,Deng2023,Batatia2022}. We note that the \citet{Riebesell2023} provides a summarized performance over these GNN using the materials project database, but does not specifically address SMA and phonon characteristics. \par
 
 \section{Computation Methodology}
 \label{sec:methods}
@@ -164,6 +162,25 @@ For CHGNet, we have used the \texttt{v0.3} series pretrained model.
 \section{Results}
 \label{sec:results}
 
+One way to understand the phase stability for a given composition is to compare the cohesive energy, which is defined as,
+
+\begin{equation}
+  \label{eq:cohesive_energy}
+  E_{c} = \frac{E_{\text{total}}}{N}
+\end{equation}
+
+With $E_{\text{total}}$ the total energy of the system and $N$ the number of atoms. In fig.~\ref{fig:ecoh} the bar chart for different phases and interatomic potentials models are show. We compare these to the predicted cohesive energy for The Materials Project (MP) entry \texttt{MP-571} which corresponds to the \textit{B2} phase \cite{MP--571}. In the figure we see that the EAM and MEAM potentials show significantly lower cohesive energy compared to the GNN potentials. The stark increase in binding energy for the GNN is surprising as the EAM and MEAM potentials are known to reproduce previous experimental and DFT data \cite{Haskins2016,Ko2015}. The GNNs predict a more strongly bound and stable \textit{B2} structure but all are consistent with the entry for The MP and calculation details can be found in ref.~\cite{MP--571}. \par
+
+\begin{figure}[ht!]
+    \script{PlotCohesiveEnergy.py}
+    \begin{centering}
+        \includegraphics[width=\linewidth]{figures/NiTi_CohesiveEnergyPlot.png}
+        \caption{
+          Comparison of predicted cohesive energy for respective ground-state structure and model. As a reference we use The Materials Project entry for the \ce{NiTi} \textit{B2} entry \cite{MP--571}.
+        }
+        \label{fig:ecoh}
+    \end{centering}
+\end{figure}
 
 \subsection{NiTi: Equation of States}
 \label{subsec:nitieos}
@@ -177,16 +194,6 @@ The MACE potential shown in fig.~\ref{fig:eos}(e) has a very different set of EO
 
 Finally, the ALIGNN potential EOS was generated, but a few issues arose during the calculations. The most prominant was the difficulty in convergence of the structural optimzation to the specified tolerance (see \ref{sec:methods}. Secondly the calculated cohesive energies differs from the UIP-GNN by a factor $\approx 2$ and by $1$ eV for the EAM potentials. The \textit{B19P} phase is the stable at zero strain and for a considerable portion of the compressive, but all of the tensile. At compressive strain beyond $\approx 0.94$ the \textit{B2} phase is stable. 
 
-\begin{figure}[ht!]
-    \script{PlotCohesiveEnergy.py}
-    \begin{centering}
-        \includegraphics[width=\linewidth]{figures/NiTi_CohesiveEnergyPlot.png}
-        \caption{
-          Comparison of predicted cohesive energy for respective ground-state structure and model.
-        }
-        \label{fig:ecoh}
-    \end{centering}
-\end{figure}
 
 
 \begin{figure}[ht!]

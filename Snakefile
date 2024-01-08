@@ -5,10 +5,10 @@ NiTi_STRUCTURES = ["B2","B19","B19P","BCO"]
 PtTi_MODELS = ["Kim","M3GNet","CHGNet","MACE"]
 PtTi_STRUCTURES = ["B2","B19"]
 
-from datetime import datetime
-date_str = datetime.now().strftime("%d%b%Y")
-DATABASE = f"Results_{date_str}.json"
-
+#from datetime import datetime
+#date_str = datetime.now().strftime("%d%b%Y")
+#DATABASE = f"Results_{date_str}.json"
+DATABASE = f"Results_06Jan2024.json"
 
 # Function to get environment file
 def get_env_file(model):
