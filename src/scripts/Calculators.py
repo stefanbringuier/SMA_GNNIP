@@ -128,7 +128,7 @@ def get_ase_calculator(model="MutterASE"):
         from alignn.ff.ff import AlignnAtomwiseCalculator, default_path
 
         alignn_params = default_path()
-        asecalc = AlignnAtomwiseCalculator(path=alignn_params, device="cpu")
+        asecalc = AlignnAtomwiseCalculator(path=alignn_params, device="cpu",stress_wt = 1.0 * GPa)
 
     elif model == "DeepMD":
         from deepmd.calculator import DP
