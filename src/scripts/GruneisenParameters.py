@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 from ase.db import connect
 
-from Config import ORDER
+from TableConfig import ORDER
 
 
 def find_index(data, label):
@@ -189,12 +189,14 @@ def calculate_gruneisen(dbname, model_name, structure_name):
         return phonons, gruneisen_all_q
 
 
-def generate_mode_gruneisen_table(dbname, output_filename, structure_name="B2", q="M"):
+def generate_mode_gruneisen_table(
+    dbname, chemsys, output_filename, structure_name="B2", q="M"
+):
     """
     Create a LaTeX table of the M point Gruneisen parameter.
     """
     db = connect(dbname)
-    unique_structure_types = set(entry.structure_name for entry in db.select())
+    unique_structure_types = set(entry.structure_name for entry in db.select(chemsys=chemsys))
 
     with open(output_filename, "w") as file:
         file.write("\\begin{table}[h]\n")
@@ -220,8 +222,14 @@ def generate_mode_gruneisen_table(dbname, output_filename, structure_name="B2", 
             file.write("Model & TA$_1$ & TA$_2$ & LA & TO$_1$ & TO$_2$ & LO \\\\\n")
             file.write("\\hline\n")
 
-            entries = db.select(structure_name=name)
-            sentries = sorted(entries, key=lambda entry: ORDER[entry.model_name])
+            entries = db.select(chemsys=chemsys,structure_name=name)
+
+            # Filter and sort based on models defined in ORDER
+            sentries = sorted(
+                [entry for entry in entries if entry.model_name in ORDER[chemsys]],
+                key=lambda entry: ORDER[chemsys][entry.model_name]
+            )
+
             for entry in sentries:
                 model_name = entry.get("model_name", "NA")
                 _, gamma = calculate_mode_gruneisen(entry)
@@ -291,5 +299,5 @@ if __name__ == "__main__":
     q = sys.argv[4]
     output_file = paths.output / f"Table_{chemsys}_{q}_ModeGruneisen.tex"
     generate_mode_gruneisen_table(
-        paths.data / dbname, output_file, structure_name=structure_name, q=q
+        paths.data / dbname, chemsys, output_file, structure_name=structure_name, q=q
     )

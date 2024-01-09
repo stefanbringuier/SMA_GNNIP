@@ -44,9 +44,12 @@ def get_ase_calculator(model="MutterASE"):
         - Zhong, Y.; Gall, K.; Zhu, T. Atomistic Study of Nanotwins in NiTi Shape Memory Alloys. Journal of Applied Physics 2011, 110 (3), 033532. https://doi.org/10.1063/1.3621429.
         - Kim, J.-S.; et al.  Calphad 2017, 59, 131–141. https://doi.org/10.1016/j.calphad.2017.09.005.
         - Ko, W.-S.; Grabowski, B.; Neugebauer, J. Phys. Rev. B 2015, 92 (13), 134107. https://doi.org/10.1103/PhysRevB.92.134107.
+        - Kavousi, S.; et al. Modelling Simul. Mater. Sci. Eng. 2019, 28 (1), 015006. https://doi.org/10.1088/1361-651X/ab580c.
         - Chen, C.; Ong, S. P. Nat Comput Sci 2022, 2 (11), 718–728. https://doi.org/10.1038/s43588-022-00349-3.
         - Deng, B.; et al. Nat Mach Intell 2023, 5 (9), 1031–1041. https://doi.org/10.1038/s42256-023-00716-3.
         - Batatia, I.; et al. MACE: Higher Order Equivariant Message Passing Neural Networks for Fast and Accurate Force Fields; 2022.
+        - Tang, H.; et al. Acta Materialia 2022, 238, 118217. https://doi.org/10.1016/j.actamat.2022.118217.
+
     """
     if model == "Mutter":
         from ase.calculators.lammpslib import LAMMPSlib
@@ -77,6 +80,18 @@ def get_ase_calculator(model="MutterASE"):
 
         library_file = str(paths.static / "NiTi_Ko.meam.library")
         potential_file = str(paths.static / "NiTi_Ko.meam.potential")
+        cmds = [
+            "pair_style meam",
+            f"pair_coeff * *  {library_file} Ni Ti {potential_file} Ni Ti",
+        ]
+        amds = ["thermo_style custom etotal lx ly lz vol pxx pyy pzz pxy pxz pyz press"]
+        asecalc = LAMMPSlib(lmpcmds=cmds, amendments=amds, keep_alive=True)
+
+    elif model == "Kavousi":
+        from ase.calculators.lammpslib import LAMMPSlib
+
+        library_file = str(paths.static / "NiTi_Kavousi.meam.library")
+        potential_file = str(paths.static / "NiTi_Kavousi.meam.potential")
         cmds = [
             "pair_style meam",
             f"pair_coeff * *  {library_file} Ni Ti {potential_file} Ni Ti",
@@ -133,8 +148,8 @@ def get_ase_calculator(model="MutterASE"):
     elif model == "DeepMD":
         from deepmd.calculator import DP
 
-        model_params = str(paths.static / "NiTi_Tang.pb")
-        asecalc= DP(model=model_params)
+        model_params = str(paths.static / "NiTi_DeepMD.pb")
+        asecalc = DP(model=model_params)
         
     return asecalc
 

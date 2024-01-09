@@ -27,11 +27,24 @@ def min_eos_calc(dbname, structure, potential, strain_info):
     # NOTE: Because this adds a new entry and its hard to get Snakemake to handle
     # checking if the entry exist directly. We check here and then skip if the model
     # and structure have already been optimized
-    entry_exist = False
+    chemsys = structure.info["chemsys"]
+    structure_name = structure.info["structure_name"]
+    entry_existed = False
     try:
-        entry = connect(dbname).get(model_name=potential[0], structure_name=structure)
-        if entry != None:
-            entry_exist = True
+        entry = connect(dbname).get(
+            chemsys=chemsys,
+            model_name=potential[0],
+            structure_name=structure_name,
+            relaxed=True,
+        )
+        print(
+            f"""
+            -----------------------------------------------------------
+            EOS already exist for {structure.info['chemsys']} {structure.info['structure_name']} using {potential[0]}
+            -----------------------------------------------------------
+            """
+        )
+        entry_existed = True
     except:
         print(
             f"""
@@ -50,7 +63,7 @@ def min_eos_calc(dbname, structure, potential, strain_info):
             ------------------------------------------------------------
             """
         )
-    return entry_exist
+    return entry_existed
 
 
 def phonon_calc(dbname, structure, potential, strain_info):
@@ -68,7 +81,11 @@ def phonon_calc(dbname, structure, potential, strain_info):
     )
     strain = np.linspace(*strain_info)
     calculate_phonons(
-        dbname, structure.info["structure_name"], potential, strain=strain
+        dbname,
+        structure.info["chemsys"],
+        structure.info["structure_name"],
+        potential,
+        strain=strain,
     )
     print(
         f"""
@@ -90,7 +107,9 @@ def elastic_calc(dbname, structure, potential):
     """
     )
     # NOT FULLY VALIDATED
-    calculate_elastic_constants(dbname, structure.info["structure_name"], potential)
+    calculate_elastic_constants(
+        dbname, structure.info["chemsys"], structure.info["structure_name"], potential
+    )
     print(
         f"""
     -----------------------------------------------------------------------------
@@ -108,7 +127,7 @@ def simulation():
 
 def main():
     """
-    Provides equation of state calculations of material. Be mindful that correct python environment is
+    Provides top level run script. Be mindful that correct python environment is
     activated for selected model (i.e., ASE Calculator) otherwise routines will fail to run.
     """
     parser = argparse.ArgumentParser(
@@ -133,6 +152,7 @@ def main():
             "CHGNet",
             "MACE",
             "ALIGNN",
+            "DeepMD",
         ],
         default="Mutter",
         help="Choose ASECalculator Model",
@@ -189,7 +209,7 @@ def main():
     outfolder = paths.data / args.model.upper()
     os.makedirs(outfolder, exist_ok=True)
 
-    structure = get_structure(args.chemsys,args.structure)
+    structure = get_structure(args.chemsys, args.structure)
     asecalc = get_ase_calculator(args.model)
     structure.calc = asecalc
     structure.info["model_name"] = args.model
@@ -214,6 +234,7 @@ def main():
         elastic_calc(db_path_file, structure, (args.model, asecalc))
 
     return None
+
 
 if __name__ == "__main__":
     main()

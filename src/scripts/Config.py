@@ -1,27 +1,3 @@
-ORDER = {
-    "Mutter": 1,
-    "Zhong": 2,
-    "Ko" : 3,
-    "M3GNet": 4,
-    "CHGNet": 5,
-    "MACE": 6,
-}
-
-SUBPLOT_ORDER = {
-    "a": "Mutter",
-    "b": "Zhong",
-    "c": "Ko",
-    "d": "M3GNet",
-    "e": "CHGNet",
-    "f": "MACE",
-}
-
-
-SPACEGROUP_MAP = {"B2" : 221,
-                  "B19P" : 11,
-                  "B19" : 51,
-                  "BCO" : 63,
-                  }
 
 def get_phonon_config(structure_name, potential):
     """Settings for the phonon calculations
@@ -38,6 +14,7 @@ def get_phonon_config(structure_name, potential):
             "Mutter": ((8, 8, 8), 0.0935, 200),
             "Zhong": ((8, 8, 8), 0.0935, 200),
             "Ko": ((8, 8, 8), 0.01, 200),
+            "Kavousi" : ((8, 8, 8), 0.01, 200),
             "Kim": ((8, 8, 8), 0.01, 200),
             "M3GNet": ((8, 8, 8), 0.260, 200),
             "CHGNet": ((8, 8, 8), 0.030, 200),
@@ -49,6 +26,7 @@ def get_phonon_config(structure_name, potential):
             "Mutter": ((7, 9, 7), 0.05, 200),
             "Zhong": ((7, 9, 7), 0.05, 200),
             "Ko": ((7, 9, 7), 0.03, 200),
+            "Kavousi" : ((7, 9, 7), 0.03, 200),
             "Kim": ((7, 9, 7), 0.03, 200),
             "M3GNet": ((7, 9, 7), 0.05, 200),
             "CHGNet": ((7, 9, 7), 0.05, 200),
@@ -60,6 +38,7 @@ def get_phonon_config(structure_name, potential):
             "Mutter": ((8, 6, 4), 0.05, 200),
             "Zhong": ((8, 6, 4), 0.05, 200),
             "Ko": ((8, 6, 4), 0.01, 200),
+            "Kavousi" : ((8, 6, 4), 0.01, 200),
             "Kim": ((8, 6, 4), 0.01, 200),
             "M3GNet": ((8, 6, 4), 0.05, 200),
             "CHGNet": ((8, 6, 4), 0.05, 200),
@@ -71,6 +50,7 @@ def get_phonon_config(structure_name, potential):
             "Mutter": ((8, 4, 6), 0.05, 200),
             "Zhong": ((8, 4, 6), 0.05, 200),
             "Ko": ((8, 4, 6), 0.05, 200),
+            "Kavousi" : ((8, 4, 6), 0.05, 200),
             "Kim": ((8, 4, 6), 0.05, 200),
             "M3GNet": ((8, 4, 6), 0.05, 200),
             "CHGNet": ((8, 4, 6), 0.05, 200),

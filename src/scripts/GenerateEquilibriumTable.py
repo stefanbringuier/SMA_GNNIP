@@ -10,12 +10,14 @@ from ase.db import connect
 from ase.spacegroup import get_basis
 from ase.spacegroup import Spacegroup, get_spacegroup
 
-from Config import *
+
+from TableConfig import SPACEGROUP_MAP, ORDER
+
 
 def get_element_basis_list(structure, spacegroup, tol=1e-3):
     """Provide the basis for a crystal structure.
 
-    Attempts to find the basis atoms for a given crystal structure. 
+    Attempts to find the basis atoms for a given crystal structure.
 
     STILL IN TESTING.
 
@@ -26,7 +28,7 @@ def get_element_basis_list(structure, spacegroup, tol=1e-3):
 
     returns:
          np.array: The basis atoms
-    
+
     """
     sg = Spacegroup(spacegroup)
     rotations = sg.rotations
@@ -42,7 +44,9 @@ def get_element_basis_list(structure, spacegroup, tol=1e-3):
         # Apply symmetry operations
         for rot, trans in zip(rotations, translations):
             sym_pos = np.dot(rot, pos) + trans
-            sym_pos -= np.floor(sym_pos)  # Wrap around using periodic boundary conditions
+            sym_pos -= np.floor(
+                sym_pos
+            )  # Wrap around using periodic boundary conditions
 
             # Check if the position is already in the unique sites within a tolerance
             for usite in unique_sites:
@@ -59,14 +63,17 @@ def get_element_basis_list(structure, spacegroup, tol=1e-3):
 
     return list(zip(unique_elements, unique_sites))
 
+
 def generate_structure_table(dbname, chemsys, output_filename):
     db = connect(dbname)
-    
+
     unique_structure_types = set(entry.structure_name for entry in db.select())
-    
-    with open(output_filename, 'w') as file:
+
+    with open(output_filename, "w") as file:
         file.write("\\begin{longtable}{|l|c|}\n")
-        file.write("\\caption{Equilibrium structures for NiTi.} \\label{tab:equil_niti}\\\\\n")
+        file.write(
+            "\\caption{Equilibrium structures for NiTi.} \\label{tab:equil_niti}\\\\\n"
+        )
         file.write("\\hline\n")
         file.write("Structure & Unit Cell \\\\\n")
         file.write("\\hline\n")
@@ -79,26 +86,38 @@ def generate_structure_table(dbname, chemsys, output_filename):
         file.write("\\endfoot\n")
 
         for structure_type in unique_structure_types:
-            structure_name = structure_type.replace("_","-")
+            structure_name = structure_type.replace("_", "-")
             spg_num = SPACEGROUP_MAP[structure_name]
             file.write(f"{structure_name}\n({spg_num}) & ")
             file.write("\\begin{tabular}{c c c c c c c}\n")  # Inner table header
-            file.write("Model & $a$ (\AA) & $b$ (\AA) & $c$ (\AA) & $\\alpha$ ($^\circ$) & $\\beta$ ($^\circ$) & $\\gamma$ ($^\circ$)\\\\\n")
+            file.write(
+                "Model & $a$ (\AA) & $b$ (\AA) & $c$ (\AA) & $\\alpha$ ($^\circ$) & $\\beta$ ($^\circ$) & $\\gamma$ ($^\circ$)\\\\\n"
+            )
 
             entries = db.select(chemsys=chemsys, structure_name=structure_type)
-            sentries = sorted(entries, key=lambda entry: ORDER[entry.model_name])
+
+            # Filter and sort based on models defined in ORDER
+            sentries = sorted(
+                [entry for entry in entries if entry.model_name in ORDER[chemsys]],
+                key=lambda entry: ORDER[chemsys][entry.model_name]
+            )
+
             for entry in sentries:
                 structure = entry.toatoms()
                 # Extract unit cell parameters
                 a, b, c, alpha, beta, gamma = structure.cell.cellpar()
-                model_name =  entry.get('model_name', 'NA')
+                model_name = entry.get("model_name", "NA")
                 file.write("\\hline\\noalign{\\smallskip}\n")
-                file.write(f"{model_name} & {a:.3f} & {b:.3f} & {c:.3f} & {alpha:.2f} & {beta:.2f} & {gamma:.2f}\\\\\n")
+                file.write(
+                    f"{model_name} & {a:.3f} & {b:.3f} & {c:.3f} & {alpha:.2f} & {beta:.2f} & {gamma:.2f}\\\\\n"
+                )
                 # Atom positions
-                file.write("& & & \\multicolumn{4}{c}{\\begin{tabular}{c c c c}\n")  # Corrected inner table header
+                file.write(
+                    "& & & \\multicolumn{4}{c}{\\begin{tabular}{c c c c}\n"
+                )  # Corrected inner table header
                 file.write("& x & y & z\\\\\n")
                 file.write("\\hline\n")
-                basis = get_element_basis_list(structure,entry.spacegroup)
+                basis = get_element_basis_list(structure, entry.spacegroup)
                 for e, b in basis:
                     file.write(f"{e} & {b[0]:.4f} & {b[1]:.4f} & {b[2]:.4f} \\\\\n")
                 file.write("\\end{tabular}}\\\\\n")
@@ -107,14 +126,12 @@ def generate_structure_table(dbname, chemsys, output_filename):
             file.write("\\hline\n")
 
         file.write("\\end{longtable}\n")
-        
+
     return None
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     dbname = sys.argv[1]
     chemsys = sys.argv[2]
     output_file = paths.output / f"Table_{chemsys}_Equilibrium_Structures.tex"
     generate_structure_table(paths.data / dbname, chemsys, output_file)
-
-  

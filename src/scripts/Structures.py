@@ -112,7 +112,7 @@ def NiTi_B19_Structure(a=4.09, b=2.86, c=4.59, alpha=90.0, beta=90.0, gamma=90.0
     return B19
 
 
-def PbTi_B19_Structure(a=4.61, b=2.76, c=4.86, alpha=90.0, beta=90.0, gamma=90.0):
+def PtTi_B19_Structure(a=4.61, b=2.76, c=4.86, alpha=90.0, beta=90.0, gamma=90.0):
     """
     Pmma (spacegroup 51)
     Ref. Kadkhodaei, S.; van de Walle, Acta Materialia 2018, 147, 296–303.

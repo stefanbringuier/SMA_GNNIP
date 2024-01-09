@@ -1,7 +1,9 @@
 ### PART OF MAIN Snakefile ###
 ### THIS IS ALL PtTi RULES ###
+PtTi_CHEMSYS="PtTi"
+PtTi_PROCESS_MODELS = ["Kim","M3GNet","CHGNet","MACE"]
 
-# Rule to aggregate the NiTi to database
+# Rule to aggregate the PtTi to database
 rule aggregate_ptti_db:
     input:
         db="src/data/" + DATABASE,
@@ -10,9 +12,9 @@ rule aggregate_ptti_db:
         eos="src/scripts/CalculateEOS.py",
         phonons="src/scripts/CalculatePhonons.py",
         elastic="src/scripts/CalculateElastic.py",
-        mineos_calc=expand("src/data/COMPLETED_TASKS/{structure}_{model}.min_eos.done", chemsys="PtTi", structure=PtTi_STRUCTURES, model=PtTi_MODELS),
-        phonons_calc=expand("src/data/COMPLETED_TASKS/{structure}_{model}.phonons.done", chemsys="PtTi", structure=PtTi_STRUCTURES, model=PtTi_MODELS),
-        elastic_calc=expand("src/data/COMPLETED_TASKS/{structure}_{model}.elastic.done", chemsys="PtTi", structure=PtTi_STRUCTURES, model=PtTi_MODELS),
+        mineos_calc=expand("src/data/COMPLETED_TASKS/{chemsys}_{structure}_{model}.min_eos.done", chemsys=PtTi_CHEMSYS, structure=PtTi_STRUCTURES, model=PtTi_PROCESS_MODELS),
+        phonons_calc=expand("src/data/COMPLETED_TASKS/{chemsys}_{structure}_{model}.phonons.done", chemsys=PtTi_CHEMSYS, structure=PtTi_STRUCTURES, model=PtTi_PROCESS_MODELS),
+        elastic_calc=expand("src/data/COMPLETED_TASKS/{chemsys}_{structure}_{model}.elastic.done", chemsys=PtTi_CHEMSYS, structure=PtTi_STRUCTURES, model=PtTi_PROCESS_MODELS),
     output:
         aggregated="src/data/COMPLETED_TASKS/ptti.database.aggregated.done"
     shell:
@@ -34,3 +36,20 @@ rule cache_ptti_db:
         True
     shell:
         "mkdir -p src/data/CACHED && cp src/data/{DATABASE} src/data/CACHED/"
+
+# Rule for plotting PtTi Cohesive Energy
+rule plot_ptti_ecoh:
+    input:
+        data = "src/data/" + DATABASE,
+        script="src/scripts/PlotCohesiveEnergy.py",
+        aggregated="src/data/COMPLETED_TASKS/ptti.database.aggregated.done"
+    output:
+        figure="src/tex/figures/PtTi_CohesiveEnergyPlot.png"
+    threads:
+        1
+    conda:
+        "env/ase.yml"
+    params:
+        chemsys="PtTi"
+    shell:
+        "python src/scripts/PlotCohesiveEnergy.py {DATABASE} {params.chemsys}"

@@ -75,6 +75,7 @@ def get_phonons(
 
 def calculate_phonons(
     dbname,
+    chemsys,
     structure_name,
     potential,
     strain=[
@@ -91,6 +92,7 @@ def calculate_phonons(
 
     Args:
         dbname (str): Name of the database for storing results.
+        chemsys (str): The chemical system, e.g. NiTi, PtTi, NiAl3
         structure_name (str): Name of the structure to analyze.
         potential (tuple): Tuple containing potential model name and calculator object.
         strain (list of float, optional): List of fractional strain values to apply. Defaults to pre-defined list.
@@ -117,7 +119,10 @@ def calculate_phonons(
 
     supercell, displacement, bspts = get_phonon_config(structure_name, potential[0])
 
-    entry = db.get(model_name=potname, structure_name=structure_name)
+    # Extract relaxed-structure from database
+    entry = db.get(
+        chemsys=chemsys, model_name=potname, structure_name=structure_name, relaxed=True
+    )
     spg = entry.spacegroup
     cell_relaxed = entry.cell
 
@@ -161,9 +166,7 @@ def calculate_phonons(
                 bandstructure,
                 dos,
                 {
-                    "chemsys": "".join(
-                        sorted(set(mod_structure.get_chemical_symbols()))
-                    ),
+                    "chemsys": chemsys,
                     "vol": volume,
                     "strain": e * 100.0,
                     "structure": structure.info["structure_name"],

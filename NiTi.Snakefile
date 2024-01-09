@@ -1,6 +1,7 @@
-### PART OF MAIN Snakefile ###
-### THIS IS ALL NiTi RULES ###
+### PART OF MAIN Snakefile     ###
+### THIS IS ALL NiTi RULES     ###
 NiTi_CHEMSYS="NiTi"
+NiTi_PROCESS_MODELS = ["Mutter","Zhong","Ko","M3GNet","CHGNet","MACE"]
 
 # Rule to aggregate the NiTi to database
 rule aggregate_niti_db:
@@ -11,9 +12,9 @@ rule aggregate_niti_db:
         eos="src/scripts/CalculateEOS.py",
         phonons="src/scripts/CalculatePhonons.py",
         elastic="src/scripts/CalculateElastic.py",
-        mineos_calc=expand("src/data/COMPLETED_TASKS/{chemsys}_{structure}_{model}.min_eos.done",chemsys=NiTi_CHEMSYS, structure=NiTi_STRUCTURES, model=NiTi_MODELS),
-        phonons_calc=expand("src/data/COMPLETED_TASKS/{chemsys}_{structure}_{model}.phonons.done",chemsys=NiTi_CHEMSYS, structure=NiTi_STRUCTURES, model=NiTi_MODELS),
-        elastic_calc=expand("src/data/COMPLETED_TASKS/{chemsys}_{structure}_{model}.elastic.done",chemsys=NiTi_CHEMSYS, structure=NiTi_STRUCTURES, model=NiTi_MODELS),
+        mineos_calc=expand("src/data/COMPLETED_TASKS/{chemsys}_{structure}_{model}.min_eos.done",chemsys=NiTi_CHEMSYS, structure=NiTi_STRUCTURES, model=NiTi_PROCESS_MODELS),
+        phonons_calc=expand("src/data/COMPLETED_TASKS/{chemsys}_{structure}_{model}.phonons.done",chemsys=NiTi_CHEMSYS, structure=NiTi_STRUCTURES, model=NiTi_PROCESS_MODELS),
+        elastic_calc=expand("src/data/COMPLETED_TASKS/{chemsys}_{structure}_{model}.elastic.done",chemsys=NiTi_CHEMSYS, structure=NiTi_STRUCTURES, model=NiTi_PROCESS_MODELS),
     output:
         aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done"
     shell:
@@ -43,6 +44,8 @@ rule visualize_niti_structures:
         script="src/scripts/VisualizeStructures.py"
     output:
         figure="src/tex/figures/NiTi_VisualizedStructures.png"
+    threads:
+        4
     conda:
         "env/ovito.yml"
     params:
@@ -58,6 +61,8 @@ rule plot_niti_ecoh:
         aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done"
     output:
         figure="src/tex/figures/NiTi_CohesiveEnergyPlot.png"
+    threads:
+        1
     conda:
         "env/ase.yml"
     params:
@@ -73,13 +78,14 @@ rule plot_niti_eos:
         aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done"
     output:
         figure="src/tex/figures/NiTi_EquationOfStates.png"
+    threads:
+        1
     conda:
         "env/ase.yml"
     params:
         chemsys="NiTi"
     shell:
         "python src/scripts/PlotEOS.py {DATABASE} {params.chemsys}"
-
 
 # Rule for plotting NiTi phonons
 rule plot_niti_phonons:
@@ -97,6 +103,8 @@ rule plot_niti_phonons:
         figure_strain_M3GNet_B2="src/tex/figures/NiTi_M3GNet_B2_StrainsPhononBandstructures.png",
         figure_strain_CHGNet_B2="src/tex/figures/NiTi_CHGNet_B2_StrainsPhononBandstructures.png",
         figure_strain_MACE_B2="src/tex/figures/NiTi_MACE_B2_StrainsPhononBandstructures.png",
+    threads:
+        1
     conda:
         "env/ase.yml"
     params:
@@ -107,7 +115,7 @@ rule plot_niti_phonons:
         {DATABASE} \
         {params.num_strains} \
         {params.chemsys} \
-        --models {NiTi_MODELS} \
+        --models {NiTi_PROCESS_MODELS} \
         --structures {NiTi_STRUCTURES}"
 
 # # Rule for generating NiTi M-Mode Gruneisen parameters.
@@ -117,6 +125,8 @@ rule generate_niti_m_mode_gruneisen:
          aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done"
      output:
          table="src/tex/output/Table_NiTi_M_ModeGruneisen.tex"
+     threads:
+         1
      conda:
          "env/ase.yml"
      params:
@@ -133,6 +143,8 @@ rule generate_niti_elastic_table:
         aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done"
     output:
         table="src/tex/output/Table_NiTi_Elastic_Constants.tex"
+    threads:
+        1
     conda:
         "env/ase.yml"
     params:
@@ -148,6 +160,8 @@ rule generate_niti_equil_table:
         aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done"
     output:
         table="src/tex/output/Table_NiTi_Equilibrium_Structures.tex"
+    threads:
+        1
     conda:
         "env/ase.yml"
     params:

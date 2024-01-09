@@ -43,6 +43,7 @@ def serial_calculate(systems, calculator):
 
 def calculate_elastic_constants(
     dbname,
+    chemsys,
     structure_name,
     potential,
     npoints=10,
@@ -55,6 +56,7 @@ def calculate_elastic_constants(
 
     Args:
         dbname (string): The path of the ASE database file.
+        chemsys (string): Chemical system, e.g., NiTi, PtTi, NiAl3
         structure_name (string): The name of the structure in the ASE database file.
         potential (string): The name of the potential style.
         npoints (int,10):  Optional, sets the number of displacement points.
@@ -72,28 +74,29 @@ def calculate_elastic_constants(
     potname = potential[0]
     calculator = potential[1]
 
-    for entry in db.select(structure_name=structure_name, model_name=potname):
-        spg = entry.spacegroup
-        structure = crystal(entry.toatoms(), spacegroup=spg)
-        # calculator.clean = potential[1].reset
-        structure.calc = calculator
+    entry = db.get(
+        chemsys=chemsys, structure_name=structure_name, model_name=potname, relaxed=True
+    )
+    
+    spg = entry.spacegroup
+    structure = crystal(entry.toatoms(), spacegroup=spg)
+    # calculator.clean = potential[1].reset
+    structure.calc = calculator
 
-        systems = get_elementary_deformations(structure, n=npoints, d=displacement)
+    systems = get_elementary_deformations(structure, n=npoints, d=displacement)
 
-     
-        result = serial_calculate(systems, calculator)
+    result = serial_calculate(systems, calculator)
 
-        ordering = get_cij_order(structure)
-        cij, _ = get_elastic_tensor(structure, systems=result)
-        cij /= units.GPa
+    ordering = get_cij_order(structure)
+    cij, _ = get_elastic_tensor(structure, systems=result)
+    cij /= units.GPa
 
-        C = dict(zip(ordering, cij))
+    C = dict(zip(ordering, cij))
 
-
-        if update:
-            db.update(entry.id, data={"elastic_constants": C})
-        else:
-            return C
+    if update:
+        db.update(entry.id, data={"elastic_constants": C})
+    else:
+        return C
 
     return None
 
@@ -102,12 +105,22 @@ if __name__ == "__main__":
     # Testing data
     print("!!! TESTING ElasticCalculation.py !!!")
     from Calculators import *
+
     calculator = get_ase_calculator("M3GNet")
-    dbname = paths.data / "NiTi_Structures.json"
+    dbname = paths.data / "Results.json"
     structure_name = "BCO"
-    potential = ("M3GNet",calculator)
-    for d in [0.25,0.5]:
-        for n in [10,15]:
-            C = calculate_elastic_constants(dbname, structure_name,potential,npoints=n,displacement=d,update=False)
+    chemsys = "NiTi"
+    potential = ("M3GNet", calculator)
+    for d in [0.25, 0.5]:
+        for n in [10, 15]:
+            C = calculate_elastic_constants(
+                dbname,
+                chemsys,
+                structure_name,
+                potential,
+                npoints=n,
+                displacement=d,
+                update=False,
+            )
             print(f"{d} {n} {C}")
     #    assert list(C.values()) == [0.0,0.0,0.0]

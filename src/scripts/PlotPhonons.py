@@ -7,6 +7,7 @@ import argparse
 
 from ase.db import connect
 
+from PlotConfigs import SUBPLOT_ORDER
 
 def format_xticklabels(labels, locs):
     # Dictionary to keep track of formatted labels with their locations
@@ -97,7 +98,7 @@ def plot_default_phonons(bs, dos, info, ymaxlim=9.0, of="."):
     )
     fig.clear()
     plt.close(fig)
-    
+
     return None
 
 
@@ -169,7 +170,7 @@ def plot_individual_phonon_bandstructure(dbname, chemsys, model_name, structure_
                 )
                 plt.savefig(paths.data / fname)
                 plt.close(fig)
-                
+
     return None
 
 
@@ -192,7 +193,9 @@ def plot_all_strains_phonons(
     fig, ax = plt.subplots()
 
     with connect(dbname) as db:
-        first_row = db.get(structure_name=structure_name, model_name=model_name)
+        first_row = db.get(
+            chemsys=chemsys, structure_name=structure_name, model_name=model_name
+        )
         if chemsys != "".join(sorted(set(first_row.symbols))):
             return None
 
@@ -238,18 +241,18 @@ def plot_all_strains_phonons(
         )
 
         # Calculate midpoints for q_vec_labels
-        midpoints = 0.5 * (norm_locs[f_strain_key][:-1] + norm_locs[f_strain_key][1:])
-        q_vec_labels = f_pdata["bandstructure"]["q_vec_labels"]
-        for midpoint, vec_label in zip(midpoints, q_vec_labels):
-            ax.text(
-                midpoint,
-                ax.get_ylim()[1],
-                vec_label,
-                ha="center",
-                va="bottom",
-                transform=ax.transData,
-                size=6,
-            )
+        #midpoints = 0.5 * (norm_locs[f_strain_key][:-1] + norm_locs[f_strain_key][1:])
+        #q_vec_labels = f_pdata["bandstructure"]["q_vec_labels"]
+        #for midpoint, vec_label in zip(midpoints, q_vec_labels):
+        #    ax.text(
+        #        midpoint,
+        #        ax.get_ylim()[1],
+        #        vec_label,
+        #        ha="center",
+        #        va="bottom",
+        #        transform=ax.transData,
+        #        size=6,
+        #    )
 
         ax.set_xlim((0, norm_locs[f_strain_key][-1]))
 
@@ -288,24 +291,35 @@ def plot_all_strains_phonons(
 
 
 def plot_all_model_phonons(
-    dbname, chemsys, models, structure_name, strain=0.00, columns=3, fade_optical=False
+    dbname,
+    chemsys,
+    models,
+    structure_name,
+    strain=0.00,
+    columns=3,
+    fade_optical=False,
+    ylims=(-2.5, 10.5),
 ):
     """
     This function creates a grid of phonon bandstructure plots for each model.
     """
     with connect(dbname) as db:
         # Determine the grid size
-        rows = int(np.ceil(len(models) / columns))
+        rows = int(np.ceil(len(SUBPLOT_ORDER) / columns))
 
         # Create a grid of subplots
         fig = plt.figure(figsize=(12, 4 * rows))
         gs = GridSpec(rows, columns, figure=fig)
 
-        for m, model_name in enumerate(models):
-        
-            ax = fig.add_subplot(gs[m // columns, m % columns])
+        m = 0
+        for model_name in models:
+            if model_name not in SUBPLOT_ORDER[chemsys].values():
+                continue
 
-            first_row = db.get(structure_name=structure_name, model_name=model_name)
+            ax = fig.add_subplot(gs[m // columns, m % columns])
+            first_row = db.get(
+                chemsys=chemsys, structure_name=structure_name, model_name=model_name
+            )
 
             if chemsys != "".join(sorted(set(first_row.symbols))):
                 break
@@ -330,23 +344,25 @@ def plot_all_model_phonons(
 
             ax.set_xticks(norm_locs)
             ax.set_xticklabels(format_xticklabels(labels[: len(norm_locs)], norm_locs))
+
             # Calculate midpoints for q_vec_labels
-            midpoints = 0.5 * (norm_locs[:-1] + norm_locs[1:])
-            for midpoint, vec_label in zip(
-                midpoints, pdata["bandstructure"]["q_vec_labels"]
-            ):
-                ax.text(
-                    midpoint,
-                    ax.get_ylim()[1],
-                    vec_label,
-                    ha="center",
-                    va="bottom",
-                    transform=ax.transData,
-                    size=6,
-                )
+            #midpoints = 0.5 * (norm_locs[:-1] + norm_locs[1:])
+            #for midpoint, vec_label in zip(
+            #    midpoints, pdata["bandstructure"]["q_vec_labels"]
+            #):
+            #    ax.text(
+            #        midpoint,
+            #        ax.get_ylim()[1],
+            #        vec_label,
+            #        ha="center",
+            #        va="bottom",
+            #        transform=ax.transData,
+            #        size=6,
+            #    )
 
             # ax.set_xticklabels(labels[: len(norm_locs)])
             ax.set_xlim((0, norm_locs[-1]))
+            ax.set_ylim(ylims)
             ax.axhline(y=0.0, color="black", linestyle="-", linewidth=0.5, alpha=0.9)
             ax.set_ylabel("Frequency [THz]")
             # ax.set_title(model_name, fontsize=10)
@@ -366,6 +382,8 @@ def plot_all_model_phonons(
                 for loc in norm_locs
             ]
 
+            m += 1
+
         # Adjust layout
         plt.tight_layout()
         plt.savefig(
@@ -376,20 +394,28 @@ def plot_all_model_phonons(
 
         return None
 
+
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Process structures and models.")
     parser.add_argument("dbname", type=str, help="Database name")
     parser.add_argument("num_strains", type=int, help="Number of strains")
     parser.add_argument("chemsys", type=str, help="Chemical system")
-    parser.add_argument("--structures", nargs='+', type=str, required=True, help="List of structures")
-    parser.add_argument("--models", nargs='+', type=str, required=True, help="List of models")
+    parser.add_argument(
+        "--structures", nargs="+", type=str, required=True, help="List of structures"
+    )
+    parser.add_argument(
+        "--models", nargs="+", type=str, required=True, help="List of models"
+    )
     return parser.parse_args()
+
 
 if __name__ == "__main__":
     args = parse_arguments()
-    dbname = paths.data / args.dbname 
+    dbname = paths.data / args.dbname
     for s in args.structures:
         plot_all_model_phonons(dbname, args.chemsys, args.models, s)
     for m in args.models:
         for s in args.structures:
-            plot_all_strains_phonons(dbname, args.chemsys, m, s, num_strains=args.num_strains)
+            plot_all_strains_phonons(
+                dbname, args.chemsys, m, s, num_strains=args.num_strains
+            )

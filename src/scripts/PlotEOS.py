@@ -5,14 +5,17 @@ import paths
 
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
+from matplotlib.ticker import MultipleLocator
 from cycler import cycler
 import seaborn as sns  # For color palette
 from ase.db import connect
 
-from Config import SUBPLOT_ORDER
+from PlotConfigs import SUBPLOT_ORDER
+
 
 def plot_eos(
     dbname,
+    chemsys,
     output_plot,
     figsize=(3.4, 5.75),
     dpi=600,
@@ -30,15 +33,20 @@ def plot_eos(
     legend_ncol=5,
     label_notes="EOS_Labels.txt",
 ):
-
     db = connect(dbname)
 
-    calculator_models = sorted(
-        set(row.model_name for row in db.select()),
-        key=lambda model: list(SUBPLOT_ORDER.values()).index(model),
-    )
+    # Select unique models if in SUBPLOT_ORDER and sort
+    plot_models = SUBPLOT_ORDER[chemsys].values()
 
-    structure_names = set(row.structure_name for row in db.select())
+    calculator_models = sorted(
+        set(
+            row.model_name
+            for row in db.select(chemsys=chemsys)
+            if row.model_name in plot_models
+        ),
+        key=lambda model: list(SUBPLOT_ORDER[chemsys].values()).index(model),
+    )
+    structure_names = set(row.structure_name for row in db.select(chemsys=chemsys))
 
     # Create a figure with a 2x3 grid of subplots
     fig, axs = plt.subplots(3, 2, figsize=figsize)
@@ -50,20 +58,16 @@ def plot_eos(
     label_file_path = paths.figures / label_notes
     with open(label_file_path, "w") as label_file:
         for i, calculator_model in enumerate(calculator_models):
-            if calculator_model not in SUBPLOT_ORDER.values():
-                warnings.warn(f"{calculator_model} model results not used/expected", UserWarning)
+            if calculator_model not in SUBPLOT_ORDER[chemsys].values():
+                warnings.warn(
+                    f"{calculator_model} model results not used/expected", UserWarning
+                )
 
-
-            ax = axs[i] 
+            ax = axs[i]
             alphabetic_label = f"({chr(97 + i)})"
-            ax.set_title(
-                alphabetic_label, loc="left", fontsize=fontsize
-            ) 
-            label_file.write(
-                f"{alphabetic_label}: {calculator_model}\n"
-            )
+            ax.set_title(alphabetic_label, loc="left", fontsize=fontsize)
+            label_file.write(f"{alphabetic_label}: {calculator_model}\n")
 
-          
             ax.set_prop_cycle(cycler(color=color_cycle))
             ax.set_xlim(xlim)
             ax.xaxis.set_major_locator(MultipleLocator(0.1))
@@ -79,7 +83,9 @@ def plot_eos(
                     continue  # Skip the structures in the ignore list
 
                 for row in db.select(
-                    model_name=calculator_model, structure_name=structure_name
+                    chemsys=chemsys,
+                    model_name=calculator_model,
+                    structure_name=structure_name,
                 ):
                     volumes = np.array(row.data["volumes"])
                     energies = np.array(row.data["energies"])
@@ -125,10 +131,10 @@ def plot_eos(
             va="center",
             rotation="vertical",
             fontsize=fontsize,
-        ) 
+        )
         plt.subplots_adjust(wspace=wspace, hspace=hspace)
         plt.savefig(output_plot, dpi=dpi)
-
+        plt.close()
         return None
 
 
@@ -136,4 +142,4 @@ if __name__ == "__main__":
     dbname = sys.argv[1]
     chemsys = sys.argv[2]
     output_plot = paths.figures / f"{chemsys}_EquationOfStates.png"
-    plot_eos(paths.data / dbname, paths.figures / output_plot)
+    plot_eos(paths.data / dbname, chemsys, paths.figures / output_plot)
