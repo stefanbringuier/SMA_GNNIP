@@ -226,8 +226,8 @@ def generate_mode_gruneisen_table(
 
             # Filter and sort based on models defined in ORDER
             sentries = sorted(
-                [entry for entry in entries if entry.model_name in ORDER[chemsys]],
-                key=lambda entry: ORDER[chemsys][entry.model_name]
+                [entry for entry in entries if entry.model_name in ORDER[chemsys]['model']],
+                key=lambda entry: ORDER[chemsys]['model'][entry.model_name]
             )
 
             for entry in sentries:

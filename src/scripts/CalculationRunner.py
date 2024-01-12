@@ -45,6 +45,7 @@ def min_eos_calc(dbname, structure, potential, strain_info):
             """
         )
         entry_existed = True
+
     except:
         print(
             f"""
@@ -63,6 +64,7 @@ def min_eos_calc(dbname, structure, potential, strain_info):
             ------------------------------------------------------------
             """
         )
+
     return entry_existed
 
 
@@ -232,7 +234,6 @@ def main():
         )
     elif args.calc_type == "elastic":
         elastic_calc(db_path_file, structure, (args.model, asecalc))
-
     return None
 
 

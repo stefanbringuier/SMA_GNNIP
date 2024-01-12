@@ -47,7 +47,7 @@ def calculate_elastic_constants(
     structure_name,
     potential,
     npoints=10,
-    displacement=0.5,
+    displacement=0.25,
     update=True,
 ):
     """

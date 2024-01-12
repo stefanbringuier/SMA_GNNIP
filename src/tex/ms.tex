@@ -14,6 +14,7 @@
 \usepackage{pdflscape}
 %% Handles multipage table. Not sure allowed by pub.
 \usepackage{longtable}
+\usepackage{tabularx}
 \usepackage{subcaption}
 \usepackage{listings}
 \lstset{
@@ -84,13 +85,22 @@ For each combination of potential/model, chemical system, and phase we perform c
     \begin{centering}
         \includegraphics[width=\linewidth]{figures/NiTi_VisualizedStructures.png}
         \caption{
-          Initial unit cells of used in this work for NiTi, (a) \textit{B2}(221), (b) \textit{B19}(11), (c) \textit{B19'}(51), and (d) \textit{BCO}(61). The spacegroup numbers are given in the parentheses. Also additional atoms (i.e. non-basis sites) are shown based on periodic boundary conditions. For PtTi (a-b) structures are used with different unit cell parameters and basis coordinates. 
+          Initial \ce{NiTi} structures (i.e., unrelaxed) used for (a) \textit{B2}(221), (b) \textit{B19}(11), (c) \textit{B19'}(51), and (d) \textit{BCO}(61) with spacegroup numbers are given in the parentheses. The green atoms are \ce{Ni} and \ce{Ti} as gray and unit cells are highlighted with parametes shown on axis. For all unit cells the $\alpha$ and $\gamma$ angles are 90.0$^\circ$. For PtTi, (a-b) structures are used with different unit cell parameters and basis coordinates and then optimized accordingly.
         }
         \label{fig:niti_structures}
     \end{centering}
 \end{figure}
 
-Prior to any property calculations or dynamics the structures are optimized using the FIRE\cite{Bitzek2006} local optimizer with the forces converged to $2\cdot 10^{-3}$eV/\AA. We observed that other local optimization routines find the same ground-state structures. To ensure that the unit cell parameters were adjusted along with the atomic coordinates and that the crystal symmetry is not broken, we utlize a constraint and filter during the optimization process. The optimized lattice parameters as well as basis atoms for all structures and models are provided in appendix \ref{sec:opt_structures}. \par
+Prior to any property calculations or dynamics the structures are optimized using the FIRE\cite{Bitzek2006} local optimizer with the forces converged to $2\cdot 10^{-3}$eV/\AA. We observed that other local optimization routines find the same ground-state structures. To ensure that the unit cell parameters were adjusted along with the atomic coordinates and that the crystal symmetry is not broken, we utlize a constraint and filter during the optimization process. \par
+
+In fig.~\ref{fig:opt_density} the density of the structures for different potentials is shown. We observe that in general the densities and lattice parameters are within agreement with previously reported values. The optimized lattice parameters as well as basis atoms for all structures and models are provided in appendix \ref{sec:opt_structures}. \par
+
+\begin{figure}[ht!]
+  \label{fig:opt_density}
+  \centering
+  \caption{}
+\end{figure}
+
 
 \subsubsection{Equation of State}
 The EOS can be obtained by varying the cell volume and calculating the total system energy without allowing for atomic relaxations. Starting with the obtained ground-state structures the unit cell volume is adjusted by applying an isotropic strain,
@@ -352,7 +362,7 @@ This study was carried out using the reproducibility software \href{https://gith
 
 \newpage
 \appendix
-
+\section{Appendix}
 \subsection{Workflow Reproducibility}
 \label{sec:appx_reproduce}
 

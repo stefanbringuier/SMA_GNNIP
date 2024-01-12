@@ -3,6 +3,11 @@ from ase.optimize import FIRE
 from ase.constraints import UnitCellFilter
 from ase.spacegroup.symmetrize import FixSymmetry, check_symmetry
 
+from ase.units import m, kg
+
+grams = kg * (1 / 1000)
+cm = m * (1 / 100)
+
 
 def minimize_structure(structure, potential, write_db=None, fmax=5.0e-4, fstep=5000):
     """
@@ -50,11 +55,15 @@ def minimize_structure(structure, potential, write_db=None, fmax=5.0e-4, fstep=5
         forces = structure.get_forces()
         ecoh = structure.get_potential_energy() / structure.get_global_number_of_atoms()
 
+        rho = structure.get_masses().sum() / structure.get_volume()
+        rho *= cm**3 / grams  # gives g/cm^3
+
         nextrow = db.write(
             structure,
             relaxed=True,
             chemsys=chemsys,
-            vi=vol_intial,
+            vol_unrelaxed=vol_intial,
+            density=rho,
             ecoh=ecoh,
             spacegroup=sym_before["number"],
             structure_name=structure.info["structure_name"],

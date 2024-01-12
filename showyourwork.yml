@@ -1,5 +1,5 @@
 # Enable rule caching on Zenodo?
-65;6800;1ccache_on_zenodo: true
+cache_on_zenodo: true
 
 optimize_caching: true
 
@@ -41,30 +41,30 @@ dependencies:
 # Figures
   src/scripts/PlotNiTiEOS.py:
     - src/data/COMPLETED_TASKS/niti.database.aggregated.done
-    - src/data/CACHED/NiTi_Structures.json
+    - src/data/CACHED/SMA_Results_08Jan2024.json
   src/scripts/PlotPhonons.py:
     - src/data/COMPLETED_TASKS/niti.database.aggregated.done
-    - src/data/CACHED/NiTi_Structures.json
+    - src/data/CACHED/SMA_Results_08Jan2024.json
   src/scripts/PlotNoStrainPhonons.py:
     - src/scripts/PlotPhonons.py
     - src/data/COMPLETED_TASKS/niti.database.aggregated.done
-    - src/data/CACHED/NiTi_Structures.json
+    - src/data/CACHED/SMA_Results_08Jan2024.json
   src/scripts/PlotEAMPhonons.py:
     - src/scripts/PlotPhonons.py
     - src/data/COMPLETED_TASKS/niti.database.aggregated.done
-    - src/data/CACHED/NiTi_Structures.json
+    - src/data/CACHED/SMA_Results_08Jan2024.json
   src/scripts/PlotGNNPhonons.py:
     - src/scripts/PlotPhonons.py
     - src/data/COMPLETED_TASKS/niti.database.aggregated.done
-    - src/data/CACHED/NiTi_Structures.json
+    - src/data/CACHED/SMA_Results_08Jan2024.json
 
 # Tables
   src/scripts/GenerateNiTiEquilTable.py:
     - src/data/COMPLETED_TASKS/niti.database.aggregated.done
-    - src/data/CACHED/NiTi_Structures.json
+    - src/data/CACHED/SMA_Results_08Jan2024.json
   src/scripts/GenerateMGruneisenTable.py:
     - src/data/COMPLETED_TASKS/niti.database.aggregated.done
-    - src/data/CACHED/NiTi_Structures.json
+    - src/data/CACHED/SMA_Results_08Jan2024.json
 
 # LaTeX
   src/tex/ms.tex:

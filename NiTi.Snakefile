@@ -8,10 +8,10 @@ rule aggregate_niti_db:
     input:
         db="src/data/" + DATABASE,
 	create="src/data/COMPLETED_TASKS/created.database.done",
-        minimize="src/scripts/MinimizeStructure.py",
-        eos="src/scripts/CalculateEOS.py",
-        phonons="src/scripts/CalculatePhonons.py",
-        elastic="src/scripts/CalculateElastic.py",
+        #minimize="src/scripts/MinimizeStructure.py",
+        #eos="src/scripts/CalculateEOS.py",
+        #phonons="src/scripts/CalculatePhonons.py",
+        #elastic="src/scripts/CalculateElastic.py",
         mineos_calc=expand("src/data/COMPLETED_TASKS/{chemsys}_{structure}_{model}.min_eos.done",chemsys=NiTi_CHEMSYS, structure=NiTi_STRUCTURES, model=NiTi_PROCESS_MODELS),
         phonons_calc=expand("src/data/COMPLETED_TASKS/{chemsys}_{structure}_{model}.phonons.done",chemsys=NiTi_CHEMSYS, structure=NiTi_STRUCTURES, model=NiTi_PROCESS_MODELS),
         elastic_calc=expand("src/data/COMPLETED_TASKS/{chemsys}_{structure}_{model}.elastic.done",chemsys=NiTi_CHEMSYS, structure=NiTi_STRUCTURES, model=NiTi_PROCESS_MODELS),
@@ -19,23 +19,6 @@ rule aggregate_niti_db:
         aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done"
     shell:
         "touch {output.aggregated}"
-
-# NOTE: My intent is to cache the database, but I think this is not needed
-# I believe the purpose behind caching is to store intermediate results between
-# rules/workflows. For example if you need to fetch a database and had rules
-# that kept doing this, then you could cache that fetch. I think!.
-# What I was tyring to do was create the action of storing the databse once its
-# created because I'm frequentyly changeing whats being added to the database.
-rule cache_niti_db:
-    input:
-        db="src/data/" + DATABASE,
-        done="src/data/COMPLETED_TASKS/niti.database.aggregated.done"
-    output:
-        dbc = "src/data/CACHED/" + DATABASE
-    cache:
-        True
-    shell:
-        "mkdir -p src/data/CACHED && cp src/data/{DATABASE} src/data/CACHED/"
 
 # NOTE: System environment needs to have xvfb-run or remove if display server exist
 rule visualize_niti_structures:
@@ -56,7 +39,7 @@ rule visualize_niti_structures:
 # Rule for plotting NiTi Cohesive Energy
 rule plot_niti_ecoh:
     input:
-        data = "src/data/" + DATABASE,
+        data = "src/data/CACHED/" + DATABASE,
         script="src/scripts/PlotCohesiveEnergy.py",
         aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done"
     output:
@@ -78,8 +61,6 @@ rule plot_niti_eos:
         aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done"
     output:
         figure="src/tex/figures/NiTi_EquationOfStates.png"
-    threads:
-        1
     conda:
         "env/ase.yml"
     params:
@@ -90,6 +71,7 @@ rule plot_niti_eos:
 # Rule for plotting NiTi phonons
 rule plot_niti_phonons:
     input:
+        data = "src/data/" + DATABASE,
         plotphonons="src/scripts/PlotPhonons.py",
         aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done"
     output:
@@ -103,8 +85,6 @@ rule plot_niti_phonons:
         figure_strain_M3GNet_B2="src/tex/figures/NiTi_M3GNet_B2_StrainsPhononBandstructures.png",
         figure_strain_CHGNet_B2="src/tex/figures/NiTi_CHGNet_B2_StrainsPhononBandstructures.png",
         figure_strain_MACE_B2="src/tex/figures/NiTi_MACE_B2_StrainsPhononBandstructures.png",
-    threads:
-        1
     conda:
         "env/ase.yml"
     params:
@@ -121,12 +101,11 @@ rule plot_niti_phonons:
 # # Rule for generating NiTi M-Mode Gruneisen parameters.
 rule generate_niti_m_mode_gruneisen:
      input:
+         data = "src/data/" + DATABASE,
          script="src/scripts/GruneisenParameters.py",
          aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done"
      output:
          table="src/tex/output/Table_NiTi_M_ModeGruneisen.tex"
-     threads:
-         1
      conda:
          "env/ase.yml"
      params:
@@ -139,12 +118,11 @@ rule generate_niti_m_mode_gruneisen:
 # Rule for generating NiTi equilibrium table
 rule generate_niti_elastic_table:
     input:
+        data = "src/data/" + DATABASE,
         script="src/scripts/GenerateElasticTable.py",
         aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done"
     output:
         table="src/tex/output/Table_NiTi_Elastic_Constants.tex"
-    threads:
-        1
     conda:
         "env/ase.yml"
     params:
@@ -156,12 +134,11 @@ rule generate_niti_elastic_table:
 # Appendix: Rule for generating NiTi equilibrium table
 rule generate_niti_equil_table:
     input:
+        data = "src/data/" + DATABASE,
         script="src/scripts/GenerateEquilibriumTable.py",
         aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done"
     output:
         table="src/tex/output/Table_NiTi_Equilibrium_Structures.tex"
-    threads:
-        1
     conda:
         "env/ase.yml"
     params:

@@ -1,6 +1,6 @@
 # Define common parameters
 # NOTE: ALIGNN is supported but results seem total wrong!
-NiTi_MODELS = ["Mutter","Zhong","Ko","Kouvasi","DeepMD","M3GNet","CHGNet","MACE","ALIGNN"]
+NiTi_MODELS = ["Mutter","Zhong","Ko","Kouvasi","M3GNet","CHGNet","MACE","ALIGNN"]
 NiTi_STRUCTURES = ["B2","B19","B19P","BCO"]
 PtTi_MODELS = ["Kim","M3GNet","CHGNet","MACE","ALIGNN"]
 PtTi_STRUCTURES = ["B2","B19"]
@@ -8,7 +8,7 @@ PtTi_STRUCTURES = ["B2","B19"]
 #from datetime import datetime
 #date_str = datetime.now().strftime("%d%b%Y")
 #DATABASE = f"Results_{date_str}.json"
-DATABASE = "SMA_Results_07Jan2024.json"
+DATABASE = "SMA_Results_09Jan2024.json"
 
 # Function to get environment file
 def get_env_file(model):
@@ -33,7 +33,9 @@ rule minimize_and_calculate_eos:
 	create="src/data/COMPLETED_TASKS/created.database.done"
     output:
         done=touch("src/data/COMPLETED_TASKS/{chemsys}_{structure}_{model}.min_eos.done")
-    threads: 2
+    threads: 3
+    resources:
+        mem_gb = 7
     conda:
         lambda wildcards: get_env_file(wildcards.model)
     params:
@@ -46,14 +48,16 @@ rule minimize_and_calculate_eos:
 
 rule calculate_phonons:
     input:
-        #config="src/scripts/Config.py", # phonon settings, commented because will run everything, better to remove *phonons.done chk file
-        #script="src/scripts/CalculatePhonons.py",
+        config="src/scripts/Config.py",
+        script="src/scripts/CalculatePhonons.py",
         db=ancient("src/data/" + DATABASE),
 	create="src/data/COMPLETED_TASKS/created.database.done",
         mineos="src/data/COMPLETED_TASKS/{chemsys}_{structure}_{model}.min_eos.done"
     output:
         done=touch("src/data/COMPLETED_TASKS/{chemsys}_{structure}_{model}.phonons.done")
-    threads: 4
+    threads: 12
+    resources:
+        mem_gb= 30
     conda:
         lambda wildcards: get_env_file(wildcards.model)
     params:
@@ -66,15 +70,17 @@ rule calculate_phonons:
 
 rule calculate_elastic:
     input:
-        #script="src/scripts/CalculateElastic.py",
+        script="src/scripts/CalculateElastic.py",
         db=ancient("src/data/" + DATABASE),
 	create="src/data/COMPLETED_TASKS/created.database.done",
-        mineos="src/data/COMPLETED_TASKS/{chemsys}_{structure}_{model}.min_eos.done"
+        mineos="src/data/COMPLETED_TASKS/{chemsys}_{structure}_{model}.min_eos.done",
     output:
         done=touch("src/data/COMPLETED_TASKS/{chemsys}_{structure}_{model}.elastic.done")
+    threads: 6
+    resources:
+        mem_gb=15
     conda:
         lambda wildcards: get_env_file(wildcards.model)
-    threads: 4
     params:
         runner="src/scripts/CalculationRunner.py",
         chemsys=lambda wildcards: wildcards.chemsys,
@@ -87,5 +93,20 @@ include: "NiTi.Snakefile"
 
 include: "PtTi.Snakefile"
 
-
-
+# NOTE: My intent is to cache the database, but I think this is not needed
+# I believe the purpose behind caching is to store intermediate results between
+# rules/workflows. For example if you need to fetch a database and had rules
+# that kept doing this, then you could cache that fetch. I think!.
+# What I was tyring to do was create the action of storing the databse once its
+# created because I'm frequentyly changeing whats being added to the database.
+rule cache_db:
+    input:
+        db="src/data/" + DATABASE,
+        niti_done="src/data/COMPLETED_TASKS/niti.database.aggregated.done",
+        ptti_done="src/data/COMPLETED_TASKS/ptti.database.aggregated.done"
+    output:
+        dbc = "src/data/CACHED/" + DATABASE
+    cache:
+        True
+    shell:
+        "mkdir -p src/data/CACHED && cp src/data/{DATABASE} src/data/CACHED/"

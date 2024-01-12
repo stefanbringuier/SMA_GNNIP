@@ -67,7 +67,12 @@ def get_element_basis_list(structure, spacegroup, tol=1e-3):
 def generate_structure_table(dbname, chemsys, output_filename):
     db = connect(dbname)
 
+    sorder = ORDER[chemsys]["structure"]
+    default_order = max(sorder.values())
     unique_structure_types = set(entry.structure_name for entry in db.select())
+    structure_order = sorted(unique_structure_types, key=lambda x: sorder.get(x, default_order))
+
+    
 
     with open(output_filename, "w") as file:
         file.write("\\begin{longtable}{|l|c|}\n")
@@ -85,7 +90,7 @@ def generate_structure_table(dbname, chemsys, output_filename):
         file.write("\\hline\n")
         file.write("\\endfoot\n")
 
-        for structure_type in unique_structure_types:
+        for structure_type in structure_order:
             structure_name = structure_type.replace("_", "-")
             spg_num = SPACEGROUP_MAP[structure_name]
             file.write(f"{structure_name}\n({spg_num}) & ")
@@ -98,8 +103,8 @@ def generate_structure_table(dbname, chemsys, output_filename):
 
             # Filter and sort based on models defined in ORDER
             sentries = sorted(
-                [entry for entry in entries if entry.model_name in ORDER[chemsys]],
-                key=lambda entry: ORDER[chemsys][entry.model_name]
+                [entry for entry in entries if entry.model_name in ORDER[chemsys]["model"]],
+                key=lambda entry: ORDER[chemsys]["model"][entry.model_name]
             )
 
             for entry in sentries:

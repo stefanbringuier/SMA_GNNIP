@@ -2,13 +2,21 @@ import sys
 from ase.db import connect
 import paths
 
+from TableConfig import SPACEGROUP_MAP, ORDER
+
 
 def generate_elastic_constants_table(dbname, chemsys, output_filename):
     db = connect(dbname)
+    
+    sorder = ORDER[chemsys]["structure"]
+    default_order = max(sorder.values())
+    unique_structure_types = set(entry.structure_name for entry in db.select())
+    structure_order = sorted(unique_structure_types, key=lambda x: sorder.get(x, default_order))
+
 
     with open(output_filename, "w") as file:
         # Top-level table with two main columns
-        file.write("\\begin{longtable}{|l|c|}\n")
+        file.write("\\begin{longtable}{|l|l|}\n")
         file.write(
             "\\caption{Elastic constants for "
             + chemsys
@@ -17,7 +25,7 @@ def generate_elastic_constants_table(dbname, chemsys, output_filename):
             + "}\\\\\n"
         )
         file.write("\\hline\n")
-        file.write("Structure & Properties \\\\\n")
+        file.write("Structure (\#) & Properties \\\\\n")
         file.write("\\hline\n")
         file.write("\\endfirsthead\n")
         file.write(
@@ -29,26 +37,30 @@ def generate_elastic_constants_table(dbname, chemsys, output_filename):
         file.write("\\hline\n")
         file.write("\\endfoot\n")
 
-        # Group entries by structure type
-        grouped_entries = {}
-        for entry in db.select(chemsys=chemsys):
-            structure_name = entry.structure_name.replace("_", "-")
-            if structure_name not in grouped_entries:
-                grouped_entries[structure_name] = []
-            grouped_entries[structure_name].append(entry)
+        for structure_type in structure_order:
+            structure_name = structure_type.replace("_", "-")
+            spg_num = SPACEGROUP_MAP[structure_name]
+            file.write(f"{structure_name} ({spg_num}) & ")
 
-        # Process each group
-        for structure_name, entries in grouped_entries.items():
-            file.write(f"{structure_name} & ")
+            entries = db.select(chemsys=chemsys, structure_name=structure_type)
 
-            # Subtable for model and elastic constants
-            file.write("\\begin{tabular}{c|c|c|c|c|c|c|c|c|c|c|c|c|c}\n")
+            # Filter and sort based on models defined in ORDER
+            sentries = sorted(
+                [
+                    entry
+                    for entry in entries
+                    if entry.model_name in ORDER[chemsys]["model"]
+                ],
+                key=lambda entry: ORDER[chemsys]["model"][entry.model_name],
+            )
+
+            file.write("\\begin{tabularx}{\columnwidth}{X X X X X X X X X X X X X X }\n")
             file.write(
                 "Model & C$_{11}$ & C$_{22}$ & C$_{33}$ & C$_{12}$ & C$_{13}$ & C$_{23}$ & C$_{44}$ & C$_{55}$ & C$_{66}$ & C$_{16}$ & C$_{26}$ & C$_{36}$ & C$_{45}$ \\\\\n"
             )
             file.write("\\hline\n")
 
-            for entry in entries:
+            for entry in sentries:
                 model_name = entry.get("model_name", "NA")
                 elastic_data = entry.data.get("elastic_constants", {})
                 file.write(f"{model_name} & ")
@@ -68,18 +80,19 @@ def generate_elastic_constants_table(dbname, chemsys, output_filename):
                     "C_45",
                 ]
                 for i, ec in enumerate(c):
-                    value = elastic_data.get(ec, "-")
-                    if i < len(c):
-                        file.write(f"{value} & ")
-                file.write("\\\\\n")
-
-            file.write("\\end{tabular} \\\\\n")
+                    val = elastic_data.get(ec, "-")
+                    sval = f"{val:0.0f}" if val != "-" else val
+                    if i < len(c) - 1:
+                        file.write(f"{sval} & ")
+                    else:
+                        file.write(f"{sval} \\\\\n")
+                        
+            file.write("\\end{tabularx} \\\\\n")
             file.write("\\hline\n")
 
         file.write("\\end{longtable}\n")
 
     return None
-
 
 if __name__ == "__main__":
     dbname = sys.argv[1]

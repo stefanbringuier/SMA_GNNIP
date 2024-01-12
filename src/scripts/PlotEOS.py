@@ -17,7 +17,7 @@ def plot_eos(
     dbname,
     chemsys,
     output_plot,
-    figsize=(3.4, 5.75),
+    figsize=(7.24, 7.24),
     dpi=600,
     xlim=(0.75, 1.25),
     ignore_list=["B32", "R_Phase"],
@@ -49,7 +49,7 @@ def plot_eos(
     structure_names = set(row.structure_name for row in db.select(chemsys=chemsys))
 
     # Create a figure with a 2x3 grid of subplots
-    fig, axs = plt.subplots(3, 2, figsize=figsize)
+    fig, axs = plt.subplots(2, 3, figsize=figsize)
     axs = axs.ravel()  # Flatten the array of axes for easier indexing
 
     # Create a color cycle iterator using a slightly modified color palette

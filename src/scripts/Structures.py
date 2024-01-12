@@ -120,7 +120,7 @@ def PtTi_B19_Structure(a=4.61, b=2.76, c=4.86, alpha=90.0, beta=90.0, gamma=90.0
     Suppl. Mater. Appendix A
     """
     B19 = crystal(
-        ["Pb", "Ti"],
+        ["Pt", "Ti"],
         [(0.25, 0.0, 0.6874), (0.25, 0.50, 0.1958)],
         cellpar=[a, b, c, alpha, beta, gamma],
         pbc=True,
@@ -128,7 +128,7 @@ def PtTi_B19_Structure(a=4.61, b=2.76, c=4.86, alpha=90.0, beta=90.0, gamma=90.0
     )
 
     B19.info["structure_name"] = "B19"
-    B19.info["chemsys"] = "PbTi"
+    B19.info["chemsys"] = "PtTi"
     return B19
 
 
@@ -259,7 +259,7 @@ def get_structure(chemsys, structure_name):
     elif chemsys == "PtTi":
         structure_functions = {
             "B2": PtTi_B2_Structure,
-            "B19": PbTi_B19_Structure,
+            "B19": PtTi_B19_Structure,
         }
 
     if structure_name not in structure_functions:
@@ -362,7 +362,7 @@ def spacegroup51_bandpath(
     npoints=200,
 ):
     """
-    Need to verify special points  because c-axis is taken as largest in NiTi/PbTi B19.
+    Need to verify special points  because c-axis is taken as largest in NiTi/PtTi B19.
     """
 
     cell = structure.cell

@@ -175,7 +175,7 @@ def plot_individual_phonon_bandstructure(dbname, chemsys, model_name, structure_
 
 
 def plot_all_strains_phonons(
-    dbname, chemsys, model_name, structure_name, num_strains=None
+        dbname, chemsys, model_name, structure_name, num_strains=None, strain_range=(-1.0,1.0),
 ):
     """
     Plot all strain phonon bandstructures on one plot with optical branches semi-transparent.
@@ -206,6 +206,7 @@ def plot_all_strains_phonons(
         # NOTE: I create a evenly space sampling of strains from min to max, but
         # it might also be need to provide ranges based on model
         strains = sorted(first_row.data["strain_phonons"].keys(), key=float)
+        
         if num_strains is not None and num_strains < len(strains):
             strain_indices = np.round(
                 np.linspace(0, len(strains) - 1, num_strains)
@@ -302,10 +303,18 @@ def plot_all_model_phonons(
 ):
     """
     This function creates a grid of phonon bandstructure plots for each model.
+
+    TODO: 
+     Need to refactor this function. The main issue is the database will have
+    several models that I may not want to plot or use.
+
+    Can I do this with db.select? That is
+    1. get entries for all wanted models,
+    2. loop through and plot.
     """
     with connect(dbname) as db:
         # Determine the grid size
-        rows = int(np.ceil(len(SUBPLOT_ORDER) / columns))
+        rows = int(np.ceil(len(SUBPLOT_ORDER[chemsys]) / columns))
 
         # Create a grid of subplots
         fig = plt.figure(figsize=(12, 4 * rows))
