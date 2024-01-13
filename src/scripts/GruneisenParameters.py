@@ -2,12 +2,29 @@ import paths
 import sys
 import numpy as np
 import numpy.polynomial.polynomial as poly
+
+# TODO: Move to ConfigPlots and use for all.
 import matplotlib.pyplot as plt
+import matplotlib.style as style
+# Tufte-inspired style
+#style.use('seaborn-whitegrid')
+plt.rcParams['font.family'] = 'serif'
+plt.rcParams['font.serif'] = 'Times New Roman'
+plt.rcParams['axes.labelsize'] = 10
+plt.rcParams['axes.titlesize'] = 12
+plt.rcParams['xtick.labelsize'] = 8
+plt.rcParams['ytick.labelsize'] = 8
+plt.rcParams['legend.fontsize'] = 8
+plt.rcParams['figure.dpi'] = 300
+
 
 from ase.db import connect
 
 from TableConfig import ORDER
 
+# Function to apply the signed log transformation
+def log_transform(val):
+    return np.sign(val) * np.log10(abs(val) + 1)
 
 def find_index(data, label):
     """
@@ -131,7 +148,7 @@ def calculate_mode_gruneisen(dbentry, q="M"):
         b[mode_index] for b in phonons["0.00"]["bandstructure"]["band_index"].values()
     ]
     gamma = -v0 / np.array(omega0) * mode_gruneisen(phonons, q)
-    return phonons, gamma
+    return omega0, gamma
 
 
 def calculate_gruneisen(dbname, model_name, structure_name):
@@ -196,7 +213,9 @@ def generate_mode_gruneisen_table(
     Create a LaTeX table of the M point Gruneisen parameter.
     """
     db = connect(dbname)
-    unique_structure_types = set(entry.structure_name for entry in db.select(chemsys=chemsys))
+    unique_structure_types = set(
+        entry.structure_name for entry in db.select(chemsys=chemsys)
+    )
 
     with open(output_filename, "w") as file:
         file.write("\\begin{table}[h]\n")
@@ -222,12 +241,16 @@ def generate_mode_gruneisen_table(
             file.write("Model & TA$_1$ & TA$_2$ & LA & TO$_1$ & TO$_2$ & LO \\\\\n")
             file.write("\\hline\n")
 
-            entries = db.select(chemsys=chemsys,structure_name=name)
+            entries = db.select(chemsys=chemsys, structure_name=name)
 
             # Filter and sort based on models defined in ORDER
             sentries = sorted(
-                [entry for entry in entries if entry.model_name in ORDER[chemsys]['model']],
-                key=lambda entry: ORDER[chemsys]['model'][entry.model_name]
+                [
+                    entry
+                    for entry in entries
+                    if entry.model_name in ORDER[chemsys]["model"]
+                ],
+                key=lambda entry: ORDER[chemsys]["model"][entry.model_name],
             )
 
             for entry in sentries:
@@ -249,6 +272,41 @@ def generate_mode_gruneisen_table(
         file.write("\\end{table}\n")
 
 
+def generate_mode_gruneisen_plot(
+    dbname, chemsys, output_filename, structure_name="B2", q="M"
+):
+    """
+    Plot for given q-point the gruneisen param vs. eigenfrequency
+    """
+    db = connect(dbname)
+    unique_models = db.select(chemsys=chemsys, structure_name=structure_name)
+
+    # Filter and sort based on models defined in ORDER
+    sentries = sorted(
+        [
+            entry
+            for entry in unique_models
+            if entry.model_name in ORDER[chemsys]["model"]
+        ],
+        key=lambda entry: ORDER[chemsys]["model"][entry.model_name],
+    )
+    # Figure size for one-column width (inches)
+    plt.figure(figsize=(3.5, 2.5))
+
+    for entry in sentries:
+        model_name = entry.get("model_name", "NA")
+        omega0, gammas = calculate_mode_gruneisen(entry)
+        plt.plot(omega0, log_transform(gammas), label=f"{model_name}", marker='o', markersize=4, linestyle='-')
+
+    plt.xlabel("Eigenfrequency [THz]")
+    m = r'\text{sign}(\gamma) \cdot \ln(|\gamma|)$'
+    plt.ylabel(r"Gruneisen Parameter [{q}-Mode,{m}]")
+    plt.legend()
+    plt.tight_layout()  # Adjusts the plot to fit into the figure area.
+    plt.savefig(output_filename, format='png')  # Save as PDF for high quality
+    plt.close()
+
+
 def plot_gruneisen(gruneisen_data, output_filename):
     if gruneisen_data is None:
         print("No data to plot.")
@@ -257,7 +315,7 @@ def plot_gruneisen(gruneisen_data, output_filename):
     q_points = gruneisen_data["q_points"]
     num_bands = len(gruneisen_data["band_index"])
 
-    plt.figure(figsize=(10, 6))
+    plt.figure()
     for band_index in range(1, num_bands + 1):
         gamma_values = gruneisen_data["band_index"][band_index]
         plt.plot(q_points, gamma_values, label=f"Band {band_index}")
@@ -285,8 +343,8 @@ def plot_gruneisen_frequency(phonons, gruneisen_data, output_filename):
         plt.scatter(frequencies, gamma_values, label=f"Band {band_index}")
 
     plt.ylim((-50, 50))
-    plt.xlabel("Frequency")
-    plt.ylabel("Gruneisen Parameter")
+    # plt.xlabel("Frequency")
+    # plt.ylabel("Gruneisen Parameter")
     plt.title("Gruneisen Parameters vs. Frequency")
     plt.legend()
     plt.savefig(output_filename)
@@ -300,4 +358,7 @@ if __name__ == "__main__":
     output_file = paths.output / f"Table_{chemsys}_{q}_ModeGruneisen.tex"
     generate_mode_gruneisen_table(
         paths.data / dbname, chemsys, output_file, structure_name=structure_name, q=q
+    )
+    generate_mode_gruneisen_plot(
+        paths.data / dbname, chemsys, paths.figures / f"Plot_{chemsys}_{q}_ModeGruneisen.png", structure_name=structure_name, q=q
     )
