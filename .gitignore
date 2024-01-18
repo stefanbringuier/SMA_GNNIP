@@ -10,6 +10,7 @@ arxiv.tar.gz
 # LaTeX and Figure output
 src/tex/figures/*
 src/tex/auto/*
+src/tex/indent.log
 
 # Miscellaneous
 __pycache__

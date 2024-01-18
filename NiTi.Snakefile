@@ -1,79 +1,97 @@
 ### PART OF MAIN Snakefile     ###
 ### THIS IS ALL NiTi RULES     ###
-NiTi_CHEMSYS="NiTi"
-NiTi_PROCESS_MODELS = ["Mutter","Zhong","Ko","M3GNet","CHGNet","MACE"]
+NiTi_CHEMSYS = "NiTi"
+NiTi_PROCESS_MODELS = ["Mutter", "Zhong", "Ko", "M3GNet", "CHGNet", "MACE"]
+
 
 # Rule to aggregate the NiTi to database
 rule aggregate_niti_db:
     input:
         db="src/data/" + DATABASE,
-	create="src/data/COMPLETED_TASKS/created.database.done",
+        create="src/data/COMPLETED_TASKS/created.database.done",
         #minimize="src/scripts/MinimizeStructure.py",
         #eos="src/scripts/CalculateEOS.py",
         #phonons="src/scripts/CalculatePhonons.py",
         #elastic="src/scripts/CalculateElastic.py",
-        mineos_calc=expand("src/data/COMPLETED_TASKS/{chemsys}_{structure}_{model}.min_eos.done",chemsys=NiTi_CHEMSYS, structure=NiTi_STRUCTURES, model=NiTi_PROCESS_MODELS),
-        phonons_calc=expand("src/data/COMPLETED_TASKS/{chemsys}_{structure}_{model}.phonons.done",chemsys=NiTi_CHEMSYS, structure=NiTi_STRUCTURES, model=NiTi_PROCESS_MODELS),
-        elastic_calc=expand("src/data/COMPLETED_TASKS/{chemsys}_{structure}_{model}.elastic.done",chemsys=NiTi_CHEMSYS, structure=NiTi_STRUCTURES, model=NiTi_PROCESS_MODELS),
+        mineos_calc=expand(
+            "src/data/COMPLETED_TASKS/{chemsys}_{structure}_{model}.min_eos.done",
+            chemsys=NiTi_CHEMSYS,
+            structure=NiTi_STRUCTURES,
+            model=NiTi_PROCESS_MODELS,
+        ),
+        phonons_calc=expand(
+            "src/data/COMPLETED_TASKS/{chemsys}_{structure}_{model}.phonons.done",
+            chemsys=NiTi_CHEMSYS,
+            structure=NiTi_STRUCTURES,
+            model=NiTi_PROCESS_MODELS,
+        ),
+        elastic_calc=expand(
+            "src/data/COMPLETED_TASKS/{chemsys}_{structure}_{model}.elastic.done",
+            chemsys=NiTi_CHEMSYS,
+            structure=NiTi_STRUCTURES,
+            model=NiTi_PROCESS_MODELS,
+        ),
     output:
-        aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done"
+        aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done",
     shell:
         "touch {output.aggregated}"
+
 
 # NOTE: System environment needs to have xvfb-run or remove if display server exist
 rule visualize_niti_structures:
     input:
         structures="src/scripts/Structures.py",
-        script="src/scripts/VisualizeStructures.py"
+        script="src/scripts/VisualizeStructures.py",
     output:
-        figure="src/tex/figures/NiTi_VisualizedStructures.png"
-    threads:
-        4
+        figure="src/tex/figures/NiTi_VisualizedStructures.png",
+    threads: 4
     conda:
         "env/ovito.yml"
     params:
-        chemsys="NiTi"
+        chemsys="NiTi",
     shell:
         "xvfb-run python src/scripts/VisualizeStructures.py {params.chemsys} {NiTi_STRUCTURES}"
+
 
 # Rule for plotting NiTi Cohesive Energy
 rule plot_niti_ecoh:
     input:
-        data = "src/data/CACHED/" + DATABASE,
+        data="src/data/CACHED/" + DATABASE,
         script="src/scripts/PlotCohesiveEnergy.py",
-        aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done"
+        aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done",
     output:
-        figure="src/tex/figures/NiTi_CohesiveEnergyPlot.png"
-    threads:
-        1
+        figure="src/tex/figures/NiTi_CohesiveEnergyPlot.png",
+    threads: 1
     conda:
         "env/ase.yml"
     params:
-        chemsys="NiTi"
+        chemsys="NiTi",
     shell:
         "python src/scripts/PlotCohesiveEnergy.py {DATABASE} {params.chemsys}"
+
 
 # Rule for plotting NiTi EOS
 rule plot_niti_eos:
     input:
-        data = "src/data/" + DATABASE,
+        data="src/data/CACHED/" + DATABASE,
         script="src/scripts/PlotEOS.py",
-        aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done"
+        aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done",
     output:
-        figure="src/tex/figures/NiTi_EquationOfStates.png"
+        figure="src/tex/figures/NiTi_EquationOfStates.png",
     conda:
         "env/ase.yml"
     params:
-        chemsys="NiTi"
+        chemsys="NiTi",
     shell:
         "python src/scripts/PlotEOS.py {DATABASE} {params.chemsys}"
+
 
 # Rule for plotting NiTi phonons
 rule plot_niti_phonons:
     input:
-        data = "src/data/" + DATABASE,
+        data="src/data/CACHED/" + DATABASE,
         plotphonons="src/scripts/PlotPhonons.py",
-        aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done"
+        aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done",
     output:
         figure_all_models_B2="src/tex/figures/NiTi_B2_ModelsPhononBandstructures.png",
         figure_all_models_B19P="src/tex/figures/NiTi_B19P_ModelsPhononBandstructures.png",
@@ -89,7 +107,7 @@ rule plot_niti_phonons:
         "env/ase.yml"
     params:
         num_strains=5,
-        chemsys="NiTi"
+        chemsys="NiTi",
     shell:
         "python src/scripts/PlotPhonons.py \
         {DATABASE} \
@@ -98,35 +116,38 @@ rule plot_niti_phonons:
         --models {NiTi_PROCESS_MODELS} \
         --structures {NiTi_STRUCTURES}"
 
+
 # # Rule for generating NiTi M-Mode Gruneisen parameters.
 rule generate_niti_m_mode_gruneisen:
-     input:
-         data = "src/data/" + DATABASE,
-         script="src/scripts/GruneisenParameters.py",
-         aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done"
-     output:
-         table="src/tex/output/Table_NiTi_M_ModeGruneisen.tex"
-     conda:
-         "env/ase.yml"
-     params:
-         chemsys="NiTi",
-         structure="B2",
-         qpoint="M"
-     shell:
-         "python src/scripts/GruneisenParameters.py {DATABASE} {params.chemsys} {params.structure} {params.qpoint}"
+    input:
+        data="src/data/CACHED/" + DATABASE,
+        script="src/scripts/GruneisenParameters.py",
+        aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done",
+    output:
+        table="src/tex/output/Table_NiTi_M_ModeGruneisen.tex",
+        figure="src/tex/figures/Plot_NiTi_M_ModeGruneisen.png",
+    conda:
+        "env/ase.yml"
+    params:
+        chemsys="NiTi",
+        structure="B2",
+        qpoint="M",
+    shell:
+        "python src/scripts/GruneisenParameters.py {DATABASE} {params.chemsys} {params.structure} {params.qpoint}"
+
 
 # Rule for generating NiTi equilibrium table
 rule generate_niti_elastic_table:
     input:
-        data = "src/data/" + DATABASE,
+        data="src/data/CACHED/" + DATABASE,
         script="src/scripts/GenerateElasticTable.py",
-        aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done"
+        aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done",
     output:
-        table="src/tex/output/Table_NiTi_Elastic_Constants.tex"
+        table="src/tex/output/Table_NiTi_Elastic_Constants.tex",
     conda:
         "env/ase.yml"
     params:
-        chemsys="NiTi"
+        chemsys="NiTi",
     shell:
         "python src/scripts/GenerateElasticTable.py {DATABASE} {params.chemsys}"
 
@@ -134,45 +155,14 @@ rule generate_niti_elastic_table:
 # Appendix: Rule for generating NiTi equilibrium table
 rule generate_niti_equil_table:
     input:
-        data = "src/data/" + DATABASE,
+        data="src/data/CACHED/" + DATABASE,
         script="src/scripts/GenerateEquilibriumTable.py",
-        aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done"
+        aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done",
     output:
-        table="src/tex/output/Table_NiTi_Equilibrium_Structures.tex"
+        table="src/tex/output/Table_NiTi_Equilibrium_Structures.tex",
     conda:
         "env/ase.yml"
     params:
-        chemsys="NiTi"
+        chemsys="NiTi",
     shell:
         "python src/scripts/GenerateEquilibriumTable.py {DATABASE} {params.chemsys}"
-
-
-rule generate_niti_bz_appendix:
-    input:
-        script="src/scripts/AppendixBZ.py",
-    output:
-        figure_ibz_B2 = "src/tex/figures/B2_BrillouinZonePointsSampled.png",
-        figure_ibz_B19 = "src/tex/figures/B19_BrillouinZonePointsSampled.png",
-        figure_ibz_B19P = "src/tex/figures/B19P_BrillouinZonePointsSampled.png",
-        figure_ibz_BCO = "src/tex/figures/BCO_BrillouinZonePointsSampled.png",
-        table_qpoints_B2 = "src/tex/output/B2_SpecialSymmetryPointsBZ.tex",
-        table_qpoints_B19 ="src/tex/output/B19_SpecialSymmetryPointsBZ.tex",
-        table_qpoints_B19P ="src/tex/output/B19P_SpecialSymmetryPointsBZ.tex",
-        table_qpoints_BCO ="src/tex/output/BCO_SpecialSymmetryPointsBZ.tex",
-    conda:
-        "env/ase.yml"
-    script:
-        "src/scripts/AppendixBZ.py"
-
-rule show_phonon_config_appendix:
-    input:
-        config="src/scripts/Config.py",
-        script="src/scripts/WriteCodeToTex.py"
-    output:
-        code_listing="src/tex/output/Phonons_ConfigSettingsCode.tex"
-    params:
-        code="Config.py",
-        funcname="get_phonon_config",
-        output="Phonons_ConfigSettingsCode.tex",
-    shell:
-        "python src/scripts/WriteCodeToTex.py {params.code} {params.funcname} {params.output}"
