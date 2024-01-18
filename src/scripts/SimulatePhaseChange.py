@@ -1,14 +1,13 @@
 import sys
-import paths
-import numpy as np
-from ase.db import connect
-from ase.io import Trajectory
-from ase.md import MDLogger
-from ase.units import fs, bar, kg, m, GPa
-from ase.md.velocitydistribution import MaxwellBoltzmannDistribution
-from ase.md.npt import NPT
-from ase.io import read, write
 
+import numpy as np
+import paths
+from ase.db import connect
+from ase.io import Trajectory, read, write
+from ase.md import MDLogger
+from ase.md.npt import NPT
+from ase.md.velocitydistribution import MaxwellBoltzmannDistribution
+from ase.units import GPa, bar, fs, kg, m
 from Calculators import get_ase_calculator
 
 
@@ -36,8 +35,8 @@ class CustomMDLogger(MDLogger):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.cumulative_time = 0.0 / (1000 * fs)
-        self.density = (0.0 * 1.0e-3 * kg) / ((1.0e-2 * m)**3)
-        
+        self.density = (0.0 * 1.0e-3 * kg) / ((1.0e-2 * m) ** 3)
+
     def __call__(self):
         # Obtain potential and kinetic energy, and temperature
         epot = self.atoms.get_potential_energy()
@@ -57,23 +56,22 @@ class CustomMDLogger(MDLogger):
                 factor = (self.cumulative_time + current_time) % self.cumulative_time
             except ZeroDivisionError:
                 factor = 0.0e0
-            
+
             if not factor != 0.0e0:
                 display_time = self.cumulative_time + current_time
             else:
                 display_time = self.cumulative_time
 
-
         dat = (display_time, epot + ekin, epot, ekin, temp)
-        
+
         # Include stress in the log if requested
         if self.stress:
             stress_data = tuple(self.atoms.get_stress(include_ideal_gas=True) / GPa)
             dat += stress_data
 
-        #self.add_density()
+        # self.add_density()
 
-        #dat += (self.density)
+        # dat += (self.density)
 
         # Write data to the logfile
         self.logfile.write(self.fmt % dat)
@@ -88,12 +86,13 @@ class CustomMDLogger(MDLogger):
         mass = self.atoms.get_masses().sum() * grams
         volume = self.atoms.cell.volume * cm**3
         if volume > 0:  # Check to avoid division by zero
-            self.density = mass/volume
+            self.density = mass / volume
         else:
             self.density = 0.0  # or handle this case as needed
         # Add to formatter
-        self.hdr += (" Density [g/cm^3]")
+        self.hdr += " Density [g/cm^3]"
         self.fmt += " %10.6f\n"
+
 
 def simulate_dynamics(
     dbname,
@@ -140,7 +139,6 @@ def simulate_dynamics(
         mask=(1, 1, 1),
     )
 
-
     equil_dynamics.run(10)
 
     # Logging
@@ -149,9 +147,11 @@ def simulate_dynamics(
         / model_name.upper()
         / f"{formula}_{structure_name}_{model_name}_MD-NPT.log"
     )
-    
+
     # Logger, tie to equil_dynamics but not used
-    logger = CustomMDLogger(equil_dynamics, structure, log_path, header=True, stress=True, mode="w")
+    logger = CustomMDLogger(
+        equil_dynamics, structure, log_path, header=True, stress=True, mode="w"
+    )
 
     # Step 2: Phase transformation
     # Doing a quasi-equilibrium dynamics, hold 10 ps at NPT in 10 K decrements
@@ -165,7 +165,6 @@ def simulate_dynamics(
 
     cumalitive_time = 0.0e0 * fs
     for t in np.arange(initial_temp, final_temp, -temp_step):
-
         # Mask should only allow for x, y, z, and xz componenets to change.
         dynamics = NPT(
             structure,

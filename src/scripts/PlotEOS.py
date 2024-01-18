@@ -1,14 +1,17 @@
 import sys
-import numpy as np
 import warnings
-import paths
 
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
-from matplotlib.ticker import MultipleLocator
-from cycler import cycler
+import numpy as np
+import paths
+import scienceplots
 import seaborn as sns  # For color palette
 from ase.db import connect
+from cycler import cycler
+from matplotlib.ticker import MultipleLocator
+
+plt.style.use(["science", "scatter", "no-latex"])
 
 from PlotConfigs import SUBPLOT_ORDER
 
@@ -25,11 +28,11 @@ def plot_eos(
     n_colors=10,
     wspace=0.3,
     hspace=0.3,
-    linewidth=1,
+    linewidth=0.75,
     linestyle="-",
-    fontsize=8,
-    tick_fontsize=6,
-    legend_fontsize=8,
+    fontsize=5,
+    tick_fontsize=5,
+    legend_fontsize=6,
     legend_ncol=5,
     label_notes="EOS_Labels.txt",
 ):
@@ -49,7 +52,7 @@ def plot_eos(
     structure_names = set(row.structure_name for row in db.select(chemsys=chemsys))
 
     # Create a figure with a 2x3 grid of subplots
-    fig, axs = plt.subplots(2, 3, figsize=figsize)
+    fig, axs = plt.subplots(2, 3)  # , figsize=figsize)
     axs = axs.ravel()  # Flatten the array of axes for easier indexing
 
     # Create a color cycle iterator using a slightly modified color palette
@@ -71,10 +74,10 @@ def plot_eos(
             ax.set_prop_cycle(cycler(color=color_cycle))
             ax.set_xlim(xlim)
             ax.xaxis.set_major_locator(MultipleLocator(0.1))
-            ax.yaxis.set_major_locator(ticker.MaxNLocator(nbins=6))
+            ax.yaxis.set_major_locator(ticker.MaxNLocator(nbins=4))
 
-            ax.tick_params(axis="both", direction="in", length=2)
-            ax.tick_params(labelsize=tick_fontsize)
+            # ax.tick_params(axis="both", direction="in", length=2)
+            # ax.tick_params(labelsize=tick_fontsize)
 
             ax.axvline(x=1.0, color="lightgray", linestyle=":", linewidth=linewidth)
 
@@ -82,6 +85,7 @@ def plot_eos(
                 if structure_name in ignore_list:
                     continue  # Skip the structures in the ignore list
 
+                ymin, ymax = [], []
                 for row in db.select(
                     chemsys=chemsys,
                     model_name=calculator_model,
@@ -106,9 +110,14 @@ def plot_eos(
                     )
 
                     # Update the global y-axis limits
-                    ymin = min(energy_per_atom) - 0.1
-                    ymax = max(energy_per_atom) * 1.05
-                    ax.set_ylim((ymin, ymax))
+                    ymin.append(min(energy_per_atom))
+                    ymax.append(max(energy_per_atom))
+
+                ax.set_ylim((min(ymin) - 0.05, max(ymax) * 1.10))
+                ax.tick_params(axis="x", which="minor", bottom=False, top=False)
+                # ax.tick_params(axis='y', which='minor', right=False, left=False)
+                ax.tick_params(axis="x", labelsize=fontsize)
+                ax.tick_params(axis="y", labelsize=fontsize)
 
         handles, labels = axs[-1].get_legend_handles_labels()
         fig.legend(

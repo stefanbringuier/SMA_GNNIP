@@ -1,9 +1,6 @@
-import paths
-
 import matplotlib.pyplot as plt
-
+import paths
 from Structures import *
-
 
 structure_names = ["B2", "B19", "B19P", "BCO"]
 fmap = {
@@ -17,7 +14,7 @@ for name in structure_names:
     structure = fmap[name]()
     structure.info["name"] = name
     spg = structure.info["spacegroup"].no
-    path, _ = get_bandpath(structure,npoints=1)
+    path, _ = get_bandpath(structure, npoints=1)
     bz_diagram = f"{name}_BrillouinZonePointsSampled.png"
     bz_plot = path.plot(vectors=True)
     bz_plot.figure.savefig(paths.figures / bz_diagram)

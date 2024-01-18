@@ -1,13 +1,14 @@
-import paths
 import re
 import sys
+
+import paths
 
 
 def extract_function(source_file, function_name):
     with open(source_file, "r") as file:
         code = file.read()
 
-    pattern = re.compile(rf'(def {function_name}\(.*?:\n(?:\s+.*\n)+)', re.MULTILINE)
+    pattern = re.compile(rf"(def {function_name}\(.*?:\n(?:\s+.*\n)+)", re.MULTILINE)
     match = pattern.search(code)
 
     if match:

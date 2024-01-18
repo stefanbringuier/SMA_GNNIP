@@ -1,14 +1,12 @@
-import paths
 from copy import deepcopy
 
-from ase.db import connect
 import ase.units as units
-from ase.spacegroup import crystal
+import paths
 from ase.calculators.lammpslib import LAMMPSlib
-
-from elastic import get_elementary_deformations
+from ase.db import connect
+from ase.spacegroup import crystal
+from elastic import get_elastic_tensor, get_elementary_deformations
 from elastic.elastic import get_cij_order
-from elastic import get_elastic_tensor
 
 
 def serial_calculate(systems, calculator):
@@ -77,7 +75,7 @@ def calculate_elastic_constants(
     entry = db.get(
         chemsys=chemsys, structure_name=structure_name, model_name=potname, relaxed=True
     )
-    
+
     spg = entry.spacegroup
     structure = crystal(entry.toatoms(), spacegroup=spg)
     # calculator.clean = potential[1].reset

@@ -1,17 +1,13 @@
-import sys
 import re
-import numpy as np
-from math import gcd
+import sys
 from functools import reduce
+from math import gcd
+
+import numpy as np
 import paths
-
-
 from ase.db import connect
-from ase.spacegroup import get_basis
-from ase.spacegroup import Spacegroup, get_spacegroup
-
-
-from TableConfig import SPACEGROUP_MAP, ORDER
+from ase.spacegroup import Spacegroup, get_basis, get_spacegroup
+from TableConfig import ORDER, SPACEGROUP_MAP
 
 
 def get_element_basis_list(structure, spacegroup, tol=1e-3):
@@ -70,9 +66,9 @@ def generate_structure_table(dbname, chemsys, output_filename):
     sorder = ORDER[chemsys]["structure"]
     default_order = max(sorder.values())
     unique_structure_types = set(entry.structure_name for entry in db.select())
-    structure_order = sorted(unique_structure_types, key=lambda x: sorder.get(x, default_order))
-
-    
+    structure_order = sorted(
+        unique_structure_types, key=lambda x: sorder.get(x, default_order)
+    )
 
     with open(output_filename, "w") as file:
         file.write("\\begin{longtable}{|l|c|}\n")
@@ -103,8 +99,12 @@ def generate_structure_table(dbname, chemsys, output_filename):
 
             # Filter and sort based on models defined in ORDER
             sentries = sorted(
-                [entry for entry in entries if entry.model_name in ORDER[chemsys]["model"]],
-                key=lambda entry: ORDER[chemsys]["model"][entry.model_name]
+                [
+                    entry
+                    for entry in entries
+                    if entry.model_name in ORDER[chemsys]["model"]
+                ],
+                key=lambda entry: ORDER[chemsys]["model"][entry.model_name],
             )
 
             for entry in sentries:

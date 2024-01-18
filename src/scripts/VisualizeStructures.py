@@ -1,34 +1,29 @@
-import sys
-import paths
-from math import cos, sin, degrees, radians, sqrt
-
-import matplotlib.pyplot as plt
-from ase.visualize.plot import plot_atoms
-
-from Structures import get_structure
-
-import matplotlib.pyplot as plt
-from ase.visualize.plot import plot_atoms
-
 import io
-from PIL import Image, ImageDraw, ImageFont
-from PySide6.QtCore import QBuffer, QIODevice
+import sys
+from math import cos, degrees, radians, sin, sqrt
+
+import matplotlib.pyplot as plt
+import paths
+from ase.visualize.plot import plot_atoms
 from ovito.io.ase import ase_to_ovito
-from ovito.pipeline import StaticSource, Pipeline
 from ovito.modifiers import (
-    ReplicateModifier,
-    ExpressionSelectionModifier,
     DeleteSelectedModifier,
+    ExpressionSelectionModifier,
+    ReplicateModifier,
 )
+from ovito.pipeline import Pipeline, StaticSource
+from ovito.qt_compat import QtCore
 from ovito.vis import (
-    Viewport,
-    TextLabelOverlay,
     CoordinateTripodOverlay,
-    TachyonRenderer,
     OpenGLRenderer,
     OSPRayRenderer,
+    TachyonRenderer,
+    TextLabelOverlay,
+    Viewport,
 )
-from ovito.qt_compat import QtCore
+from PIL import Image, ImageDraw, ImageFont
+from PySide6.QtCore import QBuffer, QIODevice
+from Structures import get_structure
 
 
 def ovito_visualize_and_save(structures, filename, renderer="OpenGL"):
@@ -46,7 +41,7 @@ def ovito_visualize_and_save(structures, filename, renderer="OpenGL"):
         # Replicate the structure
         n = 3
         pipeline.modifiers.append(
-            ReplicateModifier(num_x=n, num_y=n-1, num_z=n, adjust_box=False)
+            ReplicateModifier(num_x=n, num_y=n - 1, num_z=n, adjust_box=False)
         )
 
         # Select and delete atoms outside the original box
@@ -110,7 +105,7 @@ def ovito_visualize_and_save(structures, filename, renderer="OpenGL"):
         viewport.camera_pos = (1.21445, -0.0105608, 1.31315)
         viewport.camera_dir = (-0.0990148, 0.990148, -0.0990148)
         viewport.camera_up = (-0.00985234, 0.0985234, 0.995086)
-        viewport.fov = n*3.81262
+        viewport.fov = n * 3.81262
         viewport.overlays.append(tripod)
         viewport.overlays.append(beta_label)
 

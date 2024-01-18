@@ -1,13 +1,13 @@
-import sys
-import paths
-import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib.gridspec import GridSpec
 import argparse
+import sys
 
+import matplotlib.pyplot as plt
+import numpy as np
+import paths
 from ase.db import connect
-
+from matplotlib.gridspec import GridSpec
 from PlotConfigs import SUBPLOT_ORDER
+
 
 def format_xticklabels(labels, locs):
     # Dictionary to keep track of formatted labels with their locations
@@ -175,7 +175,12 @@ def plot_individual_phonon_bandstructure(dbname, chemsys, model_name, structure_
 
 
 def plot_all_strains_phonons(
-        dbname, chemsys, model_name, structure_name, num_strains=None, strain_range=(-1.0,1.0),
+    dbname,
+    chemsys,
+    model_name,
+    structure_name,
+    num_strains=None,
+    strain_range=(-1.0, 1.0),
 ):
     """
     Plot all strain phonon bandstructures on one plot with optical branches semi-transparent.
@@ -206,7 +211,7 @@ def plot_all_strains_phonons(
         # NOTE: I create a evenly space sampling of strains from min to max, but
         # it might also be need to provide ranges based on model
         strains = sorted(first_row.data["strain_phonons"].keys(), key=float)
-        
+
         if num_strains is not None and num_strains < len(strains):
             strain_indices = np.round(
                 np.linspace(0, len(strains) - 1, num_strains)
@@ -242,9 +247,9 @@ def plot_all_strains_phonons(
         )
 
         # Calculate midpoints for q_vec_labels
-        #midpoints = 0.5 * (norm_locs[f_strain_key][:-1] + norm_locs[f_strain_key][1:])
-        #q_vec_labels = f_pdata["bandstructure"]["q_vec_labels"]
-        #for midpoint, vec_label in zip(midpoints, q_vec_labels):
+        # midpoints = 0.5 * (norm_locs[f_strain_key][:-1] + norm_locs[f_strain_key][1:])
+        # q_vec_labels = f_pdata["bandstructure"]["q_vec_labels"]
+        # for midpoint, vec_label in zip(midpoints, q_vec_labels):
         #    ax.text(
         #        midpoint,
         #        ax.get_ylim()[1],
@@ -304,7 +309,7 @@ def plot_all_model_phonons(
     """
     This function creates a grid of phonon bandstructure plots for each model.
 
-    TODO: 
+    TODO:
      Need to refactor this function. The main issue is the database will have
     several models that I may not want to plot or use.
 
@@ -355,10 +360,10 @@ def plot_all_model_phonons(
             ax.set_xticklabels(format_xticklabels(labels[: len(norm_locs)], norm_locs))
 
             # Calculate midpoints for q_vec_labels
-            #midpoints = 0.5 * (norm_locs[:-1] + norm_locs[1:])
-            #for midpoint, vec_label in zip(
+            # midpoints = 0.5 * (norm_locs[:-1] + norm_locs[1:])
+            # for midpoint, vec_label in zip(
             #    midpoints, pdata["bandstructure"]["q_vec_labels"]
-            #):
+            # ):
             #    ax.text(
             #        midpoint,
             #        ax.get_ylim()[1],

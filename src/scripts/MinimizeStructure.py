@@ -1,9 +1,8 @@
+from ase.constraints import UnitCellFilter
 from ase.db import connect
 from ase.optimize import FIRE
-from ase.constraints import UnitCellFilter
 from ase.spacegroup.symmetrize import FixSymmetry, check_symmetry
-
-from ase.units import m, kg
+from ase.units import kg, m
 
 grams = kg * (1 / 1000)
 cm = m * (1 / 100)

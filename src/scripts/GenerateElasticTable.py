@@ -1,18 +1,19 @@
 import sys
-from ase.db import connect
-import paths
 
-from TableConfig import SPACEGROUP_MAP, ORDER
+import paths
+from ase.db import connect
+from TableConfig import ORDER, SPACEGROUP_MAP
 
 
 def generate_elastic_constants_table(dbname, chemsys, output_filename):
     db = connect(dbname)
-    
+
     sorder = ORDER[chemsys]["structure"]
     default_order = max(sorder.values())
     unique_structure_types = set(entry.structure_name for entry in db.select())
-    structure_order = sorted(unique_structure_types, key=lambda x: sorder.get(x, default_order))
-
+    structure_order = sorted(
+        unique_structure_types, key=lambda x: sorder.get(x, default_order)
+    )
 
     with open(output_filename, "w") as file:
         # Top-level table with two main columns
@@ -54,7 +55,9 @@ def generate_elastic_constants_table(dbname, chemsys, output_filename):
                 key=lambda entry: ORDER[chemsys]["model"][entry.model_name],
             )
 
-            file.write("\\begin{tabularx}{\columnwidth}{X X X X X X X X X X X X X X }\n")
+            file.write(
+                "\\begin{tabularx}{\columnwidth}{X X X X X X X X X X X X X X }\n"
+            )
             file.write(
                 "Model & C$_{11}$ & C$_{22}$ & C$_{33}$ & C$_{12}$ & C$_{13}$ & C$_{23}$ & C$_{44}$ & C$_{55}$ & C$_{66}$ & C$_{16}$ & C$_{26}$ & C$_{36}$ & C$_{45}$ \\\\\n"
             )
@@ -86,13 +89,14 @@ def generate_elastic_constants_table(dbname, chemsys, output_filename):
                         file.write(f"{sval} & ")
                     else:
                         file.write(f"{sval} \\\\\n")
-                        
+
             file.write("\\end{tabularx} \\\\\n")
             file.write("\\hline\n")
 
         file.write("\\end{longtable}\n")
 
     return None
+
 
 if __name__ == "__main__":
     dbname = sys.argv[1]

@@ -1,15 +1,11 @@
 import paths
-
-from ase.spacegroup import get_spacegroup
-from ase.spacegroup import crystal
-
-from ase.phonons import Phonons
 from ase.db import connect
+from ase.phonons import Phonons
+from ase.spacegroup import crystal, get_spacegroup
 from ase.spectrum.band_structure import BandStructure
-
-from Structures import get_bandpath
 from Config import get_phonon_config
 from PlotPhonons import plot_default_phonons
+from Structures import get_bandpath
 
 EV_to_THz = 241.799050402293e0
 
@@ -204,6 +200,7 @@ def calculate_phonons(
             "dyn_mat": dyn_mat,
             "volume": volume,
             "stress": stress,
+            "supercell": supercell,
         }
 
     db.update(entry.id, data={"strain_phonons": strain_phonons})

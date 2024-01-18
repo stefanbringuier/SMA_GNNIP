@@ -1,5 +1,6 @@
-from ase.io.trajectory import Trajectory
 from ase.io import write
+from ase.io.trajectory import Trajectory
+
 
 def visualize_phonon_mode(
     fileprefix,

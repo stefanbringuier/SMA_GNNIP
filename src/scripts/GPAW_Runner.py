@@ -1,25 +1,35 @@
 import argparse
 import os
+import sys
+
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+# Surpress warning from dependencies for which I can do nothing about.
 import warnings
 
 import numpy as np
 import paths
+from ase import Atoms
 from ase.db import connect
 from CalculateElastic import calculate_elastic_constants
 from CalculateEOS import get_min_structure_and_calculate_eos
 from CalculatePhonons import calculate_phonons
-from Calculators import get_ase_calculator
+from Calculators import get_gpaw_calculator
+from gpaw import mpi
 from Structures import get_structure
 
-# Surpress warning from dependencies for which I can do nothing about.
 warnings.filterwarnings("ignore", category=UserWarning, module="ase.spacegroup")
-warnings.filterwarnings(
-    "ignore", category=UserWarning, module="dgl.backend.pytorch.tensor"
-)
-warnings.filterwarnings("ignore", category=UserWarning, message=".*'has_cuda'.*")
-warnings.filterwarnings("ignore", category=UserWarning, message=".*'has_cudnn'.*")
-warnings.filterwarnings("ignore", category=UserWarning, message=".*'has_mps'.*")
-warnings.filterwarnings("ignore", category=UserWarning, message=".*'has_mkldnn'.*")
+
+
+def isolated_atom(element, a=10.0):
+    atom = Atoms(
+        element,
+        scaled_positions=[[0.5, 0.5, 0.5]],
+        cell=[a, a, a],
+        pbc=[True, True, True],
+    )
+
+    return atom
 
 
 def min_eos_calc(dbname, structure, potential, strain_info):
@@ -80,13 +90,14 @@ def phonon_calc(dbname, structure, potential, strain_info):
     -----------------------------------------------------------------
     """
     )
-    strain = np.linspace(*strain_info)
+
     calculate_phonons(
         dbname,
         structure.info["chemsys"],
         structure.info["structure_name"],
         potential,
-        strain=strain,
+        strain=strain_info,
+        plotting=True,
     )
     print(
         f"""
@@ -126,50 +137,22 @@ def simulation():
     return ValueError("Simulation routine not implemented!")
 
 
-def main():
-    """
-    Provides top level run script. Be mindful that correct python environment is
-    activated for selected model (i.e., ASE Calculator) otherwise routines will fail to run.
-    """
+if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="""Top-level run script for EOS, Phonons, and Elastic constants.
-    Be mindful that the correct python environment is activated for the model (i.e., ASE Calculator) you
-    intend to use!!"""
+    Be mindful that the correct python environment is activated for GPAW
+    """
     )
     parser.add_argument(
         "--dbname", type=str, default="Results.json", help="ASE Database file name"
     )
     parser.add_argument("--dbfolder", type=str, default=".", help="ASE Database folder")
-    parser.add_argument(
-        "--model",
-        choices=[
-            "Mutter",
-            "MutterASE",
-            "Zhong",
-            "ZhongASE",
-            "Ko",
-            "Kim",
-            "M3GNet",
-            "CHGNet",
-            "MACE",
-            "ALIGNN",
-            "DeepMD",
-        ],
-        default="Mutter",
-        help="Choose ASECalculator Model",
-    )
     parser.add_argument("--structure", default="B2")
     parser.add_argument(
         "--n",
         type=int,
-        default=40,
+        default=20,
         help="Number of configurations in strain scan of EOS",
-    )
-    parser.add_argument(
-        "--nph",
-        type=int,
-        default=13,
-        help="Number of configurations in strain scan of Phonons",
     )
     parser.add_argument(
         "--min_strain_eos",
@@ -183,58 +166,60 @@ def main():
         default=0.10,
         help="Maximum strain for eos calcs, fractional",
     )
-    parser.add_argument(
-        "--min_strain_ph",
-        type=float,
-        default=-0.02,
-        help="Minimum strain for phonon calcs, fractional",
-    )
-    parser.add_argument(
-        "--max_strain_ph",
-        type=float,
-        default=0.02,
-        help="Maximum strain for phonon calcs, fractional",
-    )
     parser.add_argument("--eos_fit", type=str, default="sj", help="EOS fit function")
     parser.add_argument("--chemsys", type=str, default="NiTi", help="Chemical system")
-    parser.add_argument(
-        "--calc_type",
-        type=str,
-        choices=["min_eos", "phonons", "elastic", "simulation"],
-        required=True,
-        help="Specify the type of calculation to perform (required).",
-    )
 
     args = parser.parse_args()
-
-    outfolder = paths.data / args.model.upper()
+    outfolder = paths.data / "GPAW"
     os.makedirs(outfolder, exist_ok=True)
 
     structure = get_structure(args.chemsys, args.structure)
-    asecalc = get_ase_calculator(args.model)
-    structure.calc = asecalc
-    structure.info["model_name"] = args.model
+
+    # # Get isolated atom energie
+    # atoms = set(structure.get_chemical_symbols())
+    # atom_energies = {}
+    # gpawcalc = get_gpaw_calculator()#kpts=(1,1,1))
+    # for a in atoms:
+    #     atom = isolated_atom(a)
+    #     atom.set_calculator(gpawcalc)
+    #     atom_energies[a] = atom.get_total_energy()
+    # structure.info["dft_atom_energies"] = atom_energies
+
+    gpawcalc = get_gpaw_calculator()
+    structure.calc = gpawcalc
+    structure.info["model_name"] = "GPAW"
 
     db_path_file = paths.data / args.dbname
 
-    if args.calc_type == "min_eos":
-        min_eos_calc(
-            db_path_file,
-            structure,
-            (args.model, asecalc),
-            (args.min_strain_eos, args.max_strain_eos, args.n),
-        )
-    elif args.calc_type == "phonons":
-        phonon_calc(
-            db_path_file,
-            structure,
-            (args.model, asecalc),
-            (args.min_strain_ph, args.max_strain_ph, args.nph),
-        )
-    elif args.calc_type == "elastic":
-        elastic_calc(db_path_file, structure, (args.model, asecalc))
-    return None
+    min_eos_calc(
+        db_path_file,
+        structure,
+        ("GPAW", gpawcalc),
+        (args.min_strain_eos, args.max_strain_eos, args.n),
+    )
 
+    # # Connect to db and shift energies based on atom energies
+    # db = connect(db_path_file)
+    # entry = db.get(
+    #     model_name="GPAW", structure_name=args.structure, chemsys=args.chemsys
+    # )
+    # ecoh = entry.ecoh - sum(atom_energies.values())
+    # eos_energies = [e - sum(atom_energies.values()) for e in entry.data["energies"]]
+    # db.update(
+    #     id=entry.id,
+    #     ecoh=ecoh,
+    #     data={"energies": eos_energies,
+    #           "atom_energies":atom_energies,
+    #           }
+    # )
 
-if __name__ == "__main__":
-    main()
+    # We only run 0.0 strain case
+    gpawcalc = get_gpaw_calculator(kpts=(4, 4, 4))
+    phonon_calc(
+        db_path_file,
+        structure,
+        ("GPAW", gpawcalc),
+        [0.00],
+    )
+
+    elastic_calc(db_path_file, structure, ("GPAW", gpawcalc))

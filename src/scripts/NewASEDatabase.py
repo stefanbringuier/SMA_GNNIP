@@ -1,9 +1,10 @@
 import sys
-import paths
 
-from ase.db import connect
+import paths
 from ase import Atoms
 from ase.calculators.emt import EMT
+from ase.db import connect
+
 
 def new_ase_database(dbname):
     """
@@ -21,10 +22,10 @@ def new_ase_database(dbname):
 
     """
     db = connect(paths.data / dbname, append=False)
-    
+
     # NOTE: Must write something to the connected database
     # but then delete it.
-    h2 = Atoms('H2', [(0, 0, 0), (0, 0, 0.7)])
+    h2 = Atoms("H2", [(0, 0, 0), (0, 0, 0.7)])
     h2.calc = EMT()
     h2.get_total_energy()
     h2.get_forces()
@@ -32,6 +33,7 @@ def new_ase_database(dbname):
     db.delete(ids=[1])
 
     return None
+
 
 if __name__ == "__main__":
     new_ase_database(sys.argv[1])

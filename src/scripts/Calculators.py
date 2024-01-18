@@ -1,5 +1,5 @@
-import paths
 import numpy as np
+import paths
 from ase.calculators.eam import EAM
 
 # TODO: For M3GNet and CHGNet is stress_weight=1.0*GPa or stress_weight=1.0?
@@ -126,7 +126,7 @@ def get_ase_calculator(model="MutterASE"):
     elif model == "MACE":
         from mace.calculators import MACECalculator
 
-        #chkpoint = "2023-08-14-mace-universal.model"
+        # chkpoint = "2023-08-14-mace-universal.model"
         chkpoint = "2023-12-03-mace-128-L1_epoch-199.model"
         asecalc = MACECalculator(
             model_paths=str(paths.static / chkpoint),
@@ -134,24 +134,53 @@ def get_ase_calculator(model="MutterASE"):
             default_dtype="float32",
         )
 
-        #Alternative API for newer MACE
-        #from mace.calculators import mace_mp
-        #asecalc = mace_mp() # return the default medium ASE calculator equivalent to mace_mp(model="medium")
-        #asecalc = mace_mp(model="large") # return a larger model
+        # Alternative API for newer MACE
+        # from mace.calculators import mace_mp
+        # asecalc = mace_mp() # return the default medium ASE calculator equivalent to mace_mp(model="medium")
+        # asecalc = mace_mp(model="large") # return a larger model
 
     elif model == "ALIGNN":
         from alignn.ff.ff import AlignnAtomwiseCalculator, default_path
 
         alignn_params = default_path()
-        asecalc = AlignnAtomwiseCalculator(path=alignn_params, device="cpu",stress_wt = 1.0 * GPa)
+        asecalc = AlignnAtomwiseCalculator(
+            path=alignn_params, device="cpu", stress_wt=1.0 * GPa
+        )
 
     elif model == "DeepMD":
         from deepmd.calculator import DP
 
         model_params = str(paths.static / "NiTi_DeepMD.pb")
         asecalc = DP(model=model_params)
-        
+
     return asecalc
+
+
+def get_gpaw_calculator(
+    xc="PBE",
+    cutoff=680,
+    kpts=(8, 8, 8),
+):
+    from gpaw import GPAW, PW, FermiDirac
+
+    # import gpaw.mpi as mpi
+    # world_size = mpi.world.size  # Total number of MPI processes
+    # all_ranks = list(range(world_size))  # List of all ranks
+    # comm = mpi.world.new_communicator(all_ranks)
+    from gpaw.mpi import world
+
+    calc = GPAW(
+        # communicator=comm,
+        mode=PW(cutoff),
+        xc=xc,
+        kpts=kpts,
+        spinpol=True,
+        convergence={"energy": 1e-5},
+        occupations=FermiDirac(0.2),
+        #        parallel={'domain':world.size},
+    )
+
+    return calc
 
 
 if __name__ == "__main__":

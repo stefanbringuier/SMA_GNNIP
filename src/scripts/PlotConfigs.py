@@ -1,4 +1,3 @@
-
 ORDER = {
     "NiTi": {
         "Mutter": 1,
@@ -33,3 +32,12 @@ SUBPLOT_ORDER = {
     },
 }
 
+STRUCTURE_ORDER = {
+    "NiTi": {
+        "B2": 1,
+        "B19P": 2,
+        "B19": 3,
+        "BCO": 4,
+    },
+    "PtTi": {"B2": 1, "B19P": 2},
+}
