@@ -1,8 +1,6 @@
 # Enable rule caching on Zenodo?
 cache_on_zenodo: true
 
-optimize_caching: true
-
 # Workflow graph (DAG) generation
 dag:
   # Generate `dag.pdf` on each build?
@@ -80,7 +78,7 @@ optimize_caching: true
 # Overleaf sync settings
 overleaf:
   # Overleaf project ID (blank = disabled)
-  id: 
+  id:
   # Perform sync on GitHub Actions?
   gh_actions_sync: true
   # List of files to push to Overleaf
