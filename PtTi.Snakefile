@@ -47,7 +47,7 @@ rule plot_ptti_ecoh:
     output:
         figure="src/tex/figures/PtTi_CohesiveEnergyPlot.png",
     conda:
-        "env/ase.yml"
+        "env/base.yml"
     params:
         chemsys="PtTi",
     shell:
@@ -63,7 +63,7 @@ rule plot_ptti_eos:
     output:
         figure="src/tex/figures/PtTi_EquationOfStates.png",
     conda:
-        "env/ase.yml"
+        "env/base.yml"
     params:
         chemsys="PtTi",
     shell:
@@ -88,7 +88,7 @@ rule plot_ptti_phonons:
         figure_strain_CHGNet_B2="src/tex/figures/PtTi_CHGNet_B2_StrainsPhononBandstructures.png",
         figure_strain_MACE_B2="src/tex/figures/PtTi_MACE_B2_StrainsPhononBandstructures.png",
     conda:
-        "env/ase.yml"
+        "env/base.yml"
     params:
         num_strains=5,
         chemsys="PtTi",
@@ -111,7 +111,7 @@ rule generate_ptti_m_mode_gruneisen:
         table="src/tex/output/Table_PtTi_M_ModeGruneisen.tex",
         figure="src/tex/figures/Plot_PtTi_M_ModeGruneisen.png",
     conda:
-        "env/ase.yml"
+        "env/base.yml"
     params:
         chemsys="PtTi",
         structure="B2",
@@ -129,7 +129,7 @@ rule generate_ptti_elastic_table:
     output:
         table="src/tex/output/Table_PtTi_Elastic_Constants.tex",
     conda:
-        "env/ase.yml"
+        "env/base.yml"
     params:
         chemsys="PtTi",
     shell:
@@ -145,7 +145,7 @@ rule generate_ptti_equil_table:
     output:
         table="src/tex/output/Table_PtTi_Equilibrium_Structures.tex",
     conda:
-        "env/ase.yml"
+        "env/base.yml"
     params:
         chemsys="PtTi",
     shell:

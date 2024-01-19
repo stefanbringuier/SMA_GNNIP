@@ -19,46 +19,46 @@
 
 
 \title{Qualitative Assessesment of Graph Neural Network Potentials for
-	Phonon Properties of Shape Memory Alloys using Graph Neural Network
-	Potentials}
+  Phonon Properties of Shape Memory Alloys using Graph Neural Network
+  Potentials}
 
 % Author list
 \author[1]{Stefan
-	Bringuier\corref{cor1}\orcidlink{0000-0001-6753-1437}}
+  Bringuier\corref{cor1}\orcidlink{0000-0001-6753-1437}}
 \ead{stefanbringuier@gmail.com} \cortext[cor1]{Corresponding author}
 \affiliation[1]{organization={Indpendent Researcher}, city={San Diego,
-			CA}, country={United States}, }
+    CA}, country={United States}, }
 
 % Abstract with filler text
 \begin{abstract}
-	Shape Memory Alloys (SMAs) such as NiTi are pivotal in vibrational
-	dampening,robotic arms, prothestic hands, and mechanical vales as a
-	result of their unique displacive phase transformation
-	properties. However, assessing their phonon characteristics, which
-	provide insight into the displacive phase transformation, by using
-	conventional Density Functional Theory (DFT) methods is
-	computationally challenging. In this paper we assess the use of
-	recent Graph Neural Network (GNN) potentials as a viable
-	alternative. These GNN potentials have leveraged large DFT-computed
-	databases for training and provide a good approximation to the
-	potential energy surfaces which enable inference on energies and
-	forces in lattice and atomic dynamic calculations. We compare GNN
-	potentials with the Embedded Atom Method (EAM) and Modified EAM
-	style potentials in predicting phonon properties of NiTi and
-	PtTi. We find that in general the EAM/MEAM potentials are slightly
-	more performant than the GNN in that they appear to more accurately
-	describe equation of state, phonon dispersions, and elastic
-	constants. However, the MACE potential shows significant promise as
-	an exploritory potential for designing and characterizing more
-	complex SMAs. Our findings suggest GNN potentials as a promising
-	initial avenue for advancing SMA research, in particular ternary and
-	quaternary systems, upon fine-tuning of pre-trained GNN models with
-	more relevant DFT data (i.e., force-constants) to permit better
-	outcomes.
+  Shape Memory Alloys (SMAs) such as NiTi are pivotal in vibrational
+  dampening,robotic arms, prothestic hands, and mechanical vales as a
+  result of their unique displacive phase transformation
+  properties. However, assessing their phonon characteristics, which
+  provide insight into the displacive phase transformation, by using
+  conventional Density Functional Theory (DFT) methods is
+  computationally challenging. In this paper we assess the use of
+  recent Graph Neural Network (GNN) potentials as a viable
+  alternative. These GNN potentials have leveraged large DFT-computed
+  databases for training and provide a good approximation to the
+  potential energy surfaces which enable inference on energies and
+  forces in lattice and atomic dynamic calculations. We compare GNN
+  potentials with the Embedded Atom Method (EAM) and Modified EAM
+  style potentials in predicting phonon properties of NiTi and
+  PtTi. We find that in general the EAM/MEAM potentials are slightly
+  more performant than the GNN in that they appear to more accurately
+  describe equation of state, phonon dispersions, and elastic
+  constants. However, the MACE potential shows significant promise as
+  an exploritory potential for designing and characterizing more
+  complex SMAs. Our findings suggest GNN potentials as a promising
+  initial avenue for advancing SMA research, in particular ternary and
+  quaternary systems, upon fine-tuning of pre-trained GNN models with
+  more relevant DFT data (i.e., force-constants) to permit better
+  outcomes.
 \end{abstract}
 
 \begin{keyword}
-	shape memory alloys \sep machine learning potentials \sep phonons
+  shape memory alloys \sep machine learning potentials \sep phonons
 \end{keyword}
 
 
@@ -126,8 +126,8 @@ distinctions, first being that the nodes and edges corresponding to
 the atoms and bonds could include features, and secondly the learning
 could be done over a large structural and compositional space enabling
 a generalization\footnote{Typically these are referred to as Universal
-	interatomic potentials or forcefields since they in theory
-	generalize well to any chemical system or phase.}. The use of GNNs
+  interatomic potentials or forcefields since they in theory
+  generalize well to any chemical system or phase.}. The use of GNNs
 is efficient in representing structure-composition-property inputs to
 additional NN layers for predicting potential energy surfaces and
 gradients and was initially pursued in the CGCNN, MEGNet, and ALIGNN
@@ -207,20 +207,20 @@ python computing environments using
 package.\par
 
 \begin{figure}[ht!]
-	\script{VisualizedStructures.py}
-	\begin{centering}
-		\includegraphics[width=\linewidth]{figures/NiTi_VisualizedStructures.png}
-		\caption{ Initial \ce{NiTi} structures (i.e., unrelaxed) used for
-			(a) \textit{B2}(221), (b) \textit{B19}(11), (c)
-			\textit{B19'}(51), and (d) \textit{BCO}(61) with spacegroup
-			numbers are given in the parentheses. The green atoms are
-			\ce{Ni} and \ce{Ti} as gray and unit cells are highlighted with
-			parametes shown on axis. For all unit cells the $\alpha$ and
-			$\gamma$ angles are 90.0$^\circ$. For PtTi, (a-b) structures are
-			used with different unit cell parameters and basis coordinates
-			and then optimized accordingly.  }
-		\label{fig:niti_structures}
-	\end{centering}
+  \script{VisualizedStructures.py}
+  \begin{centering}
+    \includegraphics[width=\linewidth]{figures/NiTi_VisualizedStructures.png}
+    \caption{ Initial \ce{NiTi} structures (i.e., unrelaxed) used for
+      (a) \textit{B2}(221), (b) \textit{B19}(11), (c)
+      \textit{B19'}(51), and (d) \textit{BCO}(61) with spacegroup
+      numbers are given in the parentheses. The green atoms are
+      \ce{Ni} and \ce{Ti} as gray and unit cells are highlighted with
+      parametes shown on axis. For all unit cells the $\alpha$ and
+      $\gamma$ angles are 90.0$^\circ$. For PtTi, (a-b) structures are
+      used with different unit cell parameters and basis coordinates
+      and then optimized accordingly.  }
+    \label{fig:niti_structures}
+  \end{centering}
 \end{figure}
 
 Prior to any property calculations or dynamics the structures are
@@ -239,9 +239,9 @@ atoms for all structures and models are provided in appendix
 \ref{sec:opt_structures}. \par
 
 \begin{figure}[ht!]
-	\label{fig:opt_density}
-	\centering
-	\caption{}
+  \label{fig:opt_density}
+  \centering
+  \caption{}
 \end{figure}
 
 
@@ -252,12 +252,12 @@ with the obtained ground-state structures the unit cell volume is
 adjusted by applying an isotropic strain,
 
 \begin{equation}
-	\label{eq:isotropic_strain}
-	T=\begin{bmatrix}
-		\epsilon & 0        & 0        \\
-		0        & \epsilon & 0        \\
-		0        & 0        & \epsilon \\
-	\end{bmatrix}
+  \label{eq:isotropic_strain}
+  T=\begin{bmatrix}
+    \epsilon & 0 & 0 \\
+    0 & \epsilon & 0 \\
+    0 & 0 & \epsilon \\
+  \end{bmatrix}
 \end{equation},
 
 to the cell and scaling the fractional atomic coordinates. Here
@@ -270,8 +270,8 @@ range to characterize the EOS curves and obtain analytical fits. We
 fit the EOS using a third order inverse polynomial,
 
 \begin{equation}
-	\label{eq:eos_fit}
-	E(V) = c_0 + c_1 t + c_2 t^2 + c_3 t^3, \quad \text{where} \quad t = V^{-\frac{1}{3}}
+  \label{eq:eos_fit}
+  E(V) = c_0 + c_1 t + c_2 t^2 + c_3 t^3, \quad \text{where} \quad t = V^{-\frac{1}{3}}
 \end{equation},
 
 where the coefficients are used to determine equilibrium volume,
@@ -364,8 +364,8 @@ complexity of the material system but the total energy is typically
 written as,
 
 \begin{equation}
-	\label{eq:eam}
-	E = \sum_{i\neq j}^N V_{ij}(r_{ij}) + \sum_i^N F_i\left(\rho(r_i)\right)
+  \label{eq:eam}
+  E = \sum_{i\neq j}^N V_{ij}(r_{ij}) + \sum_i^N F_i\left(\rho(r_i)\right)
 \end{equation}
 
 where $V_{ij}$ is the pair potential, $F_i$, the functional, and
@@ -408,7 +408,7 @@ induced martensitic transformation. \paragraphmark
 In the work of \citet{Tang2022} ground-state predictions for
 \textit{B2}, \textit{B19'}, \textit{B19}, and
 \textit{BCO}\footnote{Referred to as \textit{B33} prototype in
-	\citet{Tang2022}} were provided and showed good agreement. However,
+  \citet{Tang2022}} were provided and showed good agreement. However,
 we note that deviation from Ni-Ti 1:1 stoichiometry or addition of a
 third species was not investigated nor the inclusion of additional
 alloying species. \par
@@ -441,8 +441,8 @@ One way to understand the phase stability for a given composition is
 to compare the cohesive energy, which is defined as,
 
 \begin{equation}
-	\label{eq:cohesive_energy}
-	E_{c} = \frac{E_{\text{bulk}} - \sum_{i}^{N} n_i E_{\text{atom}_i}}{N}
+  \label{eq:cohesive_energy}
+  E_{c} = \frac{E_{\text{bulk}} - \sum_{i}^{N} n_i E_{\text{atom}_i}}{N}
 \end{equation}
 
 With $E_{\text{bulk}}$ the total energy of the system,
@@ -468,16 +468,16 @@ considering all pretrained GNN models used in this work have been
 developed with MP data. \par
 
 \begin{figure}[ht!]
-	\script{PlotCohesiveEnergy.py}
-	\begin{centering}
-		\includegraphics[width=\linewidth]{figures/NiTi_CohesiveEnergyPlot.png}
-		\caption{ Comparison of predicted \ce{NiTi} cohesive energy for
-			respective ground-state structure and model. The experimental
-			data point has been extracted from ref.~\cite{Vandermause2024}
-			and the Materials Project entry for the \ce{NiTi} \textit{B2}
-			structure \cite{MP--571} has also been included.  }
-		\label{fig:ecoh_niti}
-	\end{centering}
+  \script{PlotCohesiveEnergy.py}
+  \begin{centering}
+    \includegraphics[width=\linewidth]{figures/NiTi_CohesiveEnergyPlot.png}
+    \caption{ Comparison of predicted \ce{NiTi} cohesive energy for
+      respective ground-state structure and model. The experimental
+      data point has been extracted from ref.~\cite{Vandermause2024}
+      and the Materials Project entry for the \ce{NiTi} \textit{B2}
+      structure \cite{MP--571} has also been included.  }
+    \label{fig:ecoh_niti}
+  \end{centering}
 \end{figure}
 
 For the \ce{PtTi} system we only consider the \textit{B2} and
@@ -492,13 +492,13 @@ are either parameterized from experimental or DFT data using the PBE
 functional\cite{Mutter2010,Ko2015}. \par
 
 \begin{figure}[ht!]
-	\script{PlotCohesiveEnergy.py}
-	\begin{centering}
-		\includegraphics[width=\linewidth]{figures/PtTi_CohesiveEnergyPlot.png}
-		\caption{ Comparison of predicted \ce{PtTi} cohesive energy for
-			respective ground-state structure and model.  }
-		\label{fig:ecoh_ptti}
-	\end{centering}
+  \script{PlotCohesiveEnergy.py}
+  \begin{centering}
+    \includegraphics[width=\linewidth]{figures/PtTi_CohesiveEnergyPlot.png}
+    \caption{ Comparison of predicted \ce{PtTi} cohesive energy for
+      respective ground-state structure and model.  }
+    \label{fig:ecoh_ptti}
+  \end{centering}
 \end{figure}
 
 \subsection{NiTi: Equation of States}
@@ -559,63 +559,63 @@ of the tensile. At compressive strain beyond $\approx 0.94$ the
 
 
 \begin{figure}[ht!]
-	\script{PlotEOS.py}
-	\begin{centering}
-		\includegraphics[width=\linewidth]{figures/NiTi_EquationOfStates.png}
-		\caption{ The equation of state curves for different \ce{NiTi}
-			structures for (a) Mutter (EAM) (b) Zhong (EAM) (c) Ko
-			(2NN-MEAM) (d) M3GNet (e) CHGNet (f) MACE interatomic
-			potentials. The x-axis is the ratio of the isotropic strained
-			unit cell volume, $V$, with respect to the ground-state unit
-			cell volume, $V_o$.  }
-		\label{fig:eos}
-	\end{centering}
+  \script{PlotEOS.py}
+  \begin{centering}
+    \includegraphics[width=\linewidth]{figures/NiTi_EquationOfStates.png}
+    \caption{ The equation of state curves for different \ce{NiTi}
+      structures for (a) Mutter (EAM) (b) Zhong (EAM) (c) Ko
+      (2NN-MEAM) (d) M3GNet (e) CHGNet (f) MACE interatomic
+      potentials. The x-axis is the ratio of the isotropic strained
+      unit cell volume, $V$, with respect to the ground-state unit
+      cell volume, $V_o$.  }
+    \label{fig:eos}
+  \end{centering}
 \end{figure}
 
 \subsection{NiTi: Phonon Instability}
 \label{subsec:nitiphonons}
 
 \begin{figure}[!htp]
-	\script{PlotPhonons.py}
-	\begin{centering}
-		\includegraphics[width=\linewidth]{figures/NiTi_B2_ModelsPhononBandstructures.png}
-		\caption{ Ground-state, no isotropic strain, Phonon bandstructure
-			of B2 phase for all models. The Mutter and Zhong EAM potentials
-			differ in that Mutter predicts no dynamic instability of the B2
-			phase at 0K.  }
-		\label{fig:allmodels_b2}
-	\end{centering}
+  \script{PlotPhonons.py}
+  \begin{centering}
+    \includegraphics[width=\linewidth]{figures/NiTi_B2_ModelsPhononBandstructures.png}
+    \caption{ Ground-state, no isotropic strain, Phonon bandstructure
+      of B2 phase for all models. The Mutter and Zhong EAM potentials
+      differ in that Mutter predicts no dynamic instability of the B2
+      phase at 0K.  }
+    \label{fig:allmodels_b2}
+  \end{centering}
 \end{figure}
 
 \begin{figure}[!htp]
-	\script{PlotPhonons.py}
-	\begin{centering}
-		\includegraphics[width=\linewidth]{figures/NiTi_B19_ModelsPhononBandstructures.png}
-		\caption{ Ground-state phonon bandstructure of B19 phase for all
-			models.  }
-		\label{fig:allmodels_B19P}
-	\end{centering}
+  \script{PlotPhonons.py}
+  \begin{centering}
+    \includegraphics[width=\linewidth]{figures/NiTi_B19_ModelsPhononBandstructures.png}
+    \caption{ Ground-state phonon bandstructure of B19 phase for all
+      models.  }
+    \label{fig:allmodels_B19P}
+  \end{centering}
 \end{figure}
 
 \begin{figure}[!htp]
-	\script{PlotPhonons.py}
-	\begin{centering}
-		\includegraphics[width=\linewidth]{figures/NiTi_B19P_ModelsPhononBandstructures.png}
-		\caption{ Ground-state phonon bandstructure of
-			\textit{B19}$^\prime$ phase for all models.  }
-		\label{fig:allmodels_B19P}
-	\end{centering}
+  \script{PlotPhonons.py}
+  \begin{centering}
+    \includegraphics[width=\linewidth]{figures/NiTi_B19P_ModelsPhononBandstructures.png}
+    \caption{ Ground-state phonon bandstructure of
+      \textit{B19}$^\prime$ phase for all models.  }
+    \label{fig:allmodels_B19P}
+  \end{centering}
 \end{figure}
 
 
 \begin{figure}[!htp]
-	\script{PlotPhonons.py}
-	\begin{centering}
-		\includegraphics[width=\linewidth]{figures/NiTi_BCO_ModelsPhononBandstructures.png}
-		\caption{ Ground-state phonon bandstructure of BCO phase for all
-			models.  }
-		\label{fig:allmodels_B19P}
-	\end{centering}
+  \script{PlotPhonons.py}
+  \begin{centering}
+    \includegraphics[width=\linewidth]{figures/NiTi_BCO_ModelsPhononBandstructures.png}
+    \caption{ Ground-state phonon bandstructure of BCO phase for all
+      models.  }
+    \label{fig:allmodels_B19P}
+  \end{centering}
 \end{figure}
 
 
@@ -638,8 +638,8 @@ strain, particularly in the context of phonon instabilities at the M
 point. The mode Gruneisen parameter is defined as,
 
 \begin{equation}
-	\label{eq:modegruneisen}
-	\gamma = -\frac{V}{\omega}\left(\frac{\partial \omega}{\partial V}\right)
+  \label{eq:modegruneisen}
+  \gamma = -\frac{V}{\omega}\left(\frac{\partial \omega}{\partial V}\right)
 \end{equation},
 
 where $V$ is the volume, usually taken at equilibrium, and $\omega$ is
@@ -673,12 +673,12 @@ increase. The optical modes are less sensitive as indicated by smaller
 values. \par
 
 \begin{figure}[!htp]
-	\script{GruneisenParameters.py} \centering
-	\includegraphics[width=\columnwidth]{figures/Plot_NiTi_M_ModeGruneisen.png}
-	\label{fig:modegruneisen}
-	\caption{The sign-log of the \textit{M}-mode Gr\"{u}neisen
-	parameter, $\gamma$, as a function of eigenfrequency for different
-	interatomic potentials.}
+  \script{GruneisenParameters.py} \centering
+  \includegraphics[width=\columnwidth]{figures/Plot_NiTi_M_ModeGruneisen.png}
+  \label{fig:modegruneisen}
+  \caption{The sign-log of the \textit{M}-mode Gr\"{u}neisen
+    parameter, $\gamma$, as a function of eigenfrequency for different
+    interatomic potentials.}
 \end{figure}
 
 The Mutter EAM potential shows negative Gr\"{u}''neisen parameters for
@@ -697,41 +697,41 @@ compression and tension are show in fig
 
 
 \begin{figure}[!htp]
-	\script{PlotPhonons.py}
-	\begin{centering}
-		\includegraphics[width=0.5\linewidth]{figures/NiTi_Mutter_B2_StrainsPhononBandstructures.png}
-		\vspace{1mm}
-		\includegraphics[width=0.5\linewidth]{figures/NiTi_Zhong_B2_StrainsPhononBandstructures.png}
-		\vspace{1mm}
-		\includegraphics[width=0.5\linewidth]{figures/NiTi_Ko_B2_StrainsPhononBandstructures.png}
-		\caption{ Phonon dispersion of B2 structure for the (top) EAM
-			Mutter, (middle) EAM Zhong, and (bottom) 2NN-MEAM Ko potentials
-			at different isotropic strains. The optical branches have been
-			made more transparent to emphasis the behavior in the TA$_1$ and
-			TA$_2$ branches. The color indicates direction from compressive
-			to tensile strain. Note that the strain percent shown is with
-			respect to isotropic changes (i.e. volume).  }
-		\label{fig:mutter_zhong_ko_phonon_b2}
-	\end{centering}
+  \script{PlotPhonons.py}
+  \begin{centering}
+    \includegraphics[width=0.5\linewidth]{figures/NiTi_Mutter_B2_StrainsPhononBandstructures.png}
+    \vspace{1mm}
+    \includegraphics[width=0.5\linewidth]{figures/NiTi_Zhong_B2_StrainsPhononBandstructures.png}
+    \vspace{1mm}
+    \includegraphics[width=0.5\linewidth]{figures/NiTi_Ko_B2_StrainsPhononBandstructures.png}
+    \caption{ Phonon dispersion of B2 structure for the (top) EAM
+      Mutter, (middle) EAM Zhong, and (bottom) 2NN-MEAM Ko potentials
+      at different isotropic strains. The optical branches have been
+      made more transparent to emphasis the behavior in the TA$_1$ and
+      TA$_2$ branches. The color indicates direction from compressive
+      to tensile strain. Note that the strain percent shown is with
+      respect to isotropic changes (i.e. volume).  }
+    \label{fig:mutter_zhong_ko_phonon_b2}
+  \end{centering}
 \end{figure}
 
 
 % ADD Plot of zero strain EAM and first-pricinpals results
 
 \begin{figure}[!htp]
-	\script{PlotPhonons.py}
-	\begin{centering}
-		\includegraphics[width=0.5\linewidth]{figures/NiTi_M3GNet_B2_StrainsPhononBandstructures.png}
-		\vspace{1mm}
-		\includegraphics[width=0.5\linewidth]{figures/NiTi_CHGNet_B2_StrainsPhononBandstructures.png}
-		\vspace{1mm}
-		\includegraphics[width=0.5\linewidth]{figures/NiTi_MACE_B2_StrainsPhononBandstructures.png}
-		\caption{ Phonon dispersion of B2 structure for the (top) M3GNet,
-			(middle) CHGNet, and (bottom) MACE potentials for different
-			isotropic strains. Similar transcparency is used as done in
-			\ref{fig:mutter_zhong_phonon_b2}.  }
-		\label{fig:gnn_phonon_b2}
-	\end{centering}
+  \script{PlotPhonons.py}
+  \begin{centering}
+    \includegraphics[width=0.5\linewidth]{figures/NiTi_M3GNet_B2_StrainsPhononBandstructures.png}
+    \vspace{1mm}
+    \includegraphics[width=0.5\linewidth]{figures/NiTi_CHGNet_B2_StrainsPhononBandstructures.png}
+    \vspace{1mm}
+    \includegraphics[width=0.5\linewidth]{figures/NiTi_MACE_B2_StrainsPhononBandstructures.png}
+    \caption{ Phonon dispersion of B2 structure for the (top) M3GNet,
+      (middle) CHGNet, and (bottom) MACE potentials for different
+      isotropic strains. Similar transcparency is used as done in
+      \ref{fig:mutter_zhong_phonon_b2}.  }
+    \label{fig:gnn_phonon_b2}
+  \end{centering}
 \end{figure}
 
 
@@ -826,34 +826,34 @@ definitions are provided.
 
 
 \begin{figure}[!htp]
-	\centering
-	\begin{subfigure}[b]{0.45\linewidth}
-		\includegraphics[width=\linewidth]{figures/B2_BrillouinZonePointsSampled.png}
-		\caption{}
-		\label{fig:B2}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}[b]{0.45\linewidth}
-		\includegraphics[width=\linewidth]{figures/B19_BrillouinZonePointsSampled.png}
-		\caption{}
-		\label{fig:B19}
-	\end{subfigure}
-	\vspace{1mm}
-	\begin{subfigure}[b]{0.45\linewidth}
-		\includegraphics[width=\linewidth]{figures/B19P_BrillouinZonePointsSampled.png}
-		\caption{}
-		\label{fig:B19P}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}[b]{0.45\linewidth}
-		\includegraphics[width=\linewidth]{figures/BCO_BrillouinZonePointsSampled.png}
-		\caption{}
-		\label{fig:BCO}
-	\end{subfigure}
-	\caption{The irreducible Brillouin zones for \textit{B2}(\#221),
-		\textit{B19}(\#51), \textit{B19'}(\#11), and \textit{BCO}(\#63)
-		crystal structures}
-	\label{fig:ibz}
+  \centering
+  \begin{subfigure}[b]{0.45\linewidth}
+    \includegraphics[width=\linewidth]{figures/B2_BrillouinZonePointsSampled.png}
+    \caption{}
+    \label{fig:B2}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.45\linewidth}
+    \includegraphics[width=\linewidth]{figures/B19_BrillouinZonePointsSampled.png}
+    \caption{}
+    \label{fig:B19}
+  \end{subfigure}
+  \vspace{1mm}
+  \begin{subfigure}[b]{0.45\linewidth}
+    \includegraphics[width=\linewidth]{figures/B19P_BrillouinZonePointsSampled.png}
+    \caption{}
+    \label{fig:B19P}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.45\linewidth}
+    \includegraphics[width=\linewidth]{figures/BCO_BrillouinZonePointsSampled.png}
+    \caption{}
+    \label{fig:BCO}
+  \end{subfigure}
+  \caption{The irreducible Brillouin zones for \textit{B2}(\#221),
+    \textit{B19}(\#51), \textit{B19'}(\#11), and \textit{BCO}(\#63)
+    crystal structures}
+  \label{fig:ibz}
 \end{figure}
 
 \pagebreak

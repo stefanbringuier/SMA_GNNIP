@@ -74,7 +74,7 @@ rule plot_niti_ecoh:
         figure="src/tex/figures/NiTi_CohesiveEnergyPlot.png",
     threads: 1
     conda:
-        "env/ase.yml"
+        "env/base.yml"
     params:
         chemsys="NiTi",
     shell:
@@ -90,7 +90,7 @@ rule plot_niti_eos:
     output:
         figure="src/tex/figures/NiTi_EquationOfStates.png",
     conda:
-        "env/ase.yml"
+        "env/base.yml"
     params:
         chemsys="NiTi",
     shell:
@@ -115,7 +115,7 @@ rule plot_niti_phonons:
         figure_strain_CHGNet_B2="src/tex/figures/NiTi_CHGNet_B2_StrainsPhononBandstructures.png",
         figure_strain_MACE_B2="src/tex/figures/NiTi_MACE_B2_StrainsPhononBandstructures.png",
     conda:
-        "env/ase.yml"
+        "env/base.yml"
     params:
         num_strains=5,
         chemsys="NiTi",
@@ -138,7 +138,7 @@ rule generate_niti_m_mode_gruneisen:
         table="src/tex/output/Table_NiTi_M_ModeGruneisen.tex",
         figure="src/tex/figures/Plot_NiTi_M_ModeGruneisen.png",
     conda:
-        "env/ase.yml"
+        "env/base.yml"
     params:
         chemsys="NiTi",
         structure="B2",
@@ -156,7 +156,7 @@ rule generate_niti_elastic_table:
     output:
         table="src/tex/output/Table_NiTi_Elastic_Constants.tex",
     conda:
-        "env/ase.yml"
+        "env/base.yml"
     params:
         chemsys="NiTi",
     shell:
@@ -172,7 +172,7 @@ rule generate_niti_equil_table:
     output:
         table="src/tex/output/Table_NiTi_Equilibrium_Structures.tex",
     conda:
-        "env/ase.yml"
+        "env/base.yml"
     params:
         chemsys="NiTi",
     shell:
