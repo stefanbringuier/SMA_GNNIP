@@ -1,3 +1,4 @@
+import csv
 from copy import deepcopy
 
 import ase.units as units
@@ -5,6 +6,7 @@ import paths
 from ase.calculators.lammpslib import LAMMPSlib
 from ase.db import connect
 from ase.spacegroup import crystal
+from deepmd.calculator import DP
 from elastic import get_elastic_tensor, get_elementary_deformations
 from elastic.elastic import get_cij_order
 
@@ -30,6 +32,8 @@ def serial_calculate(systems, calculator):
     for n, s in enumerate(sysl):
         if isinstance(calculator, LAMMPSlib):
             s.set_calculator(calculator)
+        elif isinstance(calculator, DP):
+            s.set_calculator(calculator)
         else:
             s.set_calculator(deepcopy(calculator))
 
@@ -47,6 +51,7 @@ def calculate_elastic_constants(
     npoints=10,
     displacement=0.25,
     update=True,
+    write_file=True,
 ):
     """
     Calculate the elastic constants for a given structure and potential and write it to an
@@ -60,6 +65,7 @@ def calculate_elastic_constants(
         npoints (int,10):  Optional, sets the number of displacement points.
         displacement (int/float,0.5): Optional, the min and max atomic displacement in percent.
         update (bool,True): Optional, wheter or not to update ASE database file.
+        write_file (bool,True): Write elastic constants to csv
 
     Returns:
         None
@@ -91,6 +97,17 @@ def calculate_elastic_constants(
 
     C = dict(zip(ordering, cij))
 
+    if write_file:
+        filename = str(
+            paths.data
+            / potname.upper()
+            / f"{chemsys}_{structure_name}_{potname}_Cij.csv"
+        )
+        with open(filename, mode="w", newline="") as file:
+            writer = csv.writer(file)
+            writer.writerow(["Elastic Constant", "Value [GPa]"])
+            for key, value in C.items():
+                writer.writerow([key, value])
     if update:
         db.update(entry.id, data={"elastic_constants": C})
     else:

@@ -1,4 +1,5 @@
 import argparse
+import os
 import sys
 
 import matplotlib.pyplot as plt
@@ -7,6 +8,8 @@ import paths
 from ase.db import connect
 from matplotlib.gridspec import GridSpec
 from PlotConfigs import SUBPLOT_ORDER
+
+EV_to_THz = 241.799050402293e0
 
 
 def format_xticklabels(labels, locs):
@@ -41,7 +44,7 @@ def get_color(value, cmap_name="viridis", vmin=-1.5, vmax=1.5):
     return cmap(norm(value))
 
 
-def plot_default_phonons(bs, dos, info, ymaxlim=9.0, of="."):
+def plot_default_phonons(bs, dos, info, of="."):
     """
     Plot results from ASE phonon calculation.
     """
@@ -72,8 +75,9 @@ def plot_default_phonons(bs, dos, info, ymaxlim=9.0, of="."):
     ax.set_xticks(xticks)
     ax.set_xticklabels(xlabels)
 
+    yminlim, ymaxlim = np.min(energies_THz) * 1.01, np.max(energies_THz) * 1.01
     ax.set_xlim((0.0, q_points[-1]))
-    ax.set_ylim((-2.0, ymaxlim))
+    ax.set_ylim((yminlim, ymaxlim))
     ax.set_ylabel("Frequency ($\mathrm{THz}$)", fontsize=22)
 
     dosax.fill_between(
@@ -85,15 +89,14 @@ def plot_default_phonons(bs, dos, info, ymaxlim=9.0, of="."):
         lw=1,
     )
 
-    ymaxlim = np.max(energies_THz) * 1.05
-    dosax.set_ylim((-2.0, ymaxlim))
+    dosax.set_ylim((yminlim, ymaxlim))
     dosax.set_yticks([])
     dosax.set_xticks([])
     dosax.set_xlabel("DOS", fontsize=18)
     fig.savefig(
         os.path.join(
             of,
-            f"{info['chemsys']}_{info['structure']}_{info['potname']}_{info['strain']:.3f}_Phonons.png",
+            f"{info['chemsys']}_{info['structure']}_{info['potname']}_{info['strain']:.2f}_Phonons.png",
         )
     )
     fig.clear()

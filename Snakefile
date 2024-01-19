@@ -1,19 +1,15 @@
 # Define common parameters
 # NOTE: ALIGNN is supported but results seem total wrong!
-NiTi_MODELS = ["Mutter", "Zhong", "Ko", "Kouvasi", "M3GNet", "CHGNet", "MACE", "ALIGNN"]
-NiTi_STRUCTURES = ["B2", "B19", "B19P", "BCO"]
-PtTi_MODELS = ["Kim", "M3GNet", "CHGNet", "MACE", "ALIGNN"]
-PtTi_STRUCTURES = ["B2", "B19"]
-
 # from datetime import datetime
 # date_str = datetime.now().strftime("%d%b%Y")
 # DATABASE = f"Results_{date_str}.json"
-DATABASE = "SMA_Results_17Jan2024.json"
+DATABASE = "SMA_Results.json"
 
 
 # Function to get environment file
 def get_env_file(model):
-    return f"env/{model.lower()}.yml"
+    # return f"env/{model.lower()}.yml"
+    return "env/base.yml"
 
 
 rule create_db:
@@ -23,7 +19,7 @@ rule create_db:
         db="src/data/" + DATABASE,
         create="src/data/COMPLETED_TASKS/created.database.done",
     conda:
-        "env/ase.yml"
+        "env/base.yml"
     shell:
         "python src/scripts/NewASEDatabase.py {DATABASE}; touch {output.create}"
 
@@ -87,7 +83,7 @@ rule calculate_elastic:
         done=touch(
             "src/data/COMPLETED_TASKS/{chemsys}_{structure}_{model}.elastic.done"
         ),
-    threads: 6
+    threads: 1
     resources:
         mem_gb=15,
     conda:
@@ -136,7 +132,7 @@ rule generate_niti_bz_appendix:
         table_qpoints_B19P="src/tex/output/B19P_SpecialSymmetryPointsBZ.tex",
         table_qpoints_BCO="src/tex/output/BCO_SpecialSymmetryPointsBZ.tex",
     conda:
-        "env/ase.yml"
+        "env/base.yml"
     script:
         "src/scripts/AppendixBZ.py"
 

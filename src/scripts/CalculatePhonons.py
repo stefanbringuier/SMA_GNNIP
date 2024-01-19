@@ -1,4 +1,6 @@
+import numpy as np
 import paths
+from ase import Atoms
 from ase.db import connect
 from ase.phonons import Phonons
 from ase.spacegroup import crystal, get_spacegroup
@@ -10,6 +12,105 @@ from Structures import get_bandpath
 EV_to_THz = 241.799050402293e0
 
 
+class PhononsFromFile:
+    """Class for reading saved results generated and reprocessing phonon results.
+
+    Notes:
+
+        - This is not a child class of :class:`~ase.phonons.Phonons` because
+          inheriting all methods including from base
+          :class:`~ase.phonons.Displacement` is not desired, as they would be
+          invalid calls. Therefore, only suitable methods are exposed. For
+          example, see :meth:`~ase.phonons.Phonons.band_structure`.
+
+    Example:
+
+    >>> ph = ... #Phonons setup
+    >>> ph.run()
+    >>> ph.read(acoustic=True)
+    >>> ph.save_run_results(filename="phonons.results.npz")
+    >>> ...
+    >>> ph_read = PhononsFromFile("phonons.results.npz")
+
+    """
+
+    def __init__(self, filename, atoms=None):
+        """Construct from saved :meth:`~ase.phonons.Phonons.save_run_results`
+        call.
+
+        Parameters:
+
+        filename: str
+            The NumPy compressed zip archive file path.
+        atoms: :class:`~ase.Atoms`, optional
+            Provide the `Atoms` object
+        """
+        with np.load(filename, allow_pickle=True) as data:
+            self.D_N = data["D_N"]
+            self.C_N = data["C_N"]
+            self.Z_avv = data["Z_avv"]
+            self.eps_vv = data["eps_vv"]
+            indices = data["indices"]
+            m_inv_x = data["m_inv_x"]
+            cell = data["cell"]
+            supercell = data["supercell"]
+
+        # Create a Phonons instance w/ atoms
+        if atoms:
+            self.phonons = Phonons(atoms)
+            if not np.array_equal(self.phonons.atoms.cell, cell):
+                warnings.warn(
+                    "Atoms cell does not match cell saved in file!", UserWarning
+                )
+            self.atoms_given = True
+        else:
+            # Dummy atoms
+            self.phonons = Phonons(Atoms())
+            self.atoms_given = False
+
+        # Assign loaded data to the Phonons instance
+        self.phonons.D_N = self.D_N
+        self.phonons.C_N = self.C_N
+        self.phonons.Z_avv = self.Z_avv
+        self.phonons.eps_vv = self.eps_vv
+        self.phonons.indices = indices
+        self.phonons.m_inv_x = m_inv_x
+        self.phonons.atoms.cell = cell
+        self.phonons.supercell = supercell
+
+    def get_force_constant(self):
+        """See :meth:`~ase.phonons.Phonons.get_force_constant`."""
+        return self.phonons.get_force_constants()
+
+    def compute_dynamical_matrix(self, *args, **kwargs):
+        """See :meth:`~ase.phonons.Phonons.compute_dynamical_matrix`."""
+        return self.phonons.compute_dynamical_matrix(*args, **kwargs)
+
+    def get_band_structure(self, *args, **kwargs):
+        """See :meth:`~ase.phonons.Phonons.get_band_structure`."""
+        return self.phonons.get_band_structure(*args, **kwargs)
+
+    def band_structure(self, *args, **kwargs):
+        """See :meth:`~ase.phonons.Phonons.band_structure`."""
+        return self.phonons.band_structure(*args, **kwargs)
+
+    def get_dos(self, *args, **kwargs):
+        """See :meth:`~ase.phonons.Phonons.get_dos`."""
+        return self.phonons.get_dos(*args, **kwargs)
+
+    def dos(self, *args, **kwargs):
+        """See :meth:`~ase.phonons.Phonons.dos`."""
+        return self.phonons.dos(*args, **kwargs)
+
+    def write_modes(self, *args, **kwargs):
+        """See :meth:`~ase.phonons.Phonons.dos`."""
+        if not self.atoms_given:
+            raise ValueError(
+                "Can only be called when class instantiated with `atoms` kwarg"
+            )
+        return self.phonons.write_modes(*args, **kwargs)
+
+
 def get_phonons(
     structure,
     potential,
@@ -18,7 +119,7 @@ def get_phonons(
     doskpts=(30, 30, 30),
     dospts=150,
     displacement=0.03,
-    center_refcell=True,
+    center_refcell=False,
     lorentz_width=4.5e-4,
 ):
     """
@@ -37,9 +138,13 @@ def get_phonons(
 
     Returns:
         tuple: Tuple containing band structure, density of states, and dynamical matrix (ndarray)
+
+    Notes:
+        If `center_refcell=True` the dynamical matrix saved in the npz file will be all zeros.
     """
 
     model = potential[0].upper()
+    chemsys = structure.info["chemsys"]
     structure_name = structure.info["structure_name"]
     phfolder = str(paths.data / model / structure_name)
 
@@ -54,9 +159,6 @@ def get_phonons(
 
     phonons.run()
     phonons.read(acoustic=True)
-    phonons.clean()
-
-    dyn_mat = phonons.D_N
 
     # Calculate the band structure for provide path
     # NOTE: No longer need modes here, will use dyn_mat if needed
@@ -66,7 +168,27 @@ def get_phonons(
     bs = BandStructure(bandpath, energies=omegas[None])
     dos = phonons.get_dos(kpts=doskpts).sample_grid(npts=dospts, width=lorentz_width)
 
-    return bs, dos, dyn_mat
+    # save the results to a compressed numpy format (see PhononsFromFile)
+    np_file = str(
+        paths.data
+        / potential[0].upper()
+        / f"{chemsys}_{structure_name}_{model}_ASEPhonons.npz"
+    )
+    np.savez_compressed(
+        np_file,
+        indices=phonons.indices,
+        m_inv_x=phonons.m_inv_x,
+        cell=phonons.atoms.cell,
+        supercell=phonons.supercell,
+        D_N=phonons.D_N.copy(),
+        C_N=phonons.C_N.copy(),
+        Z_avv=phonons.Z_avv,
+        eps_vv=phonons.eps_vv,
+    )
+
+    phonons.clean()
+
+    return bs, dos
 
 
 def calculate_phonons(
@@ -81,7 +203,7 @@ def calculate_phonons(
         0.01,
         0.02,
     ],
-    plotting=False,
+    plotting=True,
 ):
     """
     Calculate phonon properties under various strain conditions.
@@ -126,6 +248,7 @@ def calculate_phonons(
     # NOTE: Structure cell must be same as cell_relaxed
     structure.set_calculator(calculator)
     structure.info["structure_name"] = entry.structure_name
+    structure.info["chemsys"] = entry.chemsys
     bandpath, directions = get_bandpath(structure)
 
     strain_phonons = {}
@@ -148,7 +271,7 @@ def calculate_phonons(
 
         stress = mod_structure.get_stress()
         volume = mod_structure.get_cell().volume
-        bandstructure, dos, dyn_mat = get_phonons(
+        bandstructure, dos = get_phonons(
             mod_structure,
             potential,
             bandpath,
@@ -197,10 +320,8 @@ def calculate_phonons(
         strain_phonons[frmt_e] = {
             "bandstructure": bandstructure_data,
             "dos": dos_data,
-            "dyn_mat": dyn_mat,
             "volume": volume,
             "stress": stress,
-            "supercell": supercell,
         }
 
     db.update(entry.id, data={"strain_phonons": strain_phonons})

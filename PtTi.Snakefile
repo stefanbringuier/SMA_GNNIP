@@ -2,6 +2,7 @@
 ### THIS IS ALL PtTi RULES ###
 PtTi_CHEMSYS = "PtTi"
 PtTi_PROCESS_MODELS = ["Kim", "M3GNet", "CHGNet", "MACE"]
+PtTi_STRUCTURES = ["B2", "B19"]
 
 
 # Rule to aggregate the PtTi to database

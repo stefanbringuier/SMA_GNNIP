@@ -1,7 +1,18 @@
 ### PART OF MAIN Snakefile     ###
 ### THIS IS ALL NiTi RULES     ###
 NiTi_CHEMSYS = "NiTi"
-NiTi_PROCESS_MODELS = ["Mutter", "Zhong", "Ko", "M3GNet", "CHGNet", "MACE"]
+NiTi_PROCESS_MODELS = [
+    "Mutter",
+    "Zhong",
+    "Ko",
+    "Kouvasi",
+    "M3GNet",
+    "CHGNet",
+    "MACE",
+    "ALIGNN",
+    "DeepMD",
+]
+NiTi_STRUCTURES = ["B2", "B19", "B19P", "BCO"]
 
 
 # Rule to aggregate the NiTi to database
