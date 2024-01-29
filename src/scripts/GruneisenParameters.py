@@ -7,7 +7,7 @@ import numpy.polynomial.polynomial as poly
 import paths
 import scienceplots
 
-plt.style.use(["science", "scatter"])
+plt.style.use(["science", "scatter", "no-latex"])
 
 from ase.db import connect
 from TableConfig import ORDER

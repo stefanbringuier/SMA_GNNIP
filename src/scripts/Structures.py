@@ -148,7 +148,7 @@ def NiTi_B19P_Structure(
         spacegroup=11,
     )
 
-    B19P.info["structure_name"] = "B19P"
+    B19P.info["structure_name"] = "B19'"
     B19P.info["chemsys"] = "NiTi"
     return B19P
 
@@ -241,6 +241,31 @@ def NiTi_R_Phase_Structure(
     R_Phase.info["structure_name"] = "R_Phase"
     R_Phase.info["chemsys"] = "NiTi"
     return R_Phase
+
+
+def NiAlCo_L2_1P(a=2.8640, b=2.8640, c=5.6473, alpha=90.0, beta=90.0, gamma=90.0):
+    """
+    MP predicted ground-state structure similar to a L2_1 Heusler alloy but
+    distorted (hence P for prime).
+
+    Structure: https://next-gen.materialsproject.org/materials/mp-1228913
+    """
+
+    L2_1P = crystal(
+        ["Ni", "Al", "Co"],
+        [
+            (0.500, 0.500, 0.500),
+            (0.000, 0.000, 0.245),
+            (0.500, 0.500, 0.000),
+        ],
+        spacegroup=123,
+        cellpar=[a, b, c, alpha, beta, gamma],
+        pbc=True,
+    )
+
+    L2_1P.info["structure_name"] = "L2_1'"
+    L2_1P.info["chemsys"] = "NiAlCo"
+    return L2_1P
 
 
 def get_structure(chemsys, structure_name):

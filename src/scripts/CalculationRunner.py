@@ -148,6 +148,7 @@ def main():
             "Zhong",
             "ZhongASE",
             "Ko",
+            "Kavousi",
             "Kim",
             "M3GNet",
             "CHGNet",

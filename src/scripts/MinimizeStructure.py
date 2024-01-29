@@ -1,4 +1,4 @@
-from ase.constraints import UnitCellFilter
+from ase.constraints import ExpCellFilter, UnitCellFilter
 from ase.db import connect
 from ase.optimize import FIRE
 from ase.spacegroup.symmetrize import FixSymmetry, check_symmetry
@@ -30,7 +30,7 @@ def minimize_structure(structure, potential, write_db=None, fmax=5.0e-4, fstep=5
 
     # Apply SymmetryFilter and UnitCellFilter for optimization
     structure.set_constraint(FixSymmetry(structure, symprec=1.0e-4))
-    ucf_sym = UnitCellFilter(structure)
+    ucf_sym = ExpCellFilter(structure)  # UnitCellFilter(structure)
 
     # FIRE is used as best performance seen.
     opt = FIRE(ucf_sym)

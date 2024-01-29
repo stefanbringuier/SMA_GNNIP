@@ -423,6 +423,9 @@ def parse_arguments():
     parser.add_argument(
         "--models", nargs="+", type=str, required=True, help="List of models"
     )
+    parse.add_argument(
+        "--skip-strains", action="store_true", help="Only return none strain phonons"
+    )
     return parser.parse_args()
 
 
@@ -431,8 +434,10 @@ if __name__ == "__main__":
     dbname = paths.data / args.dbname
     for s in args.structures:
         plot_all_model_phonons(dbname, args.chemsys, args.models, s)
-    for m in args.models:
-        for s in args.structures:
-            plot_all_strains_phonons(
-                dbname, args.chemsys, m, s, num_strains=args.num_strains
-            )
+
+    if not args.skip_strains:
+        for m in args.models:
+            for s in args.structures:
+                plot_all_strains_phonons(
+                    dbname, args.chemsys, m, s, num_strains=args.num_strains
+                )

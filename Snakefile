@@ -8,8 +8,13 @@ DATABASE = "SMA_Results.json"
 
 # Function to get environment file
 def get_env_file(model):
-    # return f"env/{model.lower()}.yml"
-    return "env/base.yml"
+    env = f"env/{model.lower()}.yml"
+    if model == "M3GNet":
+        return env
+    elif model == "CHGNet":
+        return env
+    else:
+        return "env/base.yml"
 
 
 rule create_db:

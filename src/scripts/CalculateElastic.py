@@ -3,10 +3,8 @@ from copy import deepcopy
 
 import ase.units as units
 import paths
-from ase.calculators.lammpslib import LAMMPSlib
 from ase.db import connect
 from ase.spacegroup import crystal
-from deepmd.calculator import DP
 from elastic import get_elastic_tensor, get_elementary_deformations
 from elastic.elastic import get_cij_order
 
@@ -30,13 +28,7 @@ def serial_calculate(systems, calculator):
 
     res = []
     for n, s in enumerate(sysl):
-        if isinstance(calculator, LAMMPSlib):
-            s.set_calculator(calculator)
-        elif isinstance(calculator, DP):
-            s.set_calculator(calculator)
-        else:
-            s.set_calculator(deepcopy(calculator))
-
+        s.set_calculator(calculator)
         s.get_potential_energy()
         res.append([n, s])
 

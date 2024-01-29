@@ -54,7 +54,7 @@ rule plot_ptti_ecoh:
         "python src/scripts/PlotCohesiveEnergy.py {DATABASE} {params.chemsys}"
 
 
-# Rule for plotting NiTi EOS
+# Rule for plotting PtTi EOS
 rule plot_ptti_eos:
     input:
         data="src/data/CACHED/" + DATABASE,
@@ -97,8 +97,8 @@ rule plot_ptti_phonons:
         {DATABASE} \
         {params.num_strains} \
         {params.chemsys} \
-        --models {NiTi_PROCESS_MODELS} \
-        --structures {NiTi_STRUCTURES}"
+        --models {PtTi_PROCESS_MODELS} \
+        --structures {PtTi_STRUCTURES}"
 
 
 # # Rule for generating PtTi M-Mode Gruneisen parameters.
@@ -120,7 +120,7 @@ rule generate_ptti_m_mode_gruneisen:
         "python src/scripts/GruneisenParameters.py {DATABASE} {params.chemsys} {params.structure} {params.qpoint}"
 
 
-# Rule for generating NiTi equilibrium table
+# Rule for generating PtTi equilibrium table
 rule generate_ptti_elastic_table:
     input:
         data="src/data/CACHED/" + DATABASE,
@@ -136,7 +136,7 @@ rule generate_ptti_elastic_table:
         "python src/scripts/GenerateElasticTable.py {DATABASE} {params.chemsys}"
 
 
-# Appendix: Rule for generating NiTi equilibrium table
+# Appendix: Rule for generating PtTi equilibrium table
 rule generate_ptti_equil_table:
     input:
         data="src/data/CACHED/" + DATABASE,

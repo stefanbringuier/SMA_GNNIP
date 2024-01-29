@@ -11,14 +11,12 @@ dependencies:
   - pip:
       - spglib
       - ase == 3.22.1
-      - matgl == 0.9.1
       - seaborn
       - SciencePlots
       - torch
       - torchvision
       - torchaudio
       - mace-torch == 0.3.3
-      - chgnet == 0.3.1
       - alignn
       - deepmd-kit[cpu]==2.2.7
 variables:

@@ -49,6 +49,9 @@ def get_ase_calculator(model="MutterASE"):
         - Deng, B.; et al. Nat Mach Intell 2023, 5 (9), 1031–1041. https://doi.org/10.1038/s42256-023-00716-3.
         - Batatia, I.; et al. MACE: Higher Order Equivariant Message Passing Neural Networks for Fast and Accurate Force Fields; 2022.
         - Tang, H.; et al. Acta Materialia 2022, 238, 118217. https://doi.org/10.1016/j.actamat.2022.118217.
+        - Kim, Y.-K.; et al., Modelling Simul. Mater. Sci. Eng. 2015, 23 (5), 055004. https://doi.org/10.1088/0965-0393/23/5/055004.
+        - Pun, G. P. P.; et al, Modelling Simul. Mater. Sci. Eng. 2015, 23 (6), 065006. https://doi.org/10.1088/0965-0393/23/6/065006.
+
 
     """
     if model == "Mutter":
@@ -74,6 +77,14 @@ def get_ase_calculator(model="MutterASE"):
     elif model == "ZhongASE":
         potential_file = str(paths.static / "NiTi_Zhong.eam.fs")
         asecalc = CustomEAM(potential=potential_file)
+
+    elif model == "Pun":
+        from ase.calculators.lammpslib import LAMMPSlib
+
+        potential_file = str(paths.static / "NiAlCo_Pun.eam.alloy")
+        cmds = ["pair_style eam/fs", f"pair_coeff * *  {potential_file} Ni Al Co"]
+        amds = ["thermo_style custom etotal lx ly lz vol pxx pyy pzz pxy pxz pyz press"]
+        asecalc = LAMMPSlib(lmpcmds=cmds, amendments=amds, keep_alive=True)
 
     elif model == "Ko":
         from ase.calculators.lammpslib import LAMMPSlib
@@ -106,7 +117,19 @@ def get_ase_calculator(model="MutterASE"):
         potential_file = str(paths.static / "PtTi_Kim.meam.potential")
         cmds = [
             "pair_style meam",
-            f"pair_coeff * *  {library_file} Ni Ti {potential_file} Ni Ti",
+            f"pair_coeff * *  {library_file} Pt Ti {potential_file} Pt Ti",
+        ]
+        amds = ["thermo_style custom etotal lx ly lz vol pxx pyy pzz pxy pxz pyz press"]
+        asecalc = LAMMPSlib(lmpcmds=cmds, amendments=amds, keep_alive=True)
+
+    elif model == "KJL":
+        from ase.calculators.lammpslib import LAMMPSlib
+
+        library_file = str(paths.static / "NiAlCo_Kim.meam.library")
+        potential_file = str(paths.static / "NiAlCo_Kim.meam.library")
+        cmds = [
+            "pair_style meam",
+            f"pair_coeff * *  {library_file} Ni Al Co {potential_file} Ni Al Co",
         ]
         amds = ["thermo_style custom etotal lx ly lz vol pxx pyy pzz pxy pxz pyz press"]
         asecalc = LAMMPSlib(lmpcmds=cmds, amendments=amds, keep_alive=True)

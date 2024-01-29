@@ -5,7 +5,7 @@ NiTi_PROCESS_MODELS = [
     "Mutter",
     "Zhong",
     "Ko",
-    "Kouvasi",
+    "Kavousi",
     "M3GNet",
     "CHGNet",
     "MACE",
