@@ -265,7 +265,7 @@ def NiAlCo_L2_1P_Structure(
         pbc=True,
     )
 
-    L2_1P.info["structure_name"] = "L2_1'"
+    L2_1P.info["structure_name"] = "L2_1P"
     L2_1P.info["chemsys"] = "NiAlCo"
     return L2_1P
 
