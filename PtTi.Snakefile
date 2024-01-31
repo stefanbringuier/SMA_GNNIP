@@ -39,7 +39,6 @@ rule plot_ptti_ecoh:
     input:
         data="src/data/" + DATABASE,
         script="src/scripts/PlotCohesiveEnergy.py",
-        aggregated="src/data/COMPLETED_TASKS/ptti.database.aggregated.done",
     output:
         figure="src/tex/figures/PtTi_CohesiveEnergyPlot.png",
     conda:
@@ -55,7 +54,6 @@ rule plot_ptti_eos:
     input:
         data="src/data/CACHED/" + DATABASE,
         script="src/scripts/PlotEOS.py",
-        aggregated="src/data/COMPLETED_TASKS/ptti.database.aggregated.done",
     output:
         figure="src/tex/figures/PtTi_EquationOfStates.png",
     conda:
@@ -71,7 +69,6 @@ rule plot_ptti_phonons:
     input:
         data="src/data/CACHED/" + DATABASE,
         plotphonons="src/scripts/PlotPhonons.py",
-        aggregated="src/data/COMPLETED_TASKS/ptti.database.aggregated.done",
     output:
         figure_all_models_B2="src/tex/figures/PtTi_B2_ModelsPhononBandstructures.png",
         figure_all_models_B19P="src/tex/figures/PtTi_B19P_ModelsPhononBandstructures.png",
@@ -102,7 +99,6 @@ rule generate_ptti_m_mode_gruneisen:
     input:
         data="src/data/CACHED/" + DATABASE,
         script="src/scripts/GruneisenParameters.py",
-        aggregated="src/data/COMPLETED_TASKS/ptti.database.aggregated.done",
     output:
         table="src/tex/output/Table_PtTi_M_ModeGruneisen.tex",
         figure="src/tex/figures/Plot_PtTi_M_ModeGruneisen.png",
@@ -121,7 +117,6 @@ rule generate_ptti_elastic_table:
     input:
         data="src/data/CACHED/" + DATABASE,
         script="src/scripts/GenerateElasticTable.py",
-        aggregated="src/data/COMPLETED_TASKS/ptti.database.aggregated.done",
     output:
         table="src/tex/output/Table_PtTi_Elastic_Constants.tex",
     conda:
@@ -137,7 +132,6 @@ rule generate_ptti_equil_table:
     input:
         data="src/data/CACHED/" + DATABASE,
         script="src/scripts/GenerateEquilibriumTable.py",
-        aggregated="src/data/COMPLETED_TASKS/ptti.database.aggregated.done",
     output:
         table="src/tex/output/Table_PtTi_Equilibrium_Structures.tex",
     conda:

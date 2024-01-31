@@ -27,7 +27,7 @@ dag:
 # THis needs to be the version DOI not concept, thus it has to
 # correspond to a `showyourwork cache freeze`
 datasets:
-  10.5072/zenodo.1172:
+  10.5072/zenodo.25148:
     contents:
       SMA_Results.json: src/data/CACHED/SMA_Results.json
 #     contents:

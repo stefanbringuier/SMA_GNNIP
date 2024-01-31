@@ -39,7 +39,6 @@ rule plot_nialco_ecoh:
     input:
         data="src/data/" + DATABASE,
         script="src/scripts/PlotCohesiveEnergy.py",
-        aggregated="src/data/COMPLETED_TASKS/nialco.database.aggregated.done",
     output:
         figure="src/tex/figures/NiAlCo_CohesiveEnergyPlot.png",
     conda:
@@ -55,7 +54,6 @@ rule plot_nialco_eos:
     input:
         data="src/data/CACHED/" + DATABASE,
         script="src/scripts/PlotEOS.py",
-        aggregated="src/data/COMPLETED_TASKS/nialco.database.aggregated.done",
     output:
         figure="src/tex/figures/NiAlCo_EquationOfStates.png",
     conda:
@@ -71,7 +69,7 @@ rule plot_nialco_phonons:
     input:
         data="src/data/CACHED/" + DATABASE,
         plotphonons="src/scripts/PlotPhonons.py",
-        aggregated="src/data/COMPLETED_TASKS/nialco.database.aggregated.done",
+    #        aggregated="src/data/COMPLETED_TASKS/nialco.database.aggregated.done",
     output:
         figure_all_models_B2="src/tex/figures/NiAlCo_L2_1P_ModelsPhononBandstructures.png",
     conda:
@@ -93,7 +91,6 @@ rule generate_nialco_elastic_table:
     input:
         data="src/data/CACHED/" + DATABASE,
         script="src/scripts/GenerateElasticTable.py",
-        aggregated="src/data/COMPLETED_TASKS/nialco.database.aggregated.done",
     output:
         table="src/tex/output/Table_NiAlCo_Elastic_Constants.tex",
     conda:
@@ -109,7 +106,6 @@ rule generate_nialco_equil_table:
     input:
         data="src/data/CACHED/" + DATABASE,
         script="src/scripts/GenerateEquilibriumTable.py",
-        aggregated="src/data/COMPLETED_TASKS/nialco.database.aggregated.done",
     output:
         table="src/tex/output/Table_NiAlCo_Equilibrium_Structures.tex",
     conda:
