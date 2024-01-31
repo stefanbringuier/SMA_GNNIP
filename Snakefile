@@ -109,6 +109,8 @@ include: "NiAlCo.Snakefile"
 
 # NOTE: This is the final database after all calculations/simulations.
 # All the plots that leverage the ASE JSON database use this file path.
+# Also Zenodo caching to sandbox seems broken. I can create a record but
+# and showyourwork validates but when it tries to create a draft it fails.
 rule cache_db:
     input:
         db="src/data/" + DATABASE,
@@ -117,7 +119,7 @@ rule cache_db:
         alnico_done="src/data/COMPLETED_TASKS/nialco.database.aggregated.done",
     output:
         dbc="src/data/CACHED/" + DATABASE,
-    cache: True
+    #    cache: True
     shell:
         "mkdir -p src/data/CACHED && cp src/data/{DATABASE} src/data/CACHED/"
 
