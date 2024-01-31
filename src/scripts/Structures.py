@@ -291,7 +291,7 @@ def get_structure(chemsys, structure_name):
 
     elif chemsys == "NiAlCo":
         structure_functions = {
-            "L2_1P": NiAlCo_L2_1P,
+            "L21P": NiAlCo_L2_1P_Structure,
         }
 
     if structure_name not in structure_functions:
