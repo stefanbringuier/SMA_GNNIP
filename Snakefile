@@ -114,7 +114,7 @@ rule cache_db:
         db="src/data/" + DATABASE,
         niti_done="src/data/COMPLETED_TASKS/niti.database.aggregated.done",
         ptti_done="src/data/COMPLETED_TASKS/ptti.database.aggregated.done",
-        alnico_done="src/data/COMPLETED_TASKS/alnico.database.aggregated.done",
+        alnico_done="src/data/COMPLETED_TASKS/nialco.database.aggregated.done",
     output:
         dbc="src/data/CACHED/" + DATABASE,
     cache: True
