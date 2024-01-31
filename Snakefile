@@ -104,19 +104,17 @@ rule calculate_elastic:
 
 include: "NiTi.Snakefile"
 include: "PtTi.Snakefile"
+include: "AlNiCo.Snakefile"
 
 
-# NOTE: My intent is to cache the database, but I think this is not needed
-# I believe the purpose behind caching is to store intermediate results between
-# rules/workflows. For example if you need to fetch a database and had rules
-# that kept doing this, then you could cache that fetch. I think!.
-# What I was tyring to do was create the action of storing the databse once its
-# created because I'm frequentyly changeing whats being added to the database.
+# NOTE: This is the final database after all calculations/simulations.
+# All the plots that leverage the ASE JSON database use this file path.
 rule cache_db:
     input:
         db="src/data/" + DATABASE,
         niti_done="src/data/COMPLETED_TASKS/niti.database.aggregated.done",
         ptti_done="src/data/COMPLETED_TASKS/ptti.database.aggregated.done",
+        alnico_done="src/data/COMPLETED_TASKS/alnico.database.aggregated.done",
     output:
         dbc="src/data/CACHED/" + DATABASE,
     cache: True

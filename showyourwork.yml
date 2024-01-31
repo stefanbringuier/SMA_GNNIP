@@ -26,48 +26,20 @@ dag:
 # Externally-hosted datasets, e.g. on Zenodo
 # THis needs to be the version DOI not concept, thus it has to
 # correspond to a `showyourwork cache freeze`
-#datasets:
-#  10.5072/zenodo.1172:
-#    contents:
-#      NiTi_Structures.json: src/data/CACHED/NiTi_Structures.json
+datasets:
+  10.5072/zenodo.1172:
+    contents:
+      SMA_Results.json: src/data/CACHED/SMA_Results.json
 #     contents:
 #       TOI640b.json: src/data/TOI640b.json
 
 # Custom file dependencies -> This is used to add icons
 
-dependencies:
-# Figures
-  src/scripts/PlotNiTiEOS.py:
-    - src/data/COMPLETED_TASKS/niti.database.aggregated.done
-    - src/data/CACHED/SMA_Results_08Jan2024.json
-  src/scripts/PlotPhonons.py:
-    - src/data/COMPLETED_TASKS/niti.database.aggregated.done
-    - src/data/CACHED/SMA_Results_08Jan2024.json
-  src/scripts/PlotNoStrainPhonons.py:
-    - src/scripts/PlotPhonons.py
-    - src/data/COMPLETED_TASKS/niti.database.aggregated.done
-    - src/data/CACHED/SMA_Results_08Jan2024.json
-  src/scripts/PlotEAMPhonons.py:
-    - src/scripts/PlotPhonons.py
-    - src/data/COMPLETED_TASKS/niti.database.aggregated.done
-    - src/data/CACHED/SMA_Results_08Jan2024.json
-  src/scripts/PlotGNNPhonons.py:
-    - src/scripts/PlotPhonons.py
-    - src/data/COMPLETED_TASKS/niti.database.aggregated.done
-    - src/data/CACHED/SMA_Results_08Jan2024.json
-
-# Tables
-  src/scripts/GenerateNiTiEquilTable.py:
-    - src/data/COMPLETED_TASKS/niti.database.aggregated.done
-    - src/data/CACHED/SMA_Results_08Jan2024.json
-  src/scripts/GenerateMGruneisenTable.py:
-    - src/data/COMPLETED_TASKS/niti.database.aggregated.done
-    - src/data/CACHED/SMA_Results_08Jan2024.json
-
-# LaTeX
-  src/tex/ms.tex:
-    - src/tex/output/Table_NiTi_Equilibrium_Structures.tex
-    - src/tex/output/Table_NiTi_M_ModeGruneisen.tex
+## I think this is mostly handled through my Snakefile.
+#dependencies:
+#  src/scripts/PlotNiTiEOS.py:
+#    - src/data/COMPLETED_TASKS/niti.database.aggregated.done
+#    - src/data/CACHED/SMA_Results.json
 
 # Name of the `.tex` manuscript and corresponding `.pdf` article
 ms_name: ms

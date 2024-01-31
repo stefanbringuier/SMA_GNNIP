@@ -10,10 +10,6 @@ rule aggregate_ptti_db:
     input:
         db="src/data/" + DATABASE,
         create="src/data/COMPLETED_TASKS/created.database.done",
-        #minimize="src/scripts/MinimizeStructure.py",
-        #eos="src/scripts/CalculateEOS.py",
-        #phonons="src/scripts/CalculatePhonons.py",
-        #elastic="src/scripts/CalculateElastic.py",
         mineos_calc=expand(
             "src/data/COMPLETED_TASKS/{chemsys}_{structure}_{model}.min_eos.done",
             chemsys=PtTi_CHEMSYS,
