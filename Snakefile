@@ -102,9 +102,28 @@ rule calculate_elastic:
         "python {params.runner} --calc_type elastic --dbname {DATABASE} --chemsys {params.chemsys} --structure {params.structure} --model {params.model}"
 
 
-include: "NiTi.Snakefile"
-include: "PtTi.Snakefile"
-include: "NiAlCo.Snakefile"
+import os
+
+
+# NOTE: We use this to bypass running if we change a script in a rule above
+# but don't want to rerun if all the cached database and checkpoint files
+# are present for the cache_db rul. This means if you want to tigger the
+# calculation rules you need to delete the checkpoint files.
+def is_cache_db_ready():
+    dependencies = [
+        "src/data/CACHED/" + DATABASE,
+        "src/data/COMPLETED_TASKS/niti.database.aggregated.done",
+        "src/data/COMPLETED_TASKS/ptti.database.aggregated.done",
+        "src/data/COMPLETED_TASKS/nialco.database.aggregated.done",
+    ]
+    return all(os.path.exists(dep) for dep in dependencies)
+
+
+if not is_cache_db_ready():
+
+    include: "NiTi.Snakefile"
+    include: "PtTi.Snakefile"
+    include: "NiAlCo.Snakefile"
 
 
 # NOTE: This is the final database after all calculations/simulations.
