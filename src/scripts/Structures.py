@@ -148,7 +148,7 @@ def NiTi_B19P_Structure(
         spacegroup=11,
     )
 
-    B19P.info["structure_name"] = "B19'"
+    B19P.info["structure_name"] = "B19P"
     B19P.info["chemsys"] = "NiTi"
     return B19P
 
