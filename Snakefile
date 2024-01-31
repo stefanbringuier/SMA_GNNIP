@@ -31,8 +31,8 @@ rule create_db:
 
 rule minimize_and_calculate_eos:
     input:
-        minimize="src/scripts/MinimizeStructure.py",
-        script="src/scripts/CalculateEOS.py",
+        #        minimize="src/scripts/MinimizeStructure.py",
+        #        script="src/scripts/CalculateEOS.py",
         db=ancient("src/data/" + DATABASE),
         create="src/data/COMPLETED_TASKS/created.database.done",
     output:
@@ -55,8 +55,8 @@ rule minimize_and_calculate_eos:
 
 rule calculate_phonons:
     input:
-        config="src/scripts/Config.py",
-        script="src/scripts/CalculatePhonons.py",
+        #        config="src/scripts/Config.py",
+        #        script="src/scripts/CalculatePhonons.py",
         db=ancient("src/data/" + DATABASE),
         create="src/data/COMPLETED_TASKS/created.database.done",
         mineos="src/data/COMPLETED_TASKS/{chemsys}_{structure}_{model}.min_eos.done",
@@ -80,7 +80,7 @@ rule calculate_phonons:
 
 rule calculate_elastic:
     input:
-        script="src/scripts/CalculateElastic.py",
+        #        script="src/scripts/CalculateElastic.py",
         db=ancient("src/data/" + DATABASE),
         create="src/data/COMPLETED_TASKS/created.database.done",
         mineos="src/data/COMPLETED_TASKS/{chemsys}_{structure}_{model}.min_eos.done",
@@ -102,28 +102,9 @@ rule calculate_elastic:
         "python {params.runner} --calc_type elastic --dbname {DATABASE} --chemsys {params.chemsys} --structure {params.structure} --model {params.model}"
 
 
-import os
-
-
-# NOTE: We use this to bypass running if we change a script in a rule above
-# but don't want to rerun if all the cached database and checkpoint files
-# are present for the cache_db rul. This means if you want to tigger the
-# calculation rules you need to delete the checkpoint files.
-def is_cache_db_ready():
-    dependencies = [
-        "src/data/CACHED/" + DATABASE,
-        "src/data/COMPLETED_TASKS/niti.database.aggregated.done",
-        "src/data/COMPLETED_TASKS/ptti.database.aggregated.done",
-        "src/data/COMPLETED_TASKS/nialco.database.aggregated.done",
-    ]
-    return all(os.path.exists(dep) for dep in dependencies)
-
-
-if not is_cache_db_ready():
-
-    include: "NiTi.Snakefile"
-    include: "PtTi.Snakefile"
-    include: "NiAlCo.Snakefile"
+include: "NiTi.Snakefile"
+include: "PtTi.Snakefile"
+include: "NiAlCo.Snakefile"
 
 
 # NOTE: This is the final database after all calculations/simulations.
