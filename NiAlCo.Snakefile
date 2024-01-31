@@ -2,7 +2,7 @@
 ### THIS IS ALL Nialco RULES ###
 NiAlCo_CHEMSYS = "NiAlCo"
 NiAlCo_PROCESS_MODELS = ["Pun", "KGL", "M3GNet", "CHGNet", "MACE"]
-NiAlCo_STRUCTURES = ["L2_1P"]
+NiAlCo_STRUCTURES = ["L2\_1P"]
 
 
 # Rule to aggregate the NiAlCo to database
