@@ -48,7 +48,7 @@ def minimize_structure(structure, potential, write_db=None, fmax=5.0e-4, fstep=5
 
     if write_db:
         db = connect(write_db)
-        chemsys = "".join(sorted(set(structure.symbols)))
+        chemsys = structure.info["chemsys"]  # "".join(sorted(set(structure.symbols)))
         etotal = structure.get_total_energy()
         stress = structure.get_stress()
         forces = structure.get_forces()
