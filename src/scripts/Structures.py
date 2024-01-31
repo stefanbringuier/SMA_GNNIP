@@ -243,7 +243,9 @@ def NiTi_R_Phase_Structure(
     return R_Phase
 
 
-def NiAlCo_L2_1P(a=2.8640, b=2.8640, c=5.6473, alpha=90.0, beta=90.0, gamma=90.0):
+def NiAlCo_L2_1P_Structure(
+    a=2.8640, b=2.8640, c=5.6473, alpha=90.0, beta=90.0, gamma=90.0
+):
     """
     MP predicted ground-state structure similar to a L2_1 Heusler alloy but
     distorted (hence P for prime).
@@ -285,6 +287,11 @@ def get_structure(chemsys, structure_name):
         structure_functions = {
             "B2": PtTi_B2_Structure,
             "B19": PtTi_B19_Structure,
+        }
+
+    elif chemsys == "NiAlCo":
+        structure_functions = {
+            "L2_1P": NiAlCo_L2_1P,
         }
 
     if structure_name not in structure_functions:

@@ -64,26 +64,26 @@ rule plot_nialco_eos:
         "python src/scripts/PlotEOS.py {DATABASE} {params.chemsys}"
 
 
-# Rule for plotting NiAlCo phonons don't plot strained phonons.
-rule plot_nialco_phonons:
-    input:
-        data="src/data/CACHED/" + DATABASE,
-        plotphonons="src/scripts/PlotPhonons.py",
-    #        aggregated="src/data/COMPLETED_TASKS/nialco.database.aggregated.done",
-    output:
-        figure_all_models_B2="src/tex/figures/NiAlCo_L2_1P_ModelsPhononBandstructures.png",
-    conda:
-        "env/base.yml"
-    params:
-        num_strains=5,
-        chemsys="NiAlCo",
-    shell:
-        "python src/scripts/PlotPhonons.py \
-        {DATABASE} \
-        --skip-strains \
-        {params.chemsys} \
-        --models {Nialco_PROCESS_MODELS} \
-        --structures {Nialco_STRUCTURES}"
+# # Rule for plotting NiAlCo phonons don't plot strained phonons.
+# rule plot_nialco_phonons:
+#     input:
+#         data="src/data/CACHED/" + DATABASE,
+#         plotphonons="src/scripts/PlotPhonons.py",
+#     #        aggregated="src/data/COMPLETED_TASKS/nialco.database.aggregated.done",
+#     output:
+#         figure_all_models_B2="src/tex/figures/NiAlCo_L2_1P_ModelsPhononBandstructures.png",
+#     conda:
+#         "env/base.yml"
+#     params:
+#         num_strains=5,
+#         chemsys="NiAlCo",
+#     shell:
+#         "python src/scripts/PlotPhonons.py \
+#         {DATABASE} \
+#         --skip-strains \
+#         {params.chemsys} \
+#         --models {Nialco_PROCESS_MODELS} \
+#         --structures {Nialco_STRUCTURES}"
 
 
 # Rule for generating NiAlCo equilibrium table
