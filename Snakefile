@@ -104,7 +104,7 @@ rule calculate_elastic:
 
 include: "NiTi.Snakefile"
 include: "PtTi.Snakefile"
-include: "AlNiCo.Snakefile"
+include: "NiAlCo.Snakefile"
 
 
 # NOTE: This is the final database after all calculations/simulations.
