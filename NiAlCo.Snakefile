@@ -1,7 +1,7 @@
 ### PART OF MAIN Snakefile ###
 ### THIS IS ALL Nialco RULES ###
 NiAlCo_CHEMSYS = "NiAlCo"
-NiAlCo_PROCESS_MODELS = ["Pun", "KGL", "M3GNet", "CHGNet", "MACE"]
+NiAlCo_PROCESS_MODELS = ["Pun", "KJL", "M3GNet", "CHGNet", "MACE"]
 NiAlCo_STRUCTURES = ["L21P"]
 
 

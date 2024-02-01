@@ -156,6 +156,7 @@ def main():
             "ALIGNN",
             "DeepMD",
             "Pun",
+            "KJL",
         ],
         default="Mutter",
         help="Choose ASECalculator Model",
