@@ -82,7 +82,7 @@ def get_ase_calculator(model="MutterASE"):
         from ase.calculators.lammpslib import LAMMPSlib
 
         potential_file = str(paths.static / "NiAlCo_Pun.eam.alloy")
-        cmds = ["pair_style eam/fs", f"pair_coeff * *  {potential_file} Ni Al Co"]
+        cmds = ["pair_style eam/alloy", f"pair_coeff * *  {potential_file} Ni Al Co"]
         amds = ["thermo_style custom etotal lx ly lz vol pxx pyy pzz pxy pxz pyz press"]
         asecalc = LAMMPSlib(lmpcmds=cmds, amendments=amds, keep_alive=True)
 

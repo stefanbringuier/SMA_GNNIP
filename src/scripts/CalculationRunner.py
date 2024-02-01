@@ -155,6 +155,7 @@ def main():
             "MACE",
             "ALIGNN",
             "DeepMD",
+            "Pun",
         ],
         default="Mutter",
         help="Choose ASECalculator Model",
