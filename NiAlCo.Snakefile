@@ -1,7 +1,7 @@
 ### PART OF MAIN Snakefile ###
 ### THIS IS ALL Nialco RULES ###
 NiAlCo_CHEMSYS = "NiAlCo"
-NiAlCo_PROCESS_MODELS = ["Pun", "KJL", "M3GNet", "CHGNet", "MACE"]
+NiAlCo_PROCESS_MODELS = ["Pun", "M3GNet", "CHGNet", "MACE"]
 NiAlCo_STRUCTURES = ["L21P"]
 
 
@@ -16,12 +16,12 @@ rule aggregate_nialco_db:
             structure=NiAlCo_STRUCTURES,
             model=NiAlCo_PROCESS_MODELS,
         ),
-        phonons_calc=expand(
-            "src/data/COMPLETED_TASKS/{chemsys}_{structure}_{model}.phonons.done",
-            chemsys=NiAlCo_CHEMSYS,
-            structure=NiAlCo_STRUCTURES,
-            model=NiAlCo_PROCESS_MODELS,
-        ),
+        # phonons_calc=expand(
+        #     "src/data/COMPLETED_TASKS/{chemsys}_{structure}_{model}.phonons.done",
+        #     chemsys=NiAlCo_CHEMSYS,
+        #     structure=NiAlCo_STRUCTURES,
+        #     model=NiAlCo_PROCESS_MODELS,
+        # ),
         elastic_calc=expand(
             "src/data/COMPLETED_TASKS/{chemsys}_{structure}_{model}.elastic.done",
             chemsys=NiAlCo_CHEMSYS,
