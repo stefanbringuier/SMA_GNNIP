@@ -35,35 +35,31 @@ rule aggregate_nialco_db:
 
 
 # Rule for plotting NiAlCo Cohesive Energy
-rule plot_nialco_ecoh:
-    input:
-        data="src/data/" + DATABASE,
-        script="src/scripts/PlotCohesiveEnergy.py",
-    output:
-        figure="src/tex/figures/NiAlCo_CohesiveEnergyPlot.png",
-    conda:
-        "env/base.yml"
-    params:
-        chemsys="NiAlCo",
-    shell:
-        "python src/scripts/PlotCohesiveEnergy.py {DATABASE} {params.chemsys}"
-
-
-# Rule for plotting Nialco EOS
-rule plot_nialco_eos:
-    input:
-        data="src/data/CACHED/" + DATABASE,
-        script="src/scripts/PlotEOS.py",
-    output:
-        figure="src/tex/figures/NiAlCo_EquationOfStates.png",
-    conda:
-        "env/base.yml"
-    params:
-        chemsys="NiAlCo",
-    shell:
-        "python src/scripts/PlotEOS.py {DATABASE} {params.chemsys}"
-
-
+# rule plot_nialco_ecoh:
+#     input:
+#         data="src/data/" + DATABASE,
+#         script="src/scripts/PlotCohesiveEnergy.py",
+#     output:
+#         figure="src/tex/figures/NiAlCo_CohesiveEnergyPlot.png",
+#     conda:
+#         "env/base.yml"
+#     params:
+#         chemsys="NiAlCo",
+#     shell:
+#         "python src/scripts/PlotCohesiveEnergy.py {DATABASE} {params.chemsys}"
+# # Rule for plotting Nialco EOS
+# rule plot_nialco_eos:
+#     input:
+#         data="src/data/CACHED/" + DATABASE,
+#         script="src/scripts/PlotEOS.py",
+#     output:
+#         figure="src/tex/figures/NiAlCo_EquationOfStates.png",
+#     conda:
+#         "env/base.yml"
+#     params:
+#         chemsys="NiAlCo",
+#     shell:
+#         "python src/scripts/PlotEOS.py {DATABASE} {params.chemsys}"
 # # Rule for plotting NiAlCo phonons don't plot strained phonons.
 # rule plot_nialco_phonons:
 #     input:
@@ -84,33 +80,29 @@ rule plot_nialco_eos:
 #         {params.chemsys} \
 #         --models {Nialco_PROCESS_MODELS} \
 #         --structures {Nialco_STRUCTURES}"
-
-
 # Rule for generating NiAlCo equilibrium table
-rule generate_nialco_elastic_table:
-    input:
-        data="src/data/CACHED/" + DATABASE,
-        script="src/scripts/GenerateElasticTable.py",
-    output:
-        table="src/tex/output/Table_NiAlCo_Elastic_Constants.tex",
-    conda:
-        "env/base.yml"
-    params:
-        chemsys="NiAlCo",
-    shell:
-        "python src/scripts/GenerateElasticTable.py {DATABASE} {params.chemsys}"
-
-
-# Appendix: Rule for generating NiAlCo equilibrium table
-rule generate_nialco_equil_table:
-    input:
-        data="src/data/CACHED/" + DATABASE,
-        script="src/scripts/GenerateEquilibriumTable.py",
-    output:
-        table="src/tex/output/Table_NiAlCo_Equilibrium_Structures.tex",
-    conda:
-        "env/base.yml"
-    params:
-        chemsys="NiAlCo",
-    shell:
-        "python src/scripts/GenerateEquilibriumTable.py {DATABASE} {params.chemsys}"
+# rule generate_nialco_elastic_table:
+#     input:
+#         data="src/data/CACHED/" + DATABASE,
+#         script="src/scripts/GenerateElasticTable.py",
+#     output:
+#         table="src/tex/output/Table_NiAlCo_Elastic_Constants.tex",
+#     conda:
+#         "env/base.yml"
+#     params:
+#         chemsys="NiAlCo",
+#     shell:
+#         "python src/scripts/GenerateElasticTable.py {DATABASE} {params.chemsys}"
+# # Appendix: Rule for generating NiAlCo equilibrium table
+# rule generate_nialco_equil_table:
+#     input:
+#         data="src/data/CACHED/" + DATABASE,
+#         script="src/scripts/GenerateEquilibriumTable.py",
+#     output:
+#         table="src/tex/output/Table_NiAlCo_Equilibrium_Structures.tex",
+#     conda:
+#         "env/base.yml"
+#     params:
+#         chemsys="NiAlCo",
+#     shell:
+#         "python src/scripts/GenerateEquilibriumTable.py {DATABASE} {params.chemsys}"
