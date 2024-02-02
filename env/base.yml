@@ -9,6 +9,7 @@ dependencies:
   - openmpi
   - mpi4py
   - pip:
+      - matplotlib
       - spglib
       - ase == 3.22.1
       - seaborn
