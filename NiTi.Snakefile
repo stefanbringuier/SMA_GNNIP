@@ -109,7 +109,6 @@ rule plot_niti_eos:
 rule plot_niti_phonons:
     input:
         data="src/data/CACHED/" + DATABASE,
-        aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done",
         plotphonons="src/scripts/PlotPhonons.py",
     output:
         figure_all_models_B2="src/tex/figures/NiTi_B2_ModelsPhononBandstructures.png",
