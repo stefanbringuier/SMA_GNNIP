@@ -423,7 +423,7 @@ def parse_arguments():
     parser.add_argument(
         "--models", nargs="+", type=str, required=True, help="List of models"
     )
-    parse.add_argument(
+    parser.add_argument(
         "--skip-strains", action="store_true", help="Only return none strain phonons"
     )
     return parser.parse_args()
