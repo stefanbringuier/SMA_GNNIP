@@ -54,7 +54,9 @@ def plot_cohesive_energy(dbname, chemsys, output_filename):
 
     sorder = STRUCTURE_ORDER[chemsys]
     default_order = max(sorder.values())
-    unique_structure_types = set(entry.structure_name for entry in db.select())
+    unique_structure_types = set(
+        entry.structure_name for entry in db.select(chemsys=chemsys)
+    )
     structure_order = sorted(
         unique_structure_types, key=lambda x: sorder.get(x, default_order)
     )
@@ -62,6 +64,7 @@ def plot_cohesive_energy(dbname, chemsys, output_filename):
     # unique_structure_types = set(
     #     entry.structure_name for entry in db.select(chemsys=chemsys)
     # )
+    print(structure_order)
 
     # Data containers
     structure_names = []

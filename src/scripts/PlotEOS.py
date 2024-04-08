@@ -23,7 +23,7 @@ def plot_eos(
     figsize=(7.24, 7.24),
     dpi=600,
     xlim=(0.75, 1.25),
-    ignore_list=["B32", "R_Phase"],
+    ignore_list=["B32", "L21P", "R_Phase"],
     color_palette="muted",
     n_colors=10,
     wspace=0.3,

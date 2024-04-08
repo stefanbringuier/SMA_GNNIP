@@ -12,7 +12,7 @@
 </a>
 </p>
 
-# Assessing Phonon Properties of Shape Memory Alloys using Graph Neural Network Potentials
+# Suitability of Graph Neural Network for Shape Memory Alloys [WIP]
 
 **Authors:** Stefan Bringuier
 
@@ -20,7 +20,30 @@
 
 ## Abstract
 
-Shape Memory Alloys (SMAs) such as NiTi are pivotal in vibrational dampening,robotic arms, prothestic hands, and mechanical vales as a result of their unique displacive phase transformation properties. However,assessing their phonon characteristics, which provide insight into the displacive phase transformation, by using conventional Density Functional Theory (DFT) methods is computationally challenging. In this paper we assess the use of recent Graph Neural Network (GNN) potentials as a viable alternative. These GNN potentials have leveraged large DFT-computed databases for training and provide a good approximation to thepotential energy surfaces which enable inference on energies and forces in lattice and atomic dynamic calculations. We compare GNN potentials with the Embedded Atom Method (EAM) in predicting phonon properties of NiTi. We find that in general the EAM potentials are slightly more performant than the GN in that they appear to more accurately describe equation of state, phonon dispersions, and elastic constants. However, the MACE potential shows significant promise as an exploritory potential for designing and characterizing more complex SMAs. Our findings reveal GNN potentials as a promising avenue for advancing SMA research and fine-tuning of pre-trained GNN models with more relevant DFT data (i.e., force-constants) may permit better outcomes.
+	Shape Memory Alloys (SMAs) such as NiTi are pivotal in vibrational
+	dampening,robotic arms, prothestic hands, and mechanical vales as a
+	result of their unique displacive phase transformation
+	properties. However, assessing their phonon characteristics, which
+	provide insight into the displacive phase transformation, by using
+	conventional Density Functional Theory (DFT) methods is
+	computationally challenging. In this paper we assess the use of
+	recent Graph Neural Network (GNN) potentials as a viable
+	alternative. These GNN potentials have leveraged large DFT-computed
+	databases for training and provide a good approximation to the
+	potential energy surfaces which enable inference on energies and
+	forces in lattice and atomic dynamic calculations. We compare GNN
+	potentials with the Embedded Atom Method (EAM) and Modified EAM
+	style potentials in predicting phonon properties of NiTi and
+	PtTi. We find that in general the EAM/MEAM potentials are slightly
+	more performant than the GNN in that they appear to more accurately
+	describe equation of state, phonon dispersions, and elastic
+	constants. However, the MACE potential shows significant promise as
+	an exploratory potential for designing and characterizing more
+	complex SMAs. Our findings suggest GNN potentials as a promising
+	initial avenue for advancing SMA research, in particular ternary and
+	quaternary systems, upon fine-tuning of pre-trained GNN models with
+	more relevant DFT data (i.e., force-constants) to permit better
+	outcomes.
 
 ## Reproduce
 
