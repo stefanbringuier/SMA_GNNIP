@@ -680,7 +680,7 @@ values. \par
 
 \begin{figure}[!htp]
 	\script{GruneisenParameters.py}
-	\centering
+	 \centering
 	\includegraphics[width=\columnwidth]{figures/Plot_NiTi_M_ModeGruneisen.png}
 	\caption{The sign-log of the \textit{M}-mode Gr\"{u}neisen
 	parameter, $\gamma$, as a function of eigenfrequency for different

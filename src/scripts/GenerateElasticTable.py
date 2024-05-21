@@ -18,8 +18,9 @@ def generate_elastic_constants_table(dbname, chemsys, output_filename):
     )
 
     with open(output_filename, "w") as file:
-        # Top-level table with two main columns
-        file.write("\\begin{longtable}{|l|l|}\n")
+        file.write("\\begin{landscape}\n")
+        file.write("\\setlength{\\tabcolsep}{6pt}\n")
+        file.write("\\begin{longtable}{|p{0.25\\linewidth}|p{0.75\\linewidth}|}\n")
         file.write(
             "\\caption{Elastic constants for "
             + chemsys
@@ -57,9 +58,7 @@ def generate_elastic_constants_table(dbname, chemsys, output_filename):
                 key=lambda entry: ORDER[chemsys]["model"][entry.model_name],
             )
 
-            file.write(
-                "\\begin{tabularx}{\columnwidth}{X X X X X X X X X X X X X X }\n"
-            )
+            file.write("\\begin{tabularx}{\\linewidth}{l l l l l l l l l l l l l l}\n")
             file.write(
                 "Model & C$_{11}$ & C$_{22}$ & C$_{33}$ & C$_{12}$ & C$_{13}$ & C$_{23}$ & C$_{44}$ & C$_{55}$ & C$_{66}$ & C$_{16}$ & C$_{26}$ & C$_{36}$ & C$_{45}$ \\\\\n"
             )
@@ -96,6 +95,7 @@ def generate_elastic_constants_table(dbname, chemsys, output_filename):
             file.write("\\hline\n")
 
         file.write("\\end{longtable}\n")
+        file.write("\\end{landscape}\n")
 
     return None
 

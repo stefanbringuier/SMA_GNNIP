@@ -5,10 +5,10 @@
 <img src="https://github.com/stefanbringuier/SMA_Phonons_GNNIP/actions/workflows/build.yml/badge.svg?branch=main" alt="Disabled"/>
 </a>
 <a href="https://github.com/stefanbringuier/SMA_Phonons_GNNIP/raw/main-pdf/arxiv.tar.gz">
-<img src="https://img.shields.io/badge/article-tarball-blue.svg?style=flat" alt="Article tarball"/>
+<img src="https://img.shields.io/badge/preprint-tarball-red.svg?style=flat" alt="Article tarball"/>
 </a>
 <a href="https://github.com/stefanbringuier/SMA_Phonons_GNNIP/raw/main-pdf/ms.pdf">
-<img src="https://img.shields.io/badge/article-pdf-blue.svg?style=flat" alt="Read the article"/>
+<img src="https://img.shields.io/badge/preprint-pdf-red.svg?style=flat" alt="Read the article"/>
 </a>
 </p>
 
@@ -57,7 +57,7 @@ This may take quite some time (3+ hours) depending on your resources. Note that 
 
 ### Dataset
 
-The data for this manuscript is stored in the file [NiTi_Structures.json](src/data/NiTi_Structures.json). This is a human readable [ASE style JSON](https://wiki.fysik.dtu.dk/ase/ase/db/db.html) file that can be either used with a standard JSON library or ASE. Within the database are ASE `Atoms` type structures and then additional datafields with regard to the GNN model used, spacgroup of the structure, equation of state parameters, phonon bandstructure/dos, and elastic constants.
+The data for this manuscript is stored in the file [SMA_Structures.json](src/data/NiTi_Structures.json). This is a human readable [ASE style JSON](https://wiki.fysik.dtu.dk/ase/ase/db/db.html) file that can be either used with a standard JSON library or ASE. Within the database are ASE `Atoms` type structures and then additional datafields with regard to the GNN model used, spacgroup of the structure, equation of state parameters, phonon bandstructure/dos, and elastic constants.
 
 ### Plotting
 
