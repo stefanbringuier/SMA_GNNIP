@@ -1,0 +1,23 @@
+name: mace
+channels:
+  - pytorch
+  - nvidia
+  - defaults
+dependencies:
+  - python
+  - conda-forge::elastic
+  - pytorch
+  - torchvision
+  - torchaudio
+  - pytorch-cuda=11.6
+  - numpy
+  - scipy
+  - matplotlib
+  - conda-forge::spglib
+  - ase=3.22.1
+  - opt_einsum
+  - prettytable
+  - pandas
+  - e3nn
+  - pip:
+    - git+https://github.com/ACEsuit/mace.git@v0.3.2

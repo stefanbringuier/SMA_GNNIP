@@ -1,305 +1,858 @@
 % Define document class
-\documentclass[preprint]{elsarticle}
+\documentclass[preprint,colorlinks=true,linkcolor=black,citecolor=black]{elsarticle}
 \usepackage{showyourwork}
 
 %% Packages
-\usepackage[utf8]{inputenc}
-\usepackage{fontspec}
-\usepackage{amsmath}
-\usepackage{siunitx}
-\usepackage[version=4]{mhchem}
-\usepackage{pdflscape}
+\usepackage{orcidlink} \usepackage[utf8]{inputenc}
+\usepackage{fontspec} \usepackage{fontawesome5} \usepackage{amssymb}
+\usepackage{amsmath} \usepackage{siunitx}
+\usepackage[version=4]{mhchem} \usepackage{pdflscape}
 %% Handles multipage table. Not sure allowed by pub.
-\usepackage{longtable}
+\usepackage{longtable} \usepackage{tabularx} \usepackage{subcaption}
+\usepackage{listings} \lstset{ basicstyle=\ttfamily,
+  columns=fullflexible, frame=single, breaklines=true,
+  postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space}, }
 
+\usepackage{pdflscape}
 
+  % Customize footer to show only "preprint"
+\makeatletter
+\def\ps@pprintTitle{%
+     \let\@oddhead\@empty
+     \let\@evenhead\@empty
+     \def\@oddfoot{\hfill\footnotesize\itshape Preprint, Incomplete Draft\hfill}%
+     \let\@evenfoot\@oddfoot}
+\makeatother
 
-% Begin!
+% \journal{Computational Materials Science}
+
 \begin{document}
 
-% Title
-\title{Assessing Phonon Properties of Shape Memory Alloys using Graph Neural Network Potentials}
+\title{Suitability of Graph Neural Network for Shape Memory Alloys}
 
 % Author list
-\author[1]{Stefan Bringuier\corref{cor1}}[role=Lead Researcher,orcid=0000-0001-6753-1437]
-\ead{stefanbringuier@gmail.com}
-\cortext[cor1]{Corresponding author}
-\affiliation[1]{organization={Indpendent Researcher},
-  city={San Diego, CA},
-  country={United States},
-}
+\author[1]{Stefan
+	Bringuier\corref{cor1}\orcidlink{0000-0001-6753-1437}}
+\ead{stefanbringuier@gmail.com} \cortext[cor1]{Corresponding author}
+\affiliation[1]{organization={Indpendent Researcher}, city={San Diego,
+			CA}, country={United States}, }
 
 % Abstract with filler text
 \begin{abstract}
-Shape Memory Alloys (SMAs) such as NiTi are pivotal in vibrational dampening,robotic arms, prothestic hands, and mechanical vales as a result of their unique displacive phase transformation properties. However, assessing their phonon characteristics, which provide insight into the displacive phase transformation, by using conventional Density Functional Theory (DFT) methods is computationally challenging. In this paper we assess the use of recent Graph Neural Network (GNN) potentials as a viable alternative. These GNN potentials have leveraged large DFT-computed databases for training and provide a good approximation to the potential energy surfaces which enable inference on energies and forces in lattice and atomic dynamic calculations. We compare GNN potentials with the Embedded Atom Method (EAM) in predicting phonon properties of NiTi. We find that in general the EAM potentials are slightly more performant than the GN in that they appear to more accurately describe equation of state, phonon dispersions, and elastic constants. However, the MACE potential shows significant promise as an exploritory potential for designing and characterizing more complex SMAs. Our findings reveal GNN potentials as a promising avenue for advancing SMA research and fine-tuning of pre-trained GNN models with more relevant DFT data (i.e., force-constants) may permit better outcomes.  
+	Shape Memory Alloys (SMAs) such as NiTi are pivotal in vibrational
+	dampening,robotic arms, prosthetic hands, and mechanical vales as a
+	result of their unique displacive phase transformation
+	properties. However, assessing their phonon characteristics, which
+	provide insight into the displacive phase transformation, by using
+	conventional Density Functional Theory (DFT) methods is
+	computationally challenging. In this paper we assess the use of
+	recent Graph Neural Network (GNN) potentials as a viable
+	alternative. These GNN potentials have leveraged large DFT-computed
+	databases for training and provide a good approximation to the
+	potential energy surfaces which enable inference on energies and
+	forces in lattice and atomic dynamic calculations. We compare GNN
+	potentials with the Embedded Atom Method (EAM) and Modified EAM
+	style potentials in predicting phonon properties of NiTi and
+	PtTi. We find that in general the EAM/MEAM potentials are slightly
+	more performant than the GNN in that they appear to more accurately
+	describe equation of state, phonon dispersions, and elastic
+	constants. However, the MACE potential shows significant promise as
+	an exploratory potential for designing and characterizing more
+	complex SMAs. Our findings suggest GNN potentials as a promising
+	initial avenue for advancing SMA research, in particular ternary and
+	quaternary systems, upon fine-tuning of pre-trained GNN models with
+	more relevant DFT data (i.e., force-constants) to permit better
+	outcomes.
 \end{abstract}
 
 \begin{keyword}
-  shape memory alloys \sep machine learning potentials \sep phonons
+	shape memory alloys \sep machine learning potentials \sep phonons
 \end{keyword}
-
 
 \maketitle
 
- % Main body with filler text
+% Main body with filler text
 \section{Introduction}
 \label{sec:intro}
-Shape memory alloys derive their unique displacive phase transformations from the dynamic instablity that occurs during the application of temperature, strain, or stress. The origin of this instability occurs due to softening or symmetry breaking of the phonon modes in the phase. Therefore, improved understanding of the phonon characteristics of the different phases that can occur for a given SMA is particular important. One of the challenges is in performing such calculations, which typically employ density functional theory in order to determine the atomic forces, which in turn are used to construct the dynamical matrix. However, the use of classical interatomic potentials can alleviate some of this computational burden. \par
 
-Recently, there as been a growing effort in the development of machine learning potentials. These deviate from traditional physics approaches to interatomic potentials, which have historically been inspired from more accurate methods like tight-binding method. In machine learning potentials, one describes the atoms and structure using descriptors of features, these are typically learned or prescribed.
+The design and development of shape memory alloys (SMA) via
+\textit{in-silico} methods would provide great value in advancing
+structural, medical, and other technologies. In order to enable such
+activity would require sampling from very large structural and
+compositional spaces and evaluating material properties indicative of
+displacive phase transformation phenomena. The use of density
+functional theory calculations to obtain properties such as equations
+of state, phonon disperisons, and elastic constants, can be done,
+however, such calculations are computationally demanding and are
+potentially prohibitive for smaller groups trying to develop new
+SMAs. To alleviate such restriction, one can resort to classical
+interatomic potentials which can greatly improve computational cost in
+evaluating the energies and forces more. However, the immediate
+challenge is to whether a suitable interatomic potential exist given a
+chemical system, and moreover, how transferable is it to different
+compositions and phases. \par
 
+Recently, there as been a growing effort in the development of machine
+learning potentials. These deviate from traditional physics approaches
+to interatomic potentials, which have historically been inspired from
+more accurate methods like tight-binding method. In machine learning
+potentials, one describes the atoms and structure using descriptors of
+features, these are typically learned or prescribed. The features can
+be prescribed in isolation or combination of structural,
+compositional, and property characteristics of the material data
+point. Futhermore, one may choose to fined new representations via
+unsupervised learning. \par
 
-The main inquiry of this work is to asses the GNN interatomic potentials on binary SMA NiTi and PbTi primarily through the phonon predictions. Our analysis aims to provide a qualitative perspective based on previously studied phonon phenomena of these systems. The findings here will provide guidnace for future use of GNN interatomic potentials for the development other binary, and more so, ternary and quaternary SMAs. IMportantly, the use of pretrained base models for these systems acts as an initial seed and can be used to fine-tune future GNN potentials for better SMA disocovery works. \par
+The subsequent step once the featurization process is completed is to
+determine a suitable neural network (NN) architecture which can learn
+the target property or properties given the feature inputs. In the
+case of atomistic simulations the target is prediction of the
+potential energy surface and corresponding gradients (i.e.,
+forces). Two of the most early attempts to do this were the works of
+\citet{Bartok2010} and \citet{Thompson2015}, whereby projection onto
+higher-dimensional basis, such as bispectrum components of local
+neighbor density, is learned in order to describe the atomic
+environments. The energy per atom is then determined by these learned
+features by employing linear regression or non-linear Gaussian process
+regression. We note that these are just two of the early examples but
+similar potentials have been developed in earlier, in parallel, or
+recently by various groups
+\cite{Behler2007,Wang2018,Deringer2019,Lee2019}. \par
 
+While these early attempts using ML models were successfully, they may
+only include limited representations of structural and/or chemical
+details to learn new features from which could limit
+transferability. Futhermore, the training process was typically
+restricted to a limited number of elemental constituents of the target
+material system. As a consequence, for each chemical system and phases
+of interest one needs to provide a suitable training dataset. To move
+beyond such limitations, groups began using graph neural network (GNN)
+architectures and message passing scheme to represent the atomic
+structures as nodes and edges \cite{Reiser2022}. This enabled two
+distinctions, first being that the nodes and edges corresponding to
+the atoms and bonds could include features, and secondly the learning
+could be done over a large structural and compositional space enabling
+a generalization\footnote{Typically these are referred to as Universal
+	interatomic potentials or forcefields since they in theory
+	generalize well to any chemical system or phase.}. The use of GNNs
+is efficient in representing structure-composition-property inputs to
+additional NN layers for predicting potential energy surfaces and
+gradients and was initially pursued in the CGCNN, MEGNet, and ALIGNN
+potentials \cite{Choudhary2021,Chen2019,Xie2018}. The differences
+between the approaches are predominately in atomic and bond features,
+nearest-neighbor graph, and specific NN architecture. \par
 
+The training of these early GNN utilized large density functional
+theory calculation repositories and mostly tuned the learning cost
+function to ground-state structure and energy. This resulted in
+mean-absolute-errors and other measures of performance that could be
+improved upon \cite{Riebesell2023}. More recently there have been
+significant improvements in both training data used and the GNN
+architecture that show promise for truly approaching a general
+interatomic potential suitable for static and dynamic atomistic
+calculations of multi-components and multi-phases. If successful,
+identifying and designing new potential SMA materials using GNN
+interatomic potentials could have tremendous impact on
+technology. Therefore, the primary goal is to provide a qualitative
+assessment of pre-trained GNN interatomic potentials that are promoted
+as being transferable across compositions and phases. We specifically
+focus on the predictions for equations of state, phonon bandstructure,
+and elastic constants for various phases of NiTi and PtTi using three
+GNN potentials: M3GNet, CHGNet, and MACE
+\cite{Chen2022,Deng2023,Batatia2022}. We note that the
+\citet{Riebesell2023} provides a summarized performance over these GNN
+using the materials project database, but does not specifically
+address SMA and phonon characteristics. \par
 
 \section{Computation Methodology}
 \label{sec:methods}
 
 \subsection{Workflow}
 \label{sec:workflow}
-The ground-state structures for the NiTi phases \textit{B2}, \textit{B19}, \textit{B19'}, and \textit{BCO} are generated using the atomic simulation environment (ASE) package (cite). This requires that the unit cell parameters, basis atoms, and spacegroup number be provided. These initial reference parameters for these structures have been taken from the materials project (cite specific DOIs for the structures). The energy and forces on the atoms are determined using the calculator interface routines which enables the assesment of different interatomic potentials for the same ASE structure. Similarly, for all EOS, phonon, and elastic constant claculations each step is performed for a specific interatomic potential via the ASE calculator interface. We not that this is done in different python computing environments using \href{https://github.com/showyourwork/showyourwork}{\showyourwork} package.\par
+To promote reproducible research and align with findable, accessible,
+interoperable and reusable (FAIR) principles\cite{Walsh2024}, we
+utilize \showyourwork python workflow\cite{Luger2021} and several open
+source python packages. Instructions for reproducing calculated data,
+figures, tables, and manuscript are provided in
+appendix~\ref{sec:appx_reproduce} and corresponding github
+repo\footnote{\url{https://github.com/stefanbringuier/SMA_Phonons_GNNIP}}. We
+note that in order to achieve the different computing environments
+required by the interatomic potentials we leverage the ability to
+specify the python computing environments using
+\href{https://github.com/showyourwork/showyourwork}{\showyourwork}
+package.\par
 
-First the structures are optimized using ASE local optimization routines. The forces were converged to $10^{-4}\,\text{eV}/\AA$ and utlize the FIRE optimizater, but found other local optimization options found same ground-state structures. To ensure that the unit cell parameters were adjusted along with the atomic coordinates and that the crystal symmetry was not broken, we utlized the ASE constraint and filter routines during optimization of the structures. \par
+\subsection{Calculation Details}
+\label{sec:calc_details}
+The ground-state structures for the NiTi phases \textit{B2},
+\textit{B19}, \textit{B19'}, and \textit{BCO} are generated using the
+atomic simulation environment (ASE) package \cite{Larsen2017}. This
+requires that the unit cell parameters, basis atoms, and spacegroup
+number be provided. The initial unit cell parameters and basis
+coordinates for these structures have been taken from the materials
+project \cite{Jain2013} and several references
+\cite{Haskins2016,Kadkhodaei2018}. The initial structures for NiTi are
+shown in fig~\ref{fig:niti_structures} and are adapted for PtTi as
+well given same space group symmetries. The energy and forces on the
+atoms are determined using the ASE calculator interfaces for EAM,
+MEAM, M3GNet, CHGNet, and
+MACE.\cite{Mutter2010,Zhong2011,Ko2015,Kim2017,Chen2022,Deng2023,Batatia2022}
+The EAM and MEAM potential interfaces are achieved through the use of
+LAMMPS python library \cite{Thompson2022} and ASE. We have also
+implemented calculators for potentials by \cite{Kavousi2019},
+\cite{Wang2018}, and \cite{Choudhary2021} but are not shown in the
+main manuscript of this work.\par
 
-To determine the equation of state, we started with the obtained ground-state structures. To adjust the volume of the unit cell, we then apply an isotropic strain tensor to the cell and scale the atomic coordinates
+For each combination of potential/model, chemical system, and phase we
+perform calculations for the structure minimization, equation of state
+(EOS), phonons, and elastic constants. To determine the
+finite-temperature phase transitions we utilize an isothermal-isobaric
+ensemble via molecular dynamics simulations. The thermostating and
+barostating is done with Nose-Hoover and Parrinello-Rahman dynamics
+and the ramping down or up of temperature is adjusted in a dynamical
+manner which entails adjusting the target thermostat temperature every
+few timesteps based on the ramp-rate. The pressure is kept constant at
+1 bar.
+
+\begin{figure}[ht!]
+	\script{VisualizedStructures.py}
+	\begin{centering}
+		\includegraphics[width=\linewidth]{figures/NiTi_VisualizedStructures.png}
+		\caption{ Initial \ce{NiTi} structures (i.e., unrelaxed) used for
+			(a) \textit{B2}(221), (b) \textit{B19}(11), (c)
+			\textit{B19'}(51), and (d) \textit{BCO}(61) with spacegroup
+			numbers are given in the parentheses. The green atoms are
+			\ce{Ni} and \ce{Ti} as gray and unit cells are highlighted with
+			parameters shown on axis. For all unit cells the $\alpha$ and
+			$\gamma$ angles are 90.0$^\circ$. For PtTi, (a-b) structures are
+			used with different unit cell parameters and basis coordinates
+			and then optimized accordingly.  }
+		\label{fig:niti_structures}
+	\end{centering}
+\end{figure}
+
+Prior to any property calculations or dynamics the structures are
+optimized using the FIRE\cite{Bitzek2006} local optimizer with the
+forces converged to $2\cdot 10^{-3}$eV/\AA\@. We observed that other
+local optimization routines find the same ground-state structures. To
+ensure that the unit cell parameters were adjusted along with the
+atomic coordinates and that the crystal symmetry is not broken, we
+utlize a constraint and filter during the optimization process. \par
+
+\subsubsection{Equation of State}
+The EOS can be obtained by varying the cell volume and calculating the
+total system energy without allowing for atomic relaxations. Starting
+with the obtained ground-state structures the unit cell volume is
+adjusted by applying an isotropic strain,
 
 \begin{equation}
-  \label{eq:isotropic_strain}
-  T=\begin{bmatrix}
-    \epsilon & 0 & 0 \\
-    0 & \epsilon & 0 \\
-    0 & 0 & \epsilon \\
-  \end{bmatrix}
+	\label{eq:isotropic_strain}
+	T=\begin{bmatrix}
+		\epsilon & 0        & 0        \\
+		0        & \epsilon & 0        \\
+		0        & 0        & \epsilon \\
+	\end{bmatrix}
+\end{equation},
+
+to the cell and scaling the fractional atomic coordinates. Here
+$\epsilon$ is the fraction strain applied to the unit cell. To ensure
+that the strain is indeed isotropic we provide a quality check on the
+symmetry of the distorted structure using the spacegroup package
+\textit{spglib} \cite{Togo2018}. The isotropic strain is applied in
+compression and tension, from $-11\%$ to $11\%$, which gave a good
+range to characterize the EOS curves and obtain analytical fits. We
+fit the EOS using a third order inverse polynomial,
+
+\begin{equation}
+	\label{eq:eos_fit}
+	E(V) = c_0 + c_1 t + c_2 t^2 + c_3 t^3, \quad \text{where} \quad t = V^{-\frac{1}{3}}
+\end{equation},
+
+where the coefficients are used to determine equilibrium volume,
+system energy, and bulk modulus \cite{Alchagirov2003} at 0K. In order
+to compare respective EOS amongst the different phases, we normalize
+the strained volume of each phase with respect to the obtained
+minimized ground-state volume. \par
+
+\subsubsection{Phonon band structure}
+
+Shape memory alloys derive their unique displacive phase
+transformations from the dynamic instability that occurs during the
+application of temperature, strain, or stress. The origin of this
+instability occurs due to softening or symmetry breaking of the phonon
+modes in the phase. Therefore, improved understanding of the phonon
+characteristics of the different phases that can occur for a given SMA
+is particular important. One of the challenges is in performing such
+calculations, which typically employ density functional theory (DFT)
+in order to determine the atomic forces, which in turn are used to
+construct the dynamical matrix. However, classical interatomic
+potentials can alleviate the computational burden. \par
+
+Phonon calculations are performed using finite-difference method via
+small displacement (i.e., harmonic approximation) of atoms in a
+reference cell \cite{Alfe2009}. In the small displacement method,
+atoms in the primitive cell are slightly displaced to calculate forces
+on other atoms, constructing the force constant matrix, which, when
+used with the dynamical matrix, allows computing phonon frequencies at
+any q-vector in the Brillouin zone. This requires typically requires
+the use of a supercell of the original unit cell. In order to ensure
+convergence of this method, one needs to sweep different supercell
+sizes and atomic displacements. This process is done for each
+interatomic potential and structure. The supercells used in this work
+have a repeat in any one direction ranging from $5-8$ and depends on
+the crystal system. The atomic displacement ranges from
+$0.03-0.26$\AA\,and was found to strongly depend on interatomic
+potential and crystal system. Details on the settings are provided in
+the appendix~\ref{sec:phonon_calc_config}. \par
+
+In order to sample high-symmetry points in the irreducible Brillouin
+zone (IBZ) for specific structures, we sample from locations specified
+in the Bilbao crystallographic \textit{KVEC} utility\cite{Aroyo2014},
+although the ASE structures object does provide a standardized routine
+for sampling the irreducible Brillouin zone for the specific
+structures.\cite{Setyawan2010}. We predominately focus on
+high-symmetry points in the IBZ that correspond to the corners and
+along directions known to exhibit phonon instabilities. The IBZ and
+points symmetry point locations can be seen in appendix
+\ref{sec:appx_ibz}. The final phonon dispersion diagrams are plot
+along these points. \par
+
+To better understand dynamic instability in the various structures,
+the same isotropic strain in eq.~\ref{eq:isotropic_strain} is used and
+the respective phonon band structure are calculated. These are then
+plotted to observed the onset or change in stability or instability of
+phonon different branches. \par
+
+\subsubsection{Elastic Constants}
+
+Similar to the phonon calculations the elastic constants within the
+harmonic approximation the elastic constants can be determined from
+linear-response of strain-stress calculations. Therefore, the
+calculation requires the use of crystal symmetry along with atomic
+displacements to determine respective elastic constant components. We
+use the \textit{Elastic}\cite{Jochym2018} python package which
+provides routines for generating the proper atomic displacement matrix
+given specific crystal space group. The elastic constants are
+determined by solving a set of linear equations using singular value
+decomposition and given calculated strains and stress. The
+displacements occur with a min and max of 0.5\% and a total of 10
+points are used. \par
+
+\subsubsection{Finite-Temperature Phase Transitions}
+
+\subsection{Physics Based Potentials}
+\label{sec:physics_potentials}
+
+The EAM and MEAM potentials were developed to go beyond pair
+interatomic potentials to treat point and extended defects in metal
+and alloys systems. The motivation was taken from the physical results
+of density functional theory and tight-binding methods, namely to add
+to the pair potentials a energy functional which depends on the local
+electron density which in turn is affected by the atomic
+environment. These type of interatomic potentials are broadly referred
+to as EAM or MEAM, with the later included direction (i.e. angle)
+dependent interactions. \par
+
+The functional form using during fitting proceed depends on the
+complexity of the material system but the total energy is typically
+written as,
+
+\begin{equation}
+	\label{eq:eam}
+	E = \sum_{i\neq j}^N V_{ij}(r_{ij}) + \sum_i^N F_i\left(\rho(r_i)\right)
 \end{equation}
 
+where $V_{ij}$ is the pair potential, $F_i$, the functional, and
+$\rho$ the density function that depends on the environment around
+$r_i$. The MEAM potential extends this by including three-body terms
+in the $\rho$ to capture features such as covalent bonding. The EAM
+and MEAM potentials have been particular successfully in predicting
+structure and properties of metals and alloys, including defect
+formation/energies, phase transitions, grain boundary
+stability/dynamics. One particular advantage of both EAM and MEAM, is
+their analytical or tabulated forms allow for quick numerical
+evaluation, with the primary reason being that the energies and forces
+on a atom are accurately determined within a relatively small
+interaction volume (i.e., 3-4 \AA interaction cutoff).  \par
 
-were $\epsilon$ is the fraction strain applied to the unit cell. To ensure that the strain is indeed isotropic we provide a quality check on the symmetry of the distorted structure. The isotropic strain is applied in compression and tension, from $-11\%$ to $11\%$, which gave a good range to asses the EOS curves and obtain fits. We fit the EOS to a standard polynomial which provides values for the equilibrium volume, energy, and bulk modulus. In order to compare respective equations of state amongst the different phases, we normalize the volume of each phase with respect to the obtained ground-state volume. \par
+For application of EAM to shape memory alloys, and in particular NiTi,
+\citet{Mutter2010} initially devised an Finnis-Sinclair style EAM
+potential to capture the structural phase transitions between
+\textit{B19'} and \textit{B2} phases. It was latter shown by
+\cite{Zhong2011} that some adjustments to the EAM parameters were
+needed to properly capture the finite-temperature displacement
+dynamics for the martensitic transition \cite{Gur2017}. More recently
+\citet{Ko2015} developed a second nearest neighbor(2NN) MEAM
+parameterization of NiTi that demonstrated very good predictive
+performance and improvements over earlier potentials.
 
-Phonon calculations are done using the ASE phonons module, which uses the finite-difference method via small displacement of atoms in a reference cell. This requires the use of a supercell of the reference structure. In order to ensure convergence of this method, one needs to sweep different supercell sizes and how the displacement size impacts the phonon eigenvalues and vectors. This process was done initially for each interatomic potential and structure. Details on the settings are provided in the appendix. \par
+\subsection{Graph Neural Network Potentials}
 
-The ASE structures provide a routine for sampling the irreducible Brillouin zone for the specific structure, however, a significant amount of additional symmetry points are include in the band path. For this reason we only focus on high-symmetry points in the IBZ, given that the monoclinic and othorhombic phases are low symmetry structures. The exception is the cubic structure which we sample the full IBZ. The IBZ and points symmetry point locations can be seen in appendix \ref{sec:appx_ibz}. The final phonon dispersion diagrams are plot along these points. \par
+The use of ML potentials for SMA has been demonstrated by
+\citet{Tang2022}. In their work, they utilized the
+DeePMD-Kit\cite{Wang2018} neural network framework to parameterize a
+descriptor matrix from atomic configurations that preserves
+permutations and symmetries. The descriptors are then feed into a
+multilayer perceptron to calculate energies and forces. The neural
+network interatomic potential demonstrated good accuracy of
+ground-state properties with respect to DFT results and showed
+agreement with experiments regarding temperature, stress, and defect
+induced martensitic transformation. \paragraphmark
 
-To better understand dynamic instability in the various structures, same isotropic strain in eq.~\ref{eq:isotropic_strain} is used and respetive phonon bandstructures are calculated. These are then plotted to observed the onset or change of the instability of different branches. \par
+The ground-state predictions for \textit{B2}, \textit{B19'},
+\textit{B19}, and \textit{BCO}\footnote{Referred to as \textit{B33}
+	prototype in \citet{Tang2022}} in \citet{Tang2022} showed good
+agreement. However, we note that deviation from Ni-Ti 1:1
+stoichiometry or addition of a third species was not investigated nor
+the inclusion of additional alloying species was explored. \par
 
-The elastic constants have been calculated using ....
+The pre-trained GNN interatomic potentials explored in this work have
+been parameterized over a large fraction of the interatomic potential
+($>$ 80 elements) and therefore are not restricted to specific
+chemistries or stoichiometries. The training data also includes
+various phases for a given chemical system which permits great
+flexibility, although broad transferability still requires
+verification.  This allows for investigation of both
+non-stoichiometric and multi-species SMA which previous physics and ML
+potentials were not developed for. We do note that fine-tuning, the
+process of adjusting GNN weights and biases using additional training
+data, can be performed with the GNNs studied in this work. However,
+this is out of the scope for this manuscript, given resources and time
+needed to generate such training data for SMAs. \par
 
+The M3GNet is a GNN that utilizes a 3-body bond-update procedure to
+more accurately capture bond-order environment changes. The M3GNet has
+been implemented in the MatGL framework and we utilize the
+\texttt{M3GNet-MP-2021.2.8-PES} pretrained model.
 
-\begin{itemize}
-\item Discuss EAM potentials Mutter and Zhong.
-\item GNN potentials M3GNet, CHGNet, MACE, ALIGNN
-\item EOS calcs
-\item Phonon calcs with strain.
-  
-  The calculation of the phonon dispersion is based on the dynamical matrix which in term is obtained from the fourier transform of the force-constant matrix. There are different numerical methods to obtain the force-constant matrix. Here we employ the finite-difference small displacement method (cite alfe), whereby atoms in a supercell are displaced by a small amount to ensure they remain within the harmonic (i.e., linear-response) regime. Then the force-constants are calculated. To obtain the dynamical matrix we sample reciprocal space on a given mesh within the irreducible Brillouin zone (BZ). Finally, we diagonalize the dynamical matrix along high-symmetry paths to obtain the phonon bands and eigenfrequencies. \par
+For CHGNet, we have used the \texttt{v0.3} series pretrained model.
 
-  Since the the finite-difference is a numerical approximation technique, one has to check convergence of the calculation for various models. In this work we have found that for most models and the avaible resources a supercell of $8\times8\times8$ is sufficient to converge, we also utlize the acoustic sum rule (add ref). The only stand-out for using that supercell is with use of the ALIGNN model, we found that supercells any larger than $5\times5\times5$ had considerable memory and we the required resources were unavilable. Despite this we find suitable convergence, althoug the ALIGNN model in general was not good at reproducing the NiTi phonon bandstructures. \par
-
-  The displacement was choosen for all calculations to be $0.01\AA$ and the number of points along the BZ path in reciprocal space was 150. These values seemed to give the best trade-off of convergence for all the models. We also calculate the phonon does on a $30\times30\time30$ reciprocal space grid and use lorentz smoothing, the DOS can be found in the supplemental material.\par
-
-  
-\item elastic constants.
-\end{itemize}
-
-
-
-
+% The MACE potential pretrained
+% \texttt{2023-12-03-mace-128-L1_epoch-199.model} checkpoint file.
 
 \section{Results}
 \label{sec:results}
 
-\subsection{NiTi: Ground State Structures}
-\label{subsec:nitigs}
+In fig.~\ref{fig:opt_density} the density of the structures for
+different potentials is shown. We observe that in general the
+densities and lattice parameters are within agreement with previously
+reported values. The optimized lattice parameters as well as basis
+atoms for all structures and models are provided in
+appendix~\ref{sec:opt_structures}. \par
 
-%\comment{Display results in tables}
+\begin{figure}[ht!]
+	\script{PlotDensity.py}
+	\centering
+	\includegraphics[width=\linewidth]{figures/NiTi_Equilibrium_Density.png}
+	\caption{Equilibrium Density for \ce{NiTi} structures with different
+		models.}
+	\label{fig:opt_density}
+\end{figure}
 
-\variable{output/Table_NiTi_Equilibrium_Structures.tex}
+To asses the relative phase stability for a given composition is to
+compare the cohesive energy, which is defined as,
+
+\begin{equation}
+	\label{eq:cohesive_energy}
+	E_{c} = \frac{E_{\text{bulk}} - \sum_{i}^{N} n_i E_{\text{atom}_i}}{N}
+\end{equation}
+
+With $E_{\text{bulk}}$ the total energy of the system,
+$\sum_i^N n_i E_{\text{atom}_i}$ is the sum over isolated atom
+energies for $n_i$ species, and $N$ the number of atoms in bulk
+reference. Classical interatomic potentials are offset with respect to
+the isolated atom energies, so these terms are zero and neglected,
+giving $E_{c} = \frac{E_{\text{bulk}}}{N}$. In fig.~\ref{fig:ecoh_niti} the
+bar chart for different phases and interatomic potentials models are
+show. We compare these to dervided experimental values for
+\textit{B2}\cite{Vandermause2024} and the value from The Materials
+Project (MP) entry \texttt{MP-571} which corresponds to the
+\textit{B2} phase \cite{MP--571}. In the figure we see that the EAM
+and MEAM potentials show significantly lower cohesive energy compared
+to the GNN potentials and are in better agreement with the
+experimental value. Previous studies using the EAM and MEAM potentials
+have been shown to reproduce previous experimental and DFT data
+\cite{Haskins2016,Ko2015} such as cohesive energy. The GNNs predict a
+more strongly bound and stable \textit{B2} structure but all are
+consistent with the entry for The MP and calculation details can be
+found in ref.~\cite{MP--571}. This consistency is reasonable
+considering all pretrained GNN models used in this work have been
+developed with MP data. \par
+
+\begin{figure}[ht!]
+	\script{PlotCohesiveEnergy.py}
+	\begin{centering}
+		\includegraphics[width=\linewidth]{figures/NiTi_CohesiveEnergyPlot.png}
+		\caption{ Comparison of predicted \ce{NiTi} cohesive energy for
+			respective ground-state structure and model. The experimental
+			data point has been extracted from ref.~\cite{Vandermause2024}
+			and the Materials Project entry for the \ce{NiTi} \textit{B2}
+			structure \cite{MP--571} has also been included.  }
+		\label{fig:ecoh_niti}
+	\end{centering}
+\end{figure}
+
+For the \ce{PtTi} system we only consider the \textit{B2} and
+\textit{B19'} structures. The MEAM potential shows a lower cohesive
+energy than all three GNN. Interestingly the difference between the
+MEAM and GNN is roughly the same order, $\approx 2.1$ eV, which maybe
+appears to be related to the MP dataset. To our knowledge most the
+pretrained GNN models are using the MP dataset which defaults to DFT
+calculation results that employ the meta-GGA R2SCAN functional. This
+could be the reason for the difference as most EAM and MEAM potentials
+are either parameterized from experimental or DFT data using the PBE
+functional\cite{Mutter2010,Ko2015}. \par
+
+\begin{figure}[ht!]
+	\script{PlotCohesiveEnergy.py}
+	\begin{centering}
+		\includegraphics[width=\linewidth]{figures/PtTi_CohesiveEnergyPlot.png}
+		\caption{ Comparison of predicted \ce{PtTi} cohesive energy for
+			respective ground-state structure and model.  }
+		\label{fig:ecoh_ptti}
+	\end{centering}
+\end{figure}
 
 \subsection{NiTi: Equation of States}
 \label{subsec:nitieos}
 
-The thermodynamic equation of state (EOS) is a standard assement of the phase stability of materials at a give condition. In the context of atomic calculations the equation of state can be determined at ground-state (i.e., 0K) to asses the phase stability of the different crystals. The equation of state can be represented as a pressure vs. volume or more commonly as the energy per atom  vs the ratio of the isotropically strained volume to that of the equilibrium volume. One criteria for a interatomic potential is that it accurately refelcts the EOS curves for different phases. This entails the construction of a convex hull which represents the minimum energy curve accross the structures for the volume strain conditions. \par
+The EOS curves for the \ce{NiTi} structures \textit{B2}, \textit{B19},
+\textit{B19'}, \textit{BCO} for the different potentials studied in
+this work are shown in fig.~\ref{fig:eos}. The two EAM potentials,
+show that at 0 strain ($V/V_o = 1.0$) both the \textit{B19P} and
+\textit{B33} phases are stable. I believe this is the first reporting
+of the \textit{B33} phase for these two fittings of the EAM potential
+for \ce{NiTi}. Its important to note that these potentials have been
+developed to capture the displacive phase transformation between
+\textit{B19P} to \textit{B2}. This is shown in fig.~\ref{fig:eos}(a,b)
+with the stability indicated upon compressive isotropic strain. A
+mininum appears around $\approx 0.9$. At tensile isotropic strains the
+\textit{B19P} phase is stable up till around $1.18$ where the
+\textit{Pbcm} phase shows stability. An interesting note is that these
+two fittings of the EAM potential show a double well curve for the
+\textit{B2} phase. \par
 
-The EOS curves for the \ce{NiTi} structures \textit{B2}, \textit{B19}, \textit{B19'}, \textit{B33}, and \textit{Pbcm}  for the different potentials studied in this work are shown in fig.~\ref{fig:eos}. The two EAM potentials, show that at 0 strain ($V/V_o = 1.0$) both the \textit{B19P} and \textit{B33} phases are stable. I believe this is the first reporting of the \textit{B33} phase for these two fittings of the EAM potential for \ce{NiTi}. Its important to note that these potentials have been developed to capture the displacive phase transformation between \textit{B19P} to \textit{B2}. This is shown in fig.~\ref{fig:eos}(a,b) with the stability indicated upon compressive isotropic strain. A mininum appears around $\approx 0.9$. At tensile isotropic strains the \textit{B19P} phase is stable up till around $1.18$ where the \textit{Pbcm} phase shows stability. An interesting note is that these two fittings of the EAM potential show a double well curve for the \textit{B2} phase. \par
+In the UIP-GNN potentials M3GNet, CHGNet, and MACE, the equation of
+states shown in fig.~\ref{fig:eos}(c-e) look fairly different from
+thos in fig.~\ref{fig:eos}(a,b). For the M3GNet, at no strain, the
+\textit{B33} appears to be the predicted stable phase and the
+\textit{B2} phase becomes stable around $0.9$ (see
+fig.~\ref{fig:eos}(c). The stability for \textit{B19} and
+\textit{B19P} exit, in trade-off, between approximately $1.025$ and
+$1.1$ tensile isotropic strain. Interestingly beyond a strain of $1.1$
+the \textit{Pbcm} is dominate. The double-well curve shown for the EAM
+potentials is not present for the B2-phase. The CHGNet potential
+results shown in fig.~\ref{fig:eos}(d) are similar to the M3GNet, but
+the stability window of the \textit{B2} occurs at a lower compressive
+isotropic strain. \par
 
-In the UIP-GNN potentials M3GNet, CHGNet, and MACE, the equation of states shown in fig.~\ref{fig:eos}(c-e) look fairly different from thos in fig.~\ref{fig:eos}(a,b). For the M3GNet,  at no strain, the \textit{B33} appears to be the predicted stable phase and the \textit{B2} phase becomes stable around $0.9$ (see fig.~\ref{fig:eos}(c). The stability for \textit{B19} and \textit{B19P} exit, in trade-off, between approximately $1.025$ and $1.1$ tensile isotropic strain. Interestingly beyond a strain of $1.1$ the \textit{Pbcm} is dominate. The double-well curve shown for the EAM potentials is not present for the B2-phase. The CHGNet potential results shown in fig.~\ref{fig:eos}(d) are similar to the M3GNet, but the stability window of the \textit{B2} occurs at a lower compressive isotropic strain. \par
+The MACE potential shown in fig.~\ref{fig:eos}(e) has a very different
+set of EOS curves compard to the M3GNet and CHGNet. Here many of the
+phases exhibit a stablity window, except the \textit{B33} phase, which
+was stable in M3GNet and CHGNet. Interestingly, the \text{B19} phase,
+not the \text{B19P} phase is shown to be the stable zero strain
+phase. One unique perspective of the the UIP-GNN models is that they
+provide a different displacive phase transformation pathway then that
+shown by the EAM potentials. However, this does not include the
+meta-stable R-phase or other potential meta-stable phases which can
+also offer such transformation mechanisms. \par
 
-The MACE potential shown in fig.~\ref{fig:eos}(e) has a very different set of EOS curves compard to the M3GNet and CHGNet. Here many of the phases exhibit a stablity window, except the \textit{B33} phase, which was stable in M3GNet and CHGNet. Interestingly, the \text{B19} phase, not the \text{B19P} phase is shown to be the stable zero strain phase. One unique perspective of the the UIP-GNN models is that they provide a different displacive phase transformation pathway then that shown by the EAM potentials. However, this does not include the meta-stable R-phase or other potential meta-stable phases which can also offer such transformation mechanisms. \par
-
-
-Finally, the ALIGNN potential EOS was generated, but a few issues arose during the calculations. The most prominant was the difficulty in convergence of the structural optimzation to the specified tolerance (see \ref{sec:methods}. Secondly the calculated cohesive energies differs from the UIP-GNN by a factor $\approx 2$ and by $1$ eV for the EAM potentials. The \textit{B19P} phase is the stable at zero strain and for a considerable portion of the compressive, but all of the tensile. At compressive strain beyond $\approx 0.94$ the \textit{B2} phase is stable. 
-
-It is observed that for all but the ALIGNN potential, that upon high tensile isotropic strain, the \textit{Pbcm} phase is the most stable. \par
-
+Finally, the ALIGNN potential EOS was generated, but a few issues
+arose during the calculations. The most prominant was the difficulty
+in convergence of the structural optimzation to the specified
+tolerance (see \ref{sec:methods}. Secondly the calculated cohesive
+energies differs from the UIP-GNN by a factor $\approx 2$ and by $1$
+eV for the EAM potentials. The \textit{B19P} phase is the stable at
+zero strain and for a considerable portion of the compressive, but all
+of the tensile. At compressive strain beyond $\approx 0.94$ the
+\textit{B2} phase is stable.
 
 \begin{figure}[ht!]
-    \script{PlotNiTiCohesiveEnergy.py}
-    \begin{centering}
-        \includegraphics[width=\linewidth]{figures/NiTi_CohesiveEnergy.png}
-        \caption{
-          Comparison of predicted cohesive energy for respective ground-state structure and model.
-        }
-        \label{fig:ecoh}
-    \end{centering}
-\end{figure}
-
-
-\begin{figure}[ht!]
-    \script{PlotNiTiEOS.py}
-    \begin{centering}
-        \includegraphics[width=\linewidth]{figures/NiTi_EOS_Comparison.png}
-        \caption{
-            The equation of state curves for different \ce{NiTi} structures for (a) Mutter (EAM) (b) Zhong (EAM) (c) M3GNet (d) CHGNet (e) MACE and (f) ALIGNN interatomic potentials. The x-axis is the ratio of the isotropic strained unit cell volume, $V$,  with respect to the ground-state unit cell volume, $V_o$.
-        }
-        \label{fig:eos}
-    \end{centering}
+	\script{PlotEOS.py}
+	\begin{centering}
+		\includegraphics[width=\linewidth]{figures/NiTi_EquationOfStates.png}
+		\caption{ The equation of state curves for different \ce{NiTi}
+			structures for (a) Mutter (EAM) (b) Zhong (EAM) (c) Ko
+			(2NN-MEAM) (d) M3GNet (e) CHGNet (f) MACE interatomic
+			potentials. The x-axis is the ratio of the isotropic strained
+			unit cell volume, $V$, with respect to the ground-state unit
+			cell volume, $V_o$.  }
+		\label{fig:eos}
+	\end{centering}
 \end{figure}
 
 \subsection{NiTi: Phonon Instability}
-\label{subsec:niphonons}
+\label{subsec:nitiphonons}
 
-
-\subsubsection{B2 Phase}
-\label{subsubsec:b2}
-
-\begin{figure}[ht!]
-    \script{PlotNoStrainPhonons.py}
-    \begin{centering}
-        \includegraphics[width=\linewidth]{figures/B2_combined_models_phonon_bandstructures.png}
-        \caption{
-          Ground-state, no isotropic strain, Phonon bandstructure of B2 phase for all models. The Mutter and Zhong EAM potentials differ in that Mutter predicts no dynamic instability of the B2 phase at 0K. 
-        }
-        \label{fig:allmodels_no_strainphonon_b2}
-    \end{centering}
+\begin{figure}[!htp]
+	\script{PlotPhonons.py}
+	\begin{centering}
+		\includegraphics[width=\linewidth]{figures/NiTi_B2_ModelsPhononBandstructures.png}
+		\caption{ Ground-state, no isotropic strain, Phonon bandstructure
+			of B2 phase for all models. The Mutter and Zhong EAM potentials
+			differ in that Mutter predicts no dynamic instability of the B2
+			phase at 0K.  }
+		\label{fig:allmodels_b2}
+	\end{centering}
 \end{figure}
 
-\begin{figure}[ht!]
-    \script{PlotNoStrainPhonons.py}
-    \begin{centering}
-        \includegraphics[width=\linewidth]{figures/B19_combined_models_phonon_bandstructures.png}
-        \caption{
-          Ground-state phonon bandstructure of B19 phase for all models.
-        }
-        \label{fig:allmodels_no_strainphonon_B19P}
-    \end{centering}
+\begin{figure}[!htp]
+	\script{PlotPhonons.py}
+	\begin{centering}
+		\includegraphics[width=\linewidth]{figures/NiTi_B19_ModelsPhononBandstructures.png}
+		\caption{ Ground-state phonon bandstructure of B19 phase for all
+			models.  }
+		\label{fig:allmodels_B19P}
+	\end{centering}
 \end{figure}
 
-\begin{figure}[ht!]
-    \script{PlotNoStrainPhonons.py}
-    \begin{centering}
-        \includegraphics[width=\linewidth]{figures/B19P_combined_models_phonon_bandstructures.png}
-        \caption{
-          Ground-state phonon bandstructure of \textit{B19}$^\prime$ phase for all models.
-        }
-        \label{fig:allmodels_no_strainphonon_B19P}
-    \end{centering}
+\begin{figure}[!htp]
+	\script{PlotPhonons.py}
+	\begin{centering}
+		\includegraphics[width=\linewidth]{figures/NiTi_B19P_ModelsPhononBandstructures.png}
+		\caption{ Ground-state phonon bandstructure of
+			\textit{B19}$^\prime$ phase for all models.  }
+		\label{fig:allmodels_B19P}
+	\end{centering}
 \end{figure}
 
-
-\begin{figure}[ht!]
-    \script{PlotNoStrainPhonons.py}
-    \begin{centering}
-        \includegraphics[width=\linewidth]{figures/BCO_combined_models_phonon_bandstructures.png}
-        \caption{
-          Ground-state phonon bandstructure of BCO phase for all models.
-        }
-        \label{fig:allmodels_no_strainphonon_B19P}
-    \end{centering}
+\begin{figure}[!htp]
+	\script{PlotPhonons.py}
+	\begin{centering}
+		\includegraphics[width=\linewidth]{figures/NiTi_BCO_ModelsPhononBandstructures.png}
+		\caption{ Ground-state phonon bandstructure of BCO phase for all
+			models.  }
+		\label{fig:allmodels_B19P}
+	\end{centering}
 \end{figure}
 
-\begin{figure}[ht!]
-    \script{PlotEAMPhonons.py}
-    \begin{centering}
-        \includegraphics[width=0.5\linewidth]{figures/Mutter_B2_combined_strain_phonon_bandstructures.png}
-        \vspace{1mm}
-        \includegraphics[width=0.5\linewidth]{figures/Zhong_B2_combined_strain_phonon_bandstructures.png}
-        \caption{
-           Phonon dispersion of B2 structure for the Mutter (top) and Zhong (bottom)  EAM potentials at different isotropic strains. The optical branches have been made more transparent to emphasis the behavior in the TA$_1$ and TA$_2$ branches. The color indicates direction from compressive to tensile strain. Note that the strain percent shown is with respect to isotropic changes (i.e. volume). 
-        }
-        \label{fig:mutter_zhong_phonon_b2}
-    \end{centering}
-\end{figure}
+\subsubsection{Mode Grun\"{e}isen Parameter}
 
+The B2 phase of NiTi exhibits notable phonon instabilities,
+particularly at the \textit{M} point in the Brillouin zone. These
+instabilities are characterized by imaginary modes, represented as
+negative phonon frequencies, indicating a dynamical instability in
+this crystal structure. The \textit{M} point, located at the edge of
+the Brillouin zone, corresponds to a wave vector of
+$\left[\frac{1}{2}, \frac{1}{2}, 0\right]$ in units of the reciprocal
+lattice vectors. The phonon dispersion curves for \ce{NiTi} in the B2
+phase reveal a softening of the acoustic modes at the \textit{M}
+point, suggesting a propensity for a structural phase transition. \par
 
-%ADD Plot of zero strain EAM and first-pricinpals results
-
-\begin{figure}[ht!]
-    \script{PlotGNNPhonons.py}
-    \begin{centering}
-      \includegraphics[width=0.5\linewidth]{figures/M3GNet_B2_combined_strain_phonon_bandstructures.png}
-      \vspace{1mm}
-      \includegraphics[width=0.5\linewidth]{figures/CHGNet_B2_combined_strain_phonon_bandstructures.png}
-      \vspace{1mm}
-      \includegraphics[width=0.5\linewidth]{figures/MACE_B2_combined_strain_phonon_bandstructures.png}
-      \caption{
-        Phonon dispersion of B2 structure for the (a) M3GNet, (b) CHGNet, and (c) MACE potentials for different isotropic strains. Similar transcparency is used as done in \ref{fig:mutter_zhong_phonon_b2}.
-      }
-      \label{fig:gnn_phonon_b2}
-    \end{centering}
-\end{figure}
-
-
-The B2 phase of NiTi exhibits notable phonon instabilities, particularly at the \textit{M} point in the Brillouin zone. These instabilities are characterized by imaginary modes, represented as negative phonon frequencies, indicating a dynamical instability in this crystal structure. The \textit{M} point, located at the edge of the Brillouin zone, corresponds to a wave vector of $\left[\frac{1}{2}, \frac{1}{2}, 0\right]$ in units of the reciprocal lattice vectors. The phonon dispersion curves for NiTi in the B2 phase reveal a softening of the acoustic modes at the \textit{M} point, suggesting a propensity for a structural phase transition. \par
-
-The mode Gruneisen parameter, $\gamma$, plays a pivotal role in understanding the stabilization of the NiTi B2 phase under external strain, particularly in the context of phonon instabilities at the M point. The mode Gruneisen parameter is defined as,
+The mode Gruneisen parameter, $\gamma$, plays a pivotal role in
+understanding the stabilization of the NiTi B2 phase under external
+strain, particularly in the context of phonon instabilities at the M
+point. The mode Gruneisen parameter is defined as,
 
 \begin{equation}
-  \label{eq:modegruneisen}
-  \gamma = -\frac{V}{\omega}\left(\frac{\partial \omega}{\partial V}\right)
+	\label{eq:modegruneisen}
+	\gamma = -\frac{V}{\omega}\left(\frac{\partial \omega}{\partial V}\right)
 \end{equation},
 
-where $V$ is the volume, usually taken at equilibrium, and $\omega$ is the phonon frequency. For the B2 phase of NiTi, the negative phonon frequencies at the M point indicate an instability that can be modulated by applying strain. The strain perturbs the lattice volume, thereby altering the phonon frequencies. The effect of this strain can be quantitatively assessed using the mode Gruneisen parameter, which describes how the phonon frequencies change with volume. A positive $\gamma$ suggests that the phonon frequency increases as the volume decreases under strain, potentially stabilizing the lattice. In the case of NiTi, applying compressive strain may increase the frequencies of the soft modes at the M point, thus stabilizing the B2 phase and delaying or suppressing the martensitic transformation. This interplay between strain and phonon behavior, quantified by $\gamma$, is crucial in tailoring the mechanical properties of shape memory and superelastic materials.
+where $V$ is the volume, usually taken at equilibrium, and $\omega$ is
+the phonon frequency. For the \textit{B2} phase of \ce{NiTi}, the
+negative phonon frequencies at the \textit{M} point indicate an
+instability that can be modulated by applying strain. The strain
+perturbs the lattice volume, thereby altering the phonon
+frequencies. The effect of this strain can be quantitatively assessed
+using the mode Gr\"{u}neisen parameter, which describes how the phonon
+frequencies change with volume. A positive $\gamma$ suggests that the
+phonon frequency increases as the volume decreases under strain,
+potentially stabilizing the lattice. In the case of NiTi, applying
+compressive strain may increase the frequencies of the soft modes at
+the \textit{M} point, thus stabilizing the \textit{B2} phase and
+delaying or suppressing the martensitic transformation. This interplay
+between strain and phonon behavior, quantified by $\gamma$, is crucial
+in tailoring the mechanical properties of shape memory and
+superelastic materials.
 
+In fig.~\ref{fig:modegruneisen} the Gr\"{u}neisen parameter for
+\textit{M}-mode in \textit{B2} is shown for different interatomic
+potentials for \ce{NiTi}. The instable modes (i.e., negative
+eigenfrequencies) for the MEAM, M3GNet, and MACE potentials have
+Gr\"{u}neisen parameter which are negative. The negative values
+suggest that compressive isotropic strains will provide stabalizing
+force against displacive phase transformation. At higher frequencies
+the Gr\"{u}neisen parameter is positive, indicating this modes
+experience a decrease in frequency with respect to volume
+increase. The optical modes are less sensitive as indicated by smaller
+values. \par
 
-\variable{output/Table_NiTi_M_ModeGruneisen.tex}
+\begin{figure}[!htp]
+	\script{GruneisenParameters.py}
+	\centering
+	\includegraphics[width=\columnwidth]{figures/Plot_NiTi_M_ModeGruneisen.png}
+	\caption{The sign-log of the \textit{M}-mode Gr\"{u}neisen
+	parameter, $\gamma$, as a function of eigenfrequency for different
+	interatomic potentials.}
+	\label{fig:modegruneisen}
+\end{figure}
 
+The Mutter EAM potential shows negative Gr\"{u}''neisen parameters for
+all eigenfrequencies indicating compressive forces increase
+frequencies, however, none of the \textit{M}-point modes have negative
+eigenfrequencies. \par
 
+In contrast the the MEAM, M3GNet, and MACE potentials, the Zhong EAM
+and CHGNet potentials show positive Gr\"{u}niesen parameters for
+negatives eignefrequencies, suggesting that isotropic tensile strain
+acts to stabalize the mode. \par
 
-\subsection{PbTi: Equation of States}
+To better coberate the results in fig.~\ref{fig:modegruneisen}, the
+phonon band structure as a result of isoptroic strain applied in
+compression and tension are show in fig
 
+\begin{figure}[!htp]
+	\script{PlotPhonons.py}
+	\begin{centering}
+		\includegraphics[width=0.5\linewidth]{figures/NiTi_Mutter_B2_StrainsPhononBandstructures.png} \vspace{1mm}
+		\includegraphics[width=0.5\linewidth]{figures/NiTi_Zhong_B2_StrainsPhononBandstructures.png} \vspace{1mm}
+		\includegraphics[width=0.5\linewidth]{figures/NiTi_Ko_B2_StrainsPhononBandstructures.png}
+		\caption{ Phonon dispersion of B2 structure for the (top) EAM
+			Mutter, (middle) EAM Zhong, and (bottom) 2NN-MEAM Ko potentials
+			at different isotropic strains. The optical branches have been
+			made more transparent to emphasis the behavior in the TA$_1$ and
+			TA$_2$ branches. The color indicates direction from compressive
+			to tensile strain. Note that the strain percent shown is with
+			respect to isotropic changes (i.e. volume).  }
+		\label{fig:mutter_zhong_ko_phonon_b2}
+	\end{centering}
+\end{figure}
+
+% ADD Plot of zero strain EAM and first-pricinpals results
+
+\begin{figure}[!htp]
+	\script{PlotPhonons.py}
+	\begin{centering}
+		\includegraphics[width=0.5\linewidth]{figures/NiTi_M3GNet_B2_StrainsPhononBandstructures.png} \vspace{1mm}
+		\includegraphics[width=0.5\linewidth]{figures/NiTi_CHGNet_B2_StrainsPhononBandstructures.png} \vspace{1mm}
+		\includegraphics[width=0.5\linewidth]{figures/NiTi_MACE_B2_StrainsPhononBandstructures.png}
+		\caption{ Phonon dispersion of B2 structure for the (top) M3GNet,
+			(middle) CHGNet, and (bottom) MACE potentials for different
+			isotropic strains. Similar transcparency is used as done in
+			\ref{fig:mutter_zhong_ko_phonon_b2}.  }
+		\label{fig:gnn_phonon_b2}
+	\end{centering}
+\end{figure}
+
+% \variable{output/Table_NiTi_M_ModeGruneisen.tex}
+
+\subsubsection{Elastic Constants}
+
+\variable{output/Table_NiTi_Elastic_Constants.tex}
+
+\subsection{PtTi: Equation of States}
+\label{sec:ptti_eos}
 
 \section{Conclusion}
 \label{sec:conclusion}
-This word aimed to provide an assement of the of GNN univeral interatomic potentials on the ability to capture the stable ground-state phases of binary and ternary SMA. In addition, the dynamic stability of these SMA is crucially evaluated to understand the suitability in observing the onset of displacive phase transformations via the softening of TA branch modes. In the case of NiTi we find that all the GNN potentials predict either the Monoclinic or BCO phases as stable over the B2 structure. However, not all agree with the recent works by (cite) which have indicated that it is the BCO phase which is the ground-state structure.
+This word aimed to provide an assement of the of GNN univeral
+interatomic potentials on the ability to capture the stable
+ground-state phases of binary and ternary SMA. In addition, the
+dynamic stability of these SMA is crucially evaluated to understand
+the suitability in observing the onset of displacive phase
+transformations via the softening of TA branch modes. In the case of
+NiTi we find that all the GNN potentials predict either the Monoclinic
+or BCO phases as stable over the B2 structure. However, not all agree
+with the recent works by (cite) which have indicated that it is the
+BCO phase which is the ground-state structure.
 
-We observe that the M3GNet and CHGnet capture the M-point instability of the B2 phase, however, no stablizing isotropic strain is observed. With regard to the MACE, very good agrement is found with the phonon bandstructure and that from ab-initio methods. The ALIGNN potential was found not to be suitable of NiTi.
+We observe that the M3GNet and CHGnet capture the M-point instability
+of the B2 phase, however, no stablizing isotropic strain is
+observed. With regard to the MACE, very good agrement is found with
+the phonon bandstructure and that from ab-initio methods. The ALIGNN
+potential was found not to be suitable of NiTi.
 
-
-\bibliographystyle{naturemag}
-\bibliography{references}
-
+\bibliographystyle{elsarticle-num-names} \bibliography{references}
 
 \section*{CR\lowercase{e}d\lowercase{i}T author statement}
 
-S.B: Conceptualization, Formal Analysis, Investigation, Methodology, Software, Visualisation, Writing---original draft.
+S.B: Conceptualization, Formal Analysis, Investigation, Methodology,
+Software, Visualisation, Writing---original draft.
 
-
-\section*{Reproducibilty and Data Availability}
-This study was carried out using the reproducibility software \href{https://github.com/showyourwork/showyourwork}{\showyourwork}, which leverages continuous integration to programmatically download the data from \href{https://zenodo.org/}{zenodo.org}, create the figures, and compile the manuscript. Each figure caption contains two links: one to the dataset stored on zenodo used in the corresponding figure, and the other to the script used to make the figure (at the commit corresponding to the current build of the manuscript). The git repository associated to this study is publicly available at \url{https://github.com/stefanbringuier/SMA_Phonons_GNNIP} and allows anyone to re-build the entire manuscript. The datasets generated by this paper are stored at \url{xyz}.
+\section*{Reproducibility and Data Availability}
+This study was carried out using the reproducibility software
+\href{https://github.com/showyourwork/showyourwork}{\showyourwork}\cite{Luger2021},
+which leverages continuous integration to programmatically download
+the data from \href{https://zenodo.org/}{zenodo.org}(if needed),
+create the figures, and compile the manuscript. Each figure caption
+contains two links: one to the dataset stored on zenodo used in the
+corresponding figure, and the other to the script used to make the
+figure (at the commit corresponding to the current build of the
+manuscript). The git repository associated to this study is publicly
+available at
+\url{https://github.com/stefanbringuier/SMA_Phonons_GNNIP} and allows
+anyone to re-build the entire manuscript.\par
 
 \section*{Acknowledgements}
 
+\newpage
 \appendix
+\section{Appendix}
+\subsection{Workflow Reproducibility}
+\label{sec:appx_reproduce}
+
+
+\subsection{NiTi: Ground State Structures}
+\label{sec:opt_structures}
+
+\variable{output/Table_NiTi_Equilibrium_Structures.tex}
+
+\subsection{Phonon Calculation Configurations}
+\label{sec:phonon_calc_config}
+
+The code used to generate the phonon configuration settings for each
+potential mode and structure are shown the table below. Settings are
+used for both NiTi and PtTi systems.
+
+\variable{output/Phonons_ConfigSettingsCode.tex}
+
 \subsection{Irreducible Brillouin Zones}
 \label{sec:appx_ibz}
 
-The irreducible Brillouin zones for the the different crystals investigated in this study are provided below. The high-symmetry points are indicated. Additionally the coordinates of the high-symmetry points in the IBZ are shown in the tables below. In Ref. xxx the  specific implementation of the band path sampling and definitions are provided.
+The irreducible Brillouin zones for the the different crystals
+investigated in this study are provided below. The high-symmetry
+points are indicated. Additionally the coordinates of the
+high-symmetry points in the IBZ are shown in the tables below. In
+Ref. xxx the specific implementation of the band path sampling and
+definitions are provided.
 
-\begin{figure}[ht!]                                                                                      
-    \script{AppendixPlotBZ.py}                                                                           
-    \begin{centering}                                                                                    
-      \includegraphics[width=0.5\linewidth]{figures/B2_BrillouinZonePointsSampled.png} 
-      \vspace{1mm}                                                                                       
-      \includegraphics[width=0.5\linewidth]{figures/B19_BrillouinZonePointsSampled.png}
-      \vspace{1mm}
-      \includegraphics[width=0.5\linewidth]{figures/BCO_BrillouinZonePointsSampled.png}
-      \vspace{1mm}                                                                                       
-      \caption{The irreducible Brillouin zones for (top) B2(\#221) (middle) B19/B19P(\#11), and (bottom) BCO(\#63) crystal structures}                                                                                  \label{fig:ibz}                                                                          
-    \end{centering}                                                                                      
-\end{figure} 
+\begin{figure}[!htp]
+	\centering
+	\begin{subfigure}[b]{0.45\linewidth}
+		\includegraphics[width=\linewidth]{figures/B2_BrillouinZonePointsSampled.png}
+		\caption{}
+		\label{fig:B2}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.45\linewidth}
+		\includegraphics[width=\linewidth]{figures/B19_BrillouinZonePointsSampled.png}
+		\caption{}
+		\label{fig:B19}
+	\end{subfigure}
+	\vspace{1mm}
+	\begin{subfigure}[b]{0.45\linewidth}
+		\includegraphics[width=\linewidth]{figures/B19P_BrillouinZonePointsSampled.png}
+		\caption{}
+		\label{fig:B19P}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.45\linewidth}
+		\includegraphics[width=\linewidth]{figures/BCO_BrillouinZonePointsSampled.png}
+		\caption{}
+		\label{fig:BCO}
+	\end{subfigure}
+	\caption{The irreducible Brillouin zones for \textit{B2}(\#221),
+		\textit{B19}(\#51), \textit{B19'}(\#11), and \textit{BCO}(\#63)
+		crystal structures}
+	\label{fig:ibz}
+\end{figure}
+
+\pagebreak
 
 \variable{output/B2_SpecialSymmetryPointsBZ.tex}
 \variable{output/B19_SpecialSymmetryPointsBZ.tex}
+\variable{output/B19P_SpecialSymmetryPointsBZ.tex}
 \variable{output/BCO_SpecialSymmetryPointsBZ.tex}
 
 \end{document}

@@ -1,0 +1,24 @@
+name: base
+channels:
+  - defaults
+dependencies:
+  - pip=21.0.1
+  - python=3.9
+  - conda-forge::elastic
+  - conda-forge::lammps
+  - openmpi
+  - mpi4py
+  - pip:
+      - matplotlib
+      - spglib
+      - ase == 3.22.1
+      - seaborn
+      - SciencePlots
+      - torch
+      - torchvision
+      - torchaudio
+      - mace-torch == 0.3.3
+      - alignn
+      - deepmd-kit[cpu]==2.2.7
+variables:
+  ASE_LAMMPSRUN_COMMAND: "lmp_serial"

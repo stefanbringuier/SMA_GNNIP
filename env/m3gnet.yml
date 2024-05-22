@@ -1,10 +1,9 @@
 name: m3gnet
 dependencies:
-  - conda-forge::pip=21.0.1
-  - conda-forge::python=3.9
+  - pip=21.0.1
+  - python=3.9
   - conda-forge::elastic
   - pip:
-      - spglib==2.1.0
+      - spglib
       - ase==3.22.1
-      - matgl == 0.8.5
-      - pandas==2.1.2
+      - matgl == 0.9.1

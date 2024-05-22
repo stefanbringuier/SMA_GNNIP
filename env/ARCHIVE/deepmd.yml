@@ -1,0 +1,19 @@
+name: deepmd
+channels:
+  - https://conda.deepmodeling.com
+  - defaults
+dependencies:
+  - conda-forge::pip
+  - conda-forge::python
+  - conda-forge::elastic
+#  - conda-forge::deepmd-kit
+#  - conda-forge::deepmd
+#  - deepmd-kit=*=*cpu
+#  - deepmd=*=*cpu
+#  - cudatoolkit=11.6
+#  - horovod
+  - pip:
+      - deepmd-kit[cpu]==2.2.7
+      - spglib==2.1.0
+      - ase==3.22.1
+      - pandas==2.1.2

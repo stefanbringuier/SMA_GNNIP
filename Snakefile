@@ -1,196 +1,156 @@
 # Define common parameters
-MODELS = ["Mutter","Zhong","M3GNet","CHGNet","MACE","ALIGNN"]
-NiTi_STRUCTURES = ["B2","B19","B19P","BCO"] #["BCO","B33", "Pbcm", "B32","R-Phase]
-NiTi_DATABASE = "NiTi_Structures.json"
+# NOTE: ALIGNN is supported but results seem total wrong!
+# from datetime import datetime
+# date_str = datetime.now().strftime("%d%b%Y")
+# DATABASE = f"Results_{date_str}.json"
+DATABASE = "SMA_Results.json"
+
 
 # Function to get environment file
 def get_env_file(model):
-    return f"env/{model.lower()}.yml"
+    env = f"env/{model.lower()}.yml"
+    if model == "M3GNet":
+        return env
+    elif model == "CHGNet":
+        return env
+    else:
+        return "env/base.yml"
 
-# Rule to create the NiTi database
-rule create_niti_db:
+
+rule create_db:
     input:
         create="src/scripts/NewASEDatabase.py",
-        script="src/scripts/Generate.py",
-        eos="src/scripts/CalculateEOS.py",
-        phonons="src/scripts/CalculatePhonons.py"        
     output:
-        db="src/data/" + NiTi_DATABASE,
-        create="src/data/COMPLETED_TASKS/created.database.done"
+        db="src/data/" + DATABASE,
+        create="src/data/COMPLETED_TASKS/created.database.done",
     conda:
-        "env/ase.yml"
+        "env/base.yml"
     shell:
-        "python src/scripts/NewASEDatabase.py {NiTi_DATABASE}; touch {output.create}"
+        "python src/scripts/NewASEDatabase.py {DATABASE}; touch {output.create}"
 
-rule add_niti_to_db:
+
+rule minimize_and_calculate_eos:
     input:
-        db=ancient("src/data/" + NiTi_DATABASE),
-        script="src/scripts/Generate.py",
-	create="src/data/COMPLETED_TASKS/created.database.done",
-        eos="src/scripts/CalculateEOS.py",
-        phonons="src/scripts/CalculatePhonons.py"
+        #        minimize="src/scripts/MinimizeStructure.py",
+        #        script="src/scripts/CalculateEOS.py",
+        db=ancient("src/data/" + DATABASE),
+        create="src/data/COMPLETED_TASKS/created.database.done",
     output:
-        done=touch("src/data/COMPLETED_TASKS/{structure}_{model}.done")
+        done=touch(
+            "src/data/COMPLETED_TASKS/{chemsys}_{structure}_{model}.min_eos.done"
+        ),
+    threads: 3
+    resources:
+        mem_gb=7,
     conda:
         lambda wildcards: get_env_file(wildcards.model)
     params:
+        runner="src/scripts/CalculationRunner.py",
+        chemsys=lambda wildcards: wildcards.chemsys,
         structure=lambda wildcards: wildcards.structure,
         model=lambda wildcards: wildcards.model,
-        nph=13
     shell:
-        "python {input.script} --dbname {NiTi_DATABASE} --structure {params.structure} --model {params.model} --nph {params.nph}"
+        "python {params.runner} --calc_type min_eos --dbname {DATABASE} --chemsys {params.chemsys} --structure {params.structure} --model {params.model}"
 
-# Rule to aggregate the NiTi database
-rule aggregate_niti_db:
+
+rule calculate_phonons:
     input:
-        done=expand("src/data/COMPLETED_TASKS/{structure}_{model}.done", structure=NiTi_STRUCTURES, model=MODELS),
-        db="src/data/" + NiTi_DATABASE,
-	create="src/data/COMPLETED_TASKS/created.database.done",
-        eos="src/scripts/CalculateEOS.py",
-        phonons="src/scripts/CalculatePhonons.py"        
+        #        config="src/scripts/Config.py",
+        #        script="src/scripts/CalculatePhonons.py",
+        db=ancient("src/data/" + DATABASE),
+        create="src/data/COMPLETED_TASKS/created.database.done",
+        mineos="src/data/COMPLETED_TASKS/{chemsys}_{structure}_{model}.min_eos.done",
     output:
-        aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done"
-    shell:
-        "touch {output.aggregated}"
-
-# NOTE: My intent is to cache the database, but I think this is not needed
-# I believe the purpose behind caching is to store intermediate results between
-# rules/workflows. For example if you need to fetch a database and had rules
-# that kept doing this, then you could cache that fetch. I think!.
-# What I was tyring to do was create the action of storing the databse once its
-# created because I'm frequentyly changeing whats being added to the database.
-rule cache_niti_db:
-    input:
-        db="src/data/" + NiTi_DATABASE,
-        done="src/data/COMPLETED_TASKS/niti.database.aggregated.done"
-    output:
-        dbc = "src/data/CACHED/" + NiTi_DATABASE
-    cache:
-        True
-    shell:
-        "mkdir -p src/data/CACHED && cp src/data/{NiTi_DATABASE} src/data/CACHED/"
-
-
-# Rule for plotting NiTi Cohesive Energy
-rule plot_niti_ecoh:
-    input:
-        script="src/scripts/PlotNiTiCohesiveEnergy.py",
-        aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done"
-    output:
-        figure="src/tex/figures/NiTi_CohesiveEnergy.png"
+        done=touch(
+            "src/data/COMPLETED_TASKS/{chemsys}_{structure}_{model}.phonons.done"
+        ),
+    threads: 12
+    resources:
+        mem_gb=30,
     conda:
-        "env/ase.yml"
-    shell:
-        "python src/scripts/PlotNiTiCohesiveEnergy.py {NiTi_DATABASE}"
-
-# Rule for plotting NiTi EOS
-rule plot_niti_eos:
-    input:
-        script="src/scripts/PlotNiTiEOS.py",
-        aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done"
-    output:
-        figure="src/tex/figures/NiTi_EOS_Comparison.png"
-    conda:
-        "env/ase.yml"
-    shell:
-        "python src/scripts/PlotNiTiEOS.py {NiTi_DATABASE}"
-
-# Rule for generating NiTi equilibrium table
-rule generate_niti_equil_table:
-    input:
-        script="src/scripts/GenerateNiTiEquilTable.py",
-        aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done"
-    output:
-        table="src/tex/output/Table_NiTi_Equilibrium_Structures.tex"
-    conda:
-        "env/ase.yml"
-    shell:
-        "python src/scripts/GenerateNiTiEquilTable.py {NiTi_DATABASE}"
-
-
-# Rule for plotting All models NiTi phonons
-rule plot_niti_all_model_phonons:
-    input:
-        phonons="src/scripts/PlotPhonons.py",
-        script="src/scripts/PlotNoStrainPhonons.py",
-        aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done"
-    output:
-        figure_all_models_B2="src/tex/figures/B2_combined_models_phonon_bandstructures.png",
-        figure_all_models_B19P="src/tex/figures/B19P_combined_models_phonon_bandstructures.png",
-        figure_all_models_B19="src/tex/figures/B19_combined_models_phonon_bandstructures.png",
-        figure_all_models_BCO="src/tex/figures/BCO_combined_models_phonon_bandstructures.png"
-    conda:
-        "env/ase.yml"
-    shell:
-        "python src/scripts/PlotNoStrainPhonons.py {NiTi_DATABASE} {NiTi_STRUCTURES}"
-
-# Rule for plotting NiTi EAM phonons
-rule plot_niti_eam_phonons:
-    input:
-        phonons="src/scripts/PlotPhonons.py",
-        script="src/scripts/PlotEAMPhonons.py",
-        aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done"
-    output:
-        figure_mutter_B2="src/tex/figures/Mutter_B2_combined_strain_phonon_bandstructures.png",
-        figure_zhong_B2="src/tex/figures/Zhong_B2_combined_strain_phonon_bandstructures.png"
-    conda:
-        "env/ase.yml"
+        lambda wildcards: get_env_file(wildcards.model)
     params:
-        npoints=5
+        runner="src/scripts/CalculationRunner.py",
+        chemsys=lambda wildcards: wildcards.chemsys,
+        structure=lambda wildcards: wildcards.structure,
+        model=lambda wildcards: wildcards.model,
     shell:
-        "python src/scripts/PlotEAMPhonons.py {NiTi_DATABASE} {params.npoints} {NiTi_STRUCTURES}"
+        "python {params.runner} --calc_type phonons --dbname {DATABASE} --chemsys {params.chemsys} --structure {params.structure} --model {params.model}"
 
-# Rule for plotting NiTi GNN phonons
-rule plot_niti_gnn_phonons:
+
+rule calculate_elastic:
     input:
-        phonons="src/scripts/PlotPhonons.py",
-        script="src/scripts/PlotGNNPhonons.py",
-        aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done"
+        #        script="src/scripts/CalculateElastic.py",
+        db=ancient("src/data/" + DATABASE),
+        create="src/data/COMPLETED_TASKS/created.database.done",
+        mineos="src/data/COMPLETED_TASKS/{chemsys}_{structure}_{model}.min_eos.done",
     output:
-        figure_m3gnet_B2="src/tex/figures/M3GNet_B2_combined_strain_phonon_bandstructures.png",
-#        figure_m3gnet_B19P="src/tex/figures/M3GNet_B19P_combined_strain_phonon_bandstructures.png",
-#        figure_m3gnet_B19="src/tex/figures/M3GNet_B19_combined_strain_phonon_bandstructures.png",
-#        figure_m3gnet_BCO="src/tex/figures/M3GNet_BCO_combined_strain_phonon_bandstructures.png",
-        figure_chgnet_B2="src/tex/figures/CHGNet_B2_combined_strain_phonon_bandstructures.png",
-#        figure_chgnet_B19P="src/tex/figures/CHGNet_B19P_combined_strain_phonon_bandstructures.png",
-#        figure_chgnet_B19="src/tex/figures/CHGNet_B19_combined_strain_phonon_bandstructures.png",
-#        figure_chgnet_BCO="src/tex/figures/CHGNet_BCO_combined_strain_phonon_bandstructures.png",
-        figure_mace_B2="src/tex/figures/MACE_B2_combined_strain_phonon_bandstructures.png",
-#        figure_mace_B19P="src/tex/figures/MACE_B19P_combined_strain_phonon_bandstructures.png",
-#        figure_mace_B19="src/tex/figures/MACE_B19_combined_strain_phonon_bandstructures.png",
-#        figure_mace_BCO="src/tex/figures/MACE_BCO_combined_strain_phonon_bandstructures.png",
+        done=touch(
+            "src/data/COMPLETED_TASKS/{chemsys}_{structure}_{model}.elastic.done"
+        ),
+    threads: 1
+    resources:
+        mem_gb=15,
     conda:
-        "env/ase.yml"
+        lambda wildcards: get_env_file(wildcards.model)
     params:
-        npoints=5
+        runner="src/scripts/CalculationRunner.py",
+        chemsys=lambda wildcards: wildcards.chemsys,
+        structure=lambda wildcards: wildcards.structure,
+        model=lambda wildcards: wildcards.model,
     shell:
-        "python src/scripts/PlotGNNPhonons.py {NiTi_DATABASE} {params.npoints} {NiTi_STRUCTURES}"
+        "python {params.runner} --calc_type elastic --dbname {DATABASE} --chemsys {params.chemsys} --structure {params.structure} --model {params.model}"
 
-# Rule for generating NiTi M-Mode Gruneisen parameters.
-rule generate_niti_m_mode_gruneisen:
+
+include: "NiTi.Snakefile"
+include: "PtTi.Snakefile"
+include: "NiAlCo.Snakefile"
+
+
+# NOTE: This is the final database after all calculations/simulations.
+# All the plots that leverage the ASE JSON database use this file path.
+# Also Zenodo caching to sandbox seems broken. I can create a record but
+# and showyourwork validates but when it tries to create a draft it fails.
+rule cache_db:
     input:
-        script="src/scripts/GenerateMGruneisenTable.py",
-        aggregated="src/data/COMPLETED_TASKS/niti.database.aggregated.done"
+        db="src/data/" + DATABASE,
+        niti_done="src/data/COMPLETED_TASKS/niti.database.aggregated.done",
+        ptti_done="src/data/COMPLETED_TASKS/ptti.database.aggregated.done",
+        alnico_done="src/data/COMPLETED_TASKS/nialco.database.aggregated.done",
     output:
-        table="src/tex/output/Table_NiTi_M_ModeGruneisen.tex"
-    conda:
-        "env/ase.yml"
+        dbc="src/data/CACHED/" + DATABASE,
+    #    cache: True
     shell:
-        "python src/scripts/GenerateMGruneisenTable.py {NiTi_DATABASE}"
+        "mkdir -p src/data/CACHED && cp src/data/{DATABASE} src/data/CACHED/"
+
 
 rule generate_niti_bz_appendix:
     input:
-        script="src/scripts/AppendixPlotBZ.py",
+        script="src/scripts/AppendixBZ.py",
     output:
-        "src/tex/figures/B2_BrillouinZonePointsSampled.png",
-        "src/tex/figures/B19_BrillouinZonePointsSampled.png",
-        "src/tex/figures/B19P_BrillouinZonePointsSampled.png",
-        "src/tex/figures/BCO_BrillouinZonePointsSampled.png",
-        "src/tex/output/B2_SpecialSymmetryPointsBZ.tex",
-        "src/tex/output/B19_SpecialSymmetryPointsBZ.tex",
-        "src/tex/output/B19P_SpecialSymmetryPointsBZ.tex",
-        "src/tex/output/BCO_SpecialSymmetryPointsBZ.tex",
+        figure_ibz_B2="src/tex/figures/B2_BrillouinZonePointsSampled.png",
+        figure_ibz_B19="src/tex/figures/B19_BrillouinZonePointsSampled.png",
+        figure_ibz_B19P="src/tex/figures/B19P_BrillouinZonePointsSampled.png",
+        figure_ibz_BCO="src/tex/figures/BCO_BrillouinZonePointsSampled.png",
+        table_qpoints_B2="src/tex/output/B2_SpecialSymmetryPointsBZ.tex",
+        table_qpoints_B19="src/tex/output/B19_SpecialSymmetryPointsBZ.tex",
+        table_qpoints_B19P="src/tex/output/B19P_SpecialSymmetryPointsBZ.tex",
+        table_qpoints_BCO="src/tex/output/BCO_SpecialSymmetryPointsBZ.tex",
     conda:
-        "env/ase.yml"
+        "env/base.yml"
     script:
-        "src/scripts/AppendixPlotBZ.py"
+        "src/scripts/AppendixBZ.py"
+
+
+rule show_phonon_config_appendix:
+    input:
+        config="src/scripts/Config.py",
+        script="src/scripts/WriteCodeToTex.py",
+    output:
+        code_listing="src/tex/output/Phonons_ConfigSettingsCode.tex",
+    params:
+        code="Config.py",
+        funcname="get_phonon_config",
+        output="Phonons_ConfigSettingsCode.tex",
+    shell:
+        "python src/scripts/WriteCodeToTex.py {params.code} {params.funcname} {params.output}"

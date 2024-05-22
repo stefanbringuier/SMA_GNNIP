@@ -1,0 +1,10 @@
+name: chgnet
+dependencies:
+  - conda-forge::pip=21.0.1
+  - conda-forge::python=3.9
+  - conda-forge::elastic
+  - pip:
+      - spglib==2.1.0
+      - ase==3.22.1
+      - chgnet == 0.3.1
+      - pandas==2.1.2

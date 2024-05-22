@@ -1,7 +1,5 @@
 # Enable rule caching on Zenodo?
-65;6800;1ccache_on_zenodo: true
-
-optimize_caching: true
+cache_on_zenodo: true
 
 # Workflow graph (DAG) generation
 dag:
@@ -29,47 +27,30 @@ dag:
 # THis needs to be the version DOI not concept, thus it has to
 # correspond to a `showyourwork cache freeze`
 #datasets:
-#  10.5072/zenodo.1172:
+#  10.5072/zenodo.25148:
 #    contents:
-#      NiTi_Structures.json: src/data/CACHED/NiTi_Structures.json
+#      SMA_Results.json: src/data/CACHED/SMA_Results.json
 #     contents:
 #       TOI640b.json: src/data/TOI640b.json
 
-# Custom file dependencies -> This is used to add icons
-
+# NOTE: You must add for every script used in ms.tex
+# The dependency. This ensure it ties it to a snakemake
+# rule.
 dependencies:
-# Figures
   src/scripts/PlotNiTiEOS.py:
-    - src/data/COMPLETED_TASKS/niti.database.aggregated.done
-    - src/data/CACHED/NiTi_Structures.json
+    - src/data/CACHED/SMA_Results.json
   src/scripts/PlotPhonons.py:
-    - src/data/COMPLETED_TASKS/niti.database.aggregated.done
-    - src/data/CACHED/NiTi_Structures.json
-  src/scripts/PlotNoStrainPhonons.py:
-    - src/scripts/PlotPhonons.py
-    - src/data/COMPLETED_TASKS/niti.database.aggregated.done
-    - src/data/CACHED/NiTi_Structures.json
-  src/scripts/PlotEAMPhonons.py:
-    - src/scripts/PlotPhonons.py
-    - src/data/COMPLETED_TASKS/niti.database.aggregated.done
-    - src/data/CACHED/NiTi_Structures.json
-  src/scripts/PlotGNNPhonons.py:
-    - src/scripts/PlotPhonons.py
-    - src/data/COMPLETED_TASKS/niti.database.aggregated.done
-    - src/data/CACHED/NiTi_Structures.json
-
-# Tables
-  src/scripts/GenerateNiTiEquilTable.py:
-    - src/data/COMPLETED_TASKS/niti.database.aggregated.done
-    - src/data/CACHED/NiTi_Structures.json
-  src/scripts/GenerateMGruneisenTable.py:
-    - src/data/COMPLETED_TASKS/niti.database.aggregated.done
-    - src/data/CACHED/NiTi_Structures.json
-
-# LaTeX
-  src/tex/ms.tex:
-    - src/tex/output/Table_NiTi_Equilibrium_Structures.tex
-    - src/tex/output/Table_NiTi_M_ModeGruneisen.tex
+    - src/data/CACHED/SMA_Results.json
+  src/scripts/PlotDensity.py:
+    - src/data/CACHED/SMA_Results.json
+  src/scripts/PlotCohesiveEnergy.py:
+    - src/data/CACHED/SMA_Results.json
+  src/scripts/GruneisenParameters.py:
+    - src/data/CACHED/SMA_Results.json
+  src/scripts/GenerateElasticTable.py:
+    - src/data/CACHED/SMA_Results.json
+  src/scripts/GenerateEquilibriumTable.py:
+    - src/data/CACHED/SMA_Results.json
 
 # Name of the `.tex` manuscript and corresponding `.pdf` article
 ms_name: ms
@@ -80,7 +61,7 @@ optimize_caching: true
 # Overleaf sync settings
 overleaf:
   # Overleaf project ID (blank = disabled)
-  id: 
+  id:
   # Perform sync on GitHub Actions?
   gh_actions_sync: true
   # List of files to push to Overleaf
