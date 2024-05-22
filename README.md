@@ -1,24 +1,32 @@
 <p align="center">
 <br>
 <br>
+<!---
 <a href="https://github.com/stefanbringuier/SMA_Phonons_GNNIP/actions/workflows/build.yml">
 <img src="https://github.com/stefanbringuier/SMA_Phonons_GNNIP/actions/workflows/build.yml/badge.svg?branch=main" alt="Disabled"/>
 </a>
+-->
 <a href="https://github.com/stefanbringuier/SMA_Phonons_GNNIP/raw/main-pdf/arxiv.tar.gz">
-<img src="https://img.shields.io/badge/preprint-tarball-red.svg?style=flat" alt="Article tarball"/>
+<img src="https://img.shields.io/badge/preprint_status-work%20in%20progress-orange.svg?style=flat" alt="WIP"/>
+</a>
+<a href="https://github.com/stefanbringuier/SMA_Phonons_GNNIP/raw/main-pdf/arxiv.tar.gz">
+<img src="https://img.shields.io/badge/build-disabled-white.svg?style=flat" alt="Article tarball"/>
+</a>
+<a href="https://github.com/stefanbringuier/SMA_Phonons_GNNIP/raw/main-pdf/arxiv.tar.gz">
+<img src="https://img.shields.io/badge/preprint-tarball-blue.svg?style=flat" alt="Article tarball"/>
 </a>
 <a href="https://github.com/stefanbringuier/SMA_Phonons_GNNIP/raw/main-pdf/ms.pdf">
-<img src="https://img.shields.io/badge/preprint-pdf-red.svg?style=flat" alt="Read the article"/>
+<img src="https://img.shields.io/badge/preprint-pdf-blue.svg?style=flat" alt="Read the article"/>
 </a>
 </p>
 
-# Suitability of Graph Neural Network for Shape Memory Alloys [WIP]
+# Suitability of Graph Neural Network for Shape Memory Alloys
 
 **Authors:** Stefan Bringuier
 
 **Affiliation:** Independent Researcher, San Diego, CA
 
-## Abstract
+### Abstract
 
 	Shape Memory Alloys (SMAs) such as NiTi are pivotal in vibrational
 	dampening,robotic arms, prothestic hands, and mechanical vales as a
@@ -45,7 +53,8 @@
 	more relevant DFT data (i.e., force-constants) to permit better
 	outcomes.
 
-## Reproduce
+
+## Reproduce Manuscript
 
 If you want to reproduce the raw data, plots, and manuscript from scratch:
 
@@ -53,11 +62,11 @@ If you want to reproduce the raw data, plots, and manuscript from scratch:
 2. Clone this repo.
 3. From the command-line run `showyourwork clean` and then `showyourwork build`
 
-This may take quite some time (3+ hours) depending on your resources. Note that all the GNN potentials run by default on the cpus, and this code base has no flags for switching it to `cuda`. However, this should be relatively simple by just modifying the [Calculators.py](src/scripts/Calculators.py) script. The phonon calculations use considerable memory and you'll need at least 32 GB of RAM.
+This may take quite some time (3+ hours) depending on your resources. The conda environments take some time to configure. If you can use the `--cores NUMBER_CPUS --conda-frontend=mamba` options.  Note that all the GNN potentials run by default on the `cpus`, and this code base has no flags for switching it to `cuda`. However, this should be relatively simple by just modifying the [Calculators.py](src/scripts/Calculators.py) script. The phonon calculations use considerable memory and you'll need at least 32 GB of RAM.
 
 ### Dataset
 
-The data for this manuscript is stored in the file [SMA_Structures.json](src/data/NiTi_Structures.json). This is a human readable [ASE style JSON](https://wiki.fysik.dtu.dk/ase/ase/db/db.html) file that can be either used with a standard JSON library or ASE. Within the database are ASE `Atoms` type structures and then additional datafields with regard to the GNN model used, spacgroup of the structure, equation of state parameters, phonon bandstructure/dos, and elastic constants.
+The data for this manuscript is stored in the file [SMA_Results.json](src/data/SMA_Results.json)[^1]. This is a human readable [ASE style JSON](https://wiki.fysik.dtu.dk/ase/ase/db/db.html) file that can be either used with a standard JSON library or ASE. Within the database are ASE `Atoms` type structures and then additional datafields with regard to the GNN model used, spacgroup of the structure, equation of state parameters, phonon bandstructure/dos, and elastic constants.
 
 ### Plotting
 
@@ -68,9 +77,13 @@ Any file in [src/scripts](src/scripts)  with a variation of the word "Plot" gene
 A single `LaTeX` files is used, [ms.tex](src/tex/ms.tex) and is fairly boilerplate other than the written text. The rendered figures are saved in [src/tex/figures](src/tex/figures) and are in `.png` format. Some formatting with regard to placement of subfigures is done in the `ms.tex` document within the `\begin{figure} ... \end{figure}` environment. So the figures in the manuscript pdf may be combinations of figures in [src/tex/figures](src/tex/figures)
 
 ### Github Actions
-
+> Disabled for now due to disk size limitations for Github actions.
+>
 Because multiple conda environments are used and the packages are considerable in size, the disk space used during the Github actions is very large. Therefore the hack provided by <https://github.com/marketplace/actions/maximize-build-disk-space> needs to be used.
 
-### Acknowledgement
+#### Acknowledgement
 
 An open source scientific article created using the [showyourwork](https://github.com/showyourwork/showyourwork) workflow.
+
+#### Footnotes
+[^1]: This is will be generated when you run `showyourwork build`.
