@@ -20,7 +20,12 @@
 </a>
 </p>
 
-# Suitability of Graph Neural Network for Shape Memory Alloys
+<div style="border: 2px solid #f39c12; background-color: #fff3cd; color: #856404; padding: 15px; border-radius: 5px; margin: 20px 0; font-family: Arial, sans-serif; font-size: 0.8em;">
+    <strong>⚠️ This research is <em>in progress</em>, therefore the results/analysis are still being completed. Please also excuse any spelling and grammar mistakes within the preprint. ⚠️</strong>
+</div>
+
+
+## Suitability of Graph Neural Network for Shape Memory Alloys
 
 **Authors:** Stefan Bringuier
 
