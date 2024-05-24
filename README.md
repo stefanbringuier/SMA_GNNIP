@@ -21,7 +21,6 @@
 </p>
 
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-
 <div class="alert alert-warning" role="alert" style="font-family: Arial, sans-serif; font-size: 0.8em;">
     <strong>⚠️ This research is <em>in progress</em>, therefore the results/analysis are still being completed. Please also excuse any spelling and grammar mistakes within the preprint. ⚠️</strong>
 </div>
@@ -34,32 +33,11 @@
 
 **Affiliation:** Independent Researcher, San Diego, CA
 
+**Contact:** [stefanbringuier@gmail.com](mailto:stefanbringuier@gmail.com)
+
 ### Abstract
 
-	Shape Memory Alloys (SMAs) such as NiTi are pivotal in vibrational
-	dampening,robotic arms, prothestic hands, and mechanical vales as a
-	result of their unique displacive phase transformation
-	properties. However, assessing their phonon characteristics, which
-	provide insight into the displacive phase transformation, by using
-	conventional Density Functional Theory (DFT) methods is
-	computationally challenging. In this paper we assess the use of
-	recent Graph Neural Network (GNN) potentials as a viable
-	alternative. These GNN potentials have leveraged large DFT-computed
-	databases for training and provide a good approximation to the
-	potential energy surfaces which enable inference on energies and
-	forces in lattice and atomic dynamic calculations. We compare GNN
-	potentials with the Embedded Atom Method (EAM) and Modified EAM
-	style potentials in predicting phonon properties of NiTi and
-	PtTi. We find that in general the EAM/MEAM potentials are slightly
-	more performant than the GNN in that they appear to more accurately
-	describe equation of state, phonon dispersions, and elastic
-	constants. However, the MACE potential shows significant promise as
-	an exploratory potential for designing and characterizing more
-	complex SMAs. Our findings suggest GNN potentials as a promising
-	initial avenue for advancing SMA research, in particular ternary and
-	quaternary systems, upon fine-tuning of pre-trained GNN models with
-	more relevant DFT data (i.e., force-constants) to permit better
-	outcomes.
+> Shape Memory Alloys (SMAs), such as NiTi, are crucial in vibration dampening, robotic arms, prosthetic hands, and mechanical valves due to their unique displacive phase transformation properties. However, assessing their phonon characteristics using conventional Density Functional Theory (DFT) methods is computationally expensive. This paper evaluates the use of recent Graph Neural Network (GNN) potentials as a viable alternative. These GNN potentials, trained on extensive DFT-computed databases, approximate potential energy surfaces, enabling inference on energies and forces in lattice and atomic dynamics calculations. We compare GNN potentials with the Embedded Atom Method (EAM) and Modified EAM (MEAM) potentials in predicting phonon properties of NiTi and PtTi. Generally, EAM/MEAM potentials appear to slightly outperform GNNs phonon, providing more accurate descriptions of the equation of state, phonon dispersions, and elastic constants. However, the MACE potential shows significant promise as an exploratory tool for designing and characterizing more complex SMAs. Our findings suggest GNN potentials as a promising initial avenue for advancing SMA research, particularly for ternary and quaternary systems, with improved outcomes possible by fine-tuning pre-trained GNN models with more relevant DFT data (e.g., force-constants).
 
 
 ## Reproduce Manuscript
@@ -98,7 +76,7 @@ The code in this repository is open sourced under the [MIT license](LICENSE).
 
 #### Acknowledgement
 
-An open source scientific article created using the [showyourwork](https://github.com/showyourwork/showyourwork) workflow.
+This reproducible workflow and manuscript is enabled by [showyourwork](https://github.com/showyourwork/showyourwork). I would also like to thank [Dr. Venkateswara Manga](https://mse.engineering.arizona.edu/faculty-staff/faculty/venkateswara-manga) for fruitful discussions.
 
 #### Footnotes
 [^1]: This is will be generated when you run `showyourwork build`.
