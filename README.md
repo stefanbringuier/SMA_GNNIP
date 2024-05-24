@@ -20,9 +20,12 @@
 </a>
 </p>
 
-<div style="border: 2px solid #f39c12; background-color: #fff3cd; color: #856404; padding: 15px; border-radius: 5px; margin: 20px 0; font-family: Arial, sans-serif; font-size: 0.8em;">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+<div class="alert alert-warning" role="alert" style="font-family: Arial, sans-serif; font-size: 0.8em;">
     <strong>⚠️ This research is <em>in progress</em>, therefore the results/analysis are still being completed. Please also excuse any spelling and grammar mistakes within the preprint. ⚠️</strong>
 </div>
+
 
 
 ## Suitability of Graph Neural Network for Shape Memory Alloys
@@ -85,6 +88,13 @@ A single `LaTeX` files is used, [ms.tex](src/tex/ms.tex) and is fairly boilerpla
 > Disabled for now due to disk size limitations for Github actions.
 >
 Because multiple conda environments are used and the packages are considerable in size, the disk space used during the Github actions is very large. Therefore the hack provided by <https://github.com/marketplace/actions/maximize-build-disk-space> needs to be used.
+
+### Collaborations
+
+If your a researcher who wants to collaborate please message me.
+
+#### License
+The code in this repository is open sourced under the [MIT license](LICENSE).
 
 #### Acknowledgement
 
